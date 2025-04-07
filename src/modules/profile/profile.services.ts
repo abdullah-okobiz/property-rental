@@ -1,9 +1,19 @@
 import mongoose from "mongoose";
-import { ICreateLocationPayload, IWorksAtPayload } from "./profile.interfaces";
+import {
+  ICreateLanguagePayload,
+  ICreateLocationPayload,
+  IWorksAtPayload,
+} from "./profile.interfaces";
 import ProfileRepositories from "./profile.repositories";
 
-const { createWorksAt, findWorksAt, createUserLocation, findLocation } =
-  ProfileRepositories;
+const {
+  createWorksAt,
+  findWorksAt,
+  createUserLocation,
+  findLocation,
+  createLanguage,
+  findLanguage,
+} = ProfileRepositories;
 
 const ProfileServices = {
   processCreateWorksAt: async (payload: IWorksAtPayload) => {
@@ -51,6 +61,32 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred In retrieve Works At service");
+      }
+    }
+  },
+  processCreateLanguage: async (payload: ICreateLanguagePayload) => {
+    try {
+      console.log(payload)
+      const data = await createLanguage(payload);
+      console.log(data)
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Create Language service");
+      }
+    }
+  },
+  processRetrieveLanguage: async (payload: mongoose.Schema.Types.ObjectId) => {
+    try {
+      const data = await findLanguage(payload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In retrieve Language service");
       }
     }
   },

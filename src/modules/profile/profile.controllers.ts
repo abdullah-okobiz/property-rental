@@ -8,6 +8,8 @@ const {
   processRetrieveWorksAt,
   processCreateLocation,
   processRetrieveLocation,
+  processCreateLanguage,
+  processRetrieveLanguage,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -70,6 +72,42 @@ const ProfileControllers = {
       res
         .status(200)
         .json({ status: "success", message: "location retrieved", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleUpdateLanguage: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { languages } = req.body;
+      console.log(languages);
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processCreateLanguage({ id: userId, languages });
+      res
+        .status(200)
+        .json({ status: "success", message: "languages updated", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetLanguage: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processRetrieveLanguage(userId);
+      res
+        .status(200)
+        .json({ status: "success", message: "languages retrieved", data });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

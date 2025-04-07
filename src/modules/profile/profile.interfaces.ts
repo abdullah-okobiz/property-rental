@@ -17,3 +17,8 @@ export interface ICreateLocationPayload {
   id: mongoose.Schema.Types.ObjectId;
   location: string;
 }
+
+export interface ICreateLanguagePayload {
+  id: mongoose.Schema.Types.ObjectId;
+  languages: string[];
+}
