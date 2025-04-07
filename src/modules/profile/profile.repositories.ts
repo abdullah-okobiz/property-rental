@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import {
+  IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IWorksAtPayload,
@@ -77,10 +78,10 @@ const ProfileRepositories = {
   },
   createLanguage: async ({ id, languages }: ICreateLanguagePayload) => {
     try {
-      console.log(id,languages)
+      console.log(id, languages);
       const data = await Profile.findOneAndUpdate(
         { user: id },
-        { languages:languages },
+        { languages: languages },
         { new: true, select: "languages -_id" }
       );
       return data;
@@ -106,6 +107,25 @@ const ProfileRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In Profile Language find Operation"
+        );
+      }
+    }
+  },
+  createBio: async ({ id, intro }: IBio) => {
+    try {
+      console.log(id, intro);
+      const data = await Profile.findOneAndUpdate(
+        { user: id },
+        { intro },
+        { new: true, select: "intro -_id" }
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Profile Create Bio Operation"
         );
       }
     }

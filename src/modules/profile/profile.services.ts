@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import {
+  IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IWorksAtPayload,
@@ -13,6 +14,7 @@ const {
   findLocation,
   createLanguage,
   findLanguage,
+  createBio,
 } = ProfileRepositories;
 
 const ProfileServices = {
@@ -66,9 +68,9 @@ const ProfileServices = {
   },
   processCreateLanguage: async (payload: ICreateLanguagePayload) => {
     try {
-      console.log(payload)
+      console.log(payload);
       const data = await createLanguage(payload);
-      console.log(data)
+      console.log(data);
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -87,6 +89,18 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred In retrieve Language service");
+      }
+    }
+  },
+  processCreateBio: async (payload: IBio) => {
+    try {
+      const data = await createBio(payload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Create Bio service");
       }
     }
   },

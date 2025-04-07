@@ -22,3 +22,8 @@ export interface ICreateLanguagePayload {
   id: mongoose.Schema.Types.ObjectId;
   languages: string[];
 }
+
+export interface IBio {
+  id: mongoose.Schema.Types.ObjectId;
+  intro: string;
+}

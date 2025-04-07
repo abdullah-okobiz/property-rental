@@ -10,6 +10,7 @@ const {
   processRetrieveLocation,
   processCreateLanguage,
   processRetrieveLanguage,
+  processCreateBio,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -108,6 +109,18 @@ const ProfileControllers = {
       res
         .status(200)
         .json({ status: "success", message: "languages retrieved", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleUpdateBio: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { bio } = req.body;
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processCreateBio({ id: userId, intro: bio });
+      res.status(200).json({ status: "success", message: "bio updated", data });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

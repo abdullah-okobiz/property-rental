@@ -11,6 +11,7 @@ const {
   handleGetLocation,
   handleUpdateLanguage,
   handleGetLanguage,
+  handleUpdateBio,
 } = ProfileControllers;
 
 router.route("/profile/work").patch(checkAccessToken, handleCreateWorksAt);
@@ -19,5 +20,6 @@ router.route("/profile/location").patch(checkAccessToken, handleCreateLocation);
 router.route("/profile/location").get(checkAccessToken, handleGetLocation);
 router.route("/profile/language").patch(checkAccessToken, handleUpdateLanguage);
 router.route("/profile/language").get(checkAccessToken, handleGetLanguage);
+router.route("/profile/bio").get(checkAccessToken, handleUpdateBio);
 
 export default router;
