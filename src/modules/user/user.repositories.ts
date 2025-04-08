@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import Profile from "../profile/profile.models";
 import { ISignupPayload, IUser } from "./user.interfaces";
 import User from "./user.model";
@@ -9,8 +9,10 @@ const UserRepositories = {
     session.startTransaction();
     try {
       const user = new User(signupPayload);
-      const savedUser = await user.save({ session });
+
       const profile = new Profile({ user: user.id });
+      user.profile = profile._id as ObjectId;
+      const savedUser = await user.save({ session });
       await profile.save({ session });
       await session.commitTransaction();
       session.endSession();
@@ -56,10 +58,16 @@ const UserRepositories = {
     }
   },
   deleteUser: async (payload: mongoose.Schema.Types.ObjectId) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
       const verifiedUserData = await User.findByIdAndDelete(payload);
+      await Profile.findOneAndDelete({ user: payload });
+      session.endSession();
       return verifiedUserData;
     } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
       if (error instanceof Error) {
         throw error;
       } else {
