@@ -27,3 +27,7 @@ export interface IBio {
   id: mongoose.Schema.Types.ObjectId;
   intro: string;
 }
+export interface IAvatar {
+  id: mongoose.Schema.Types.ObjectId;
+  avatar: string;
+}

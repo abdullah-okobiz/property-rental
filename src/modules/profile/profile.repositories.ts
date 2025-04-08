@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import {
+  IAvatar,
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import Profile from "./profile.models";
+import User from "../user/user.model";
 
 const ProfileRepositories = {
   createWorksAt: async ({ id, worksAt }: IWorksAtPayload) => {
@@ -126,6 +128,52 @@ const ProfileRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In Profile Create Bio Operation"
+        );
+      }
+    }
+  },
+  findBio: async (payload: mongoose.Schema.Types.ObjectId) => {
+    try {
+      const data = await Profile.findOne({ user: payload }).select(
+        "intro -_id"
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Profile Bio find Operation");
+      }
+    }
+  },
+  createAvatar: async ({ avatar, id }: IAvatar) => {
+    try {
+      const data = await User.findOneAndUpdate(
+        { _id: id },
+        { avatar },
+        { new: true, select: "avatar -_id" }
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Profile Create Avatar Operation"
+        );
+      }
+    }
+  },
+  findAvatar: async (payload: mongoose.Schema.Types.ObjectId) => {
+    try {
+      const data = await User.findById(payload).select("avatar -_id");
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Profile avatar find Operation"
         );
       }
     }

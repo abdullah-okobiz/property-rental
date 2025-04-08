@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 import {
+  IAvatar,
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import ProfileRepositories from "./profile.repositories";
+import { join } from "path";
+import { promises as fs } from "fs";
 
 const {
   createWorksAt,
@@ -15,6 +18,9 @@ const {
   createLanguage,
   findLanguage,
   createBio,
+  findBio,
+  createAvatar,
+  findAvatar,
 } = ProfileRepositories;
 
 const ProfileServices = {
@@ -101,6 +107,53 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred In Create Bio service");
+      }
+    }
+  },
+  processRetrieveBio: async (payload: mongoose.Schema.Types.ObjectId) => {
+    try {
+      const data = await findBio(payload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In retrieve bio  service");
+      }
+    }
+  },
+  processCreateAvatar: async ({ avatar, id }: IAvatar) => {
+    const filePath = join(__dirname, "../../../public", avatar) as string;
+    try {
+      const data = await createAvatar({ id, avatar: `/public/${avatar}` });
+      if (!data) {
+        try {
+          await fs.unlink(filePath);
+          throw new Error("Image Uploading Failed");
+        } catch (error) {
+          throw error;
+        }
+      }
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        await fs.unlink(filePath);
+        throw error;
+      } else {
+        await fs.unlink(filePath);
+        throw new Error("Unknown Error Occurred In Create Avatar service");
+      }
+    }
+  },
+  processRetrieveAvatar: async (payload: mongoose.Schema.Types.ObjectId) => {
+    try {
+      const data = await findAvatar(payload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In retrieve avatar service");
       }
     }
   },

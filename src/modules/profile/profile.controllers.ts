@@ -11,6 +11,9 @@ const {
   processCreateLanguage,
   processRetrieveLanguage,
   processCreateBio,
+  processRetrieveBio,
+  processCreateAvatar,
+  processRetrieveAvatar,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -121,6 +124,52 @@ const ProfileControllers = {
       const { userId } = req.authenticateTokenDecoded as TokenPayload;
       const data = await processCreateBio({ id: userId, intro: bio });
       res.status(200).json({ status: "success", message: "bio updated", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetBio: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processRetrieveBio(userId);
+      res
+        .status(200)
+        .json({ status: "success", message: "bio retrieved successful", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleUpdateAvatar: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const avatar = req?.file?.filename as string;
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processCreateAvatar({ id: userId, avatar });
+      res
+        .status(200)
+        .json({ status: "success", message: "avatar updated", data });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetAvatar: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const data = await processRetrieveAvatar(userId);
+      res.status(200).json({
+        status: "success",
+        message: "avatar retrieved successful",
+        data,
+      });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

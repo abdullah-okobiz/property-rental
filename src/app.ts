@@ -12,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsConfiguration));
+app.use(express.static("public"));
 app.use(
   morgan(morganMessageFormat, {
     stream: {
