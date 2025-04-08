@@ -28,10 +28,11 @@ app.get("/", (req: Request, res: Response) => {
 /* ====================================|
 |------------APP ROUTES V1-------------|
 |==================================== */
-import { ProfileRoutes, UserRoutes } from "./routes/v1";
+import { BlogRoutes, ProfileRoutes, UserRoutes } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
 app.use(baseUrl.v1, ProfileRoutes);
+app.use(baseUrl.v1, BlogRoutes);
 
 app.use(globalErrorMiddleware);
 

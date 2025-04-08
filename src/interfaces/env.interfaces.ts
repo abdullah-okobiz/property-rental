@@ -8,4 +8,7 @@ export default interface IEnvConfig {
   SMTP_PORT: number;
   SMTP_USER: string;
   SMTP_PASS: string;
+  ADMIN_EMAIL:string;
+  ADMIN_PASSWORD:string;
+  ADMIN_NAME:string;
 }

@@ -3,7 +3,7 @@ import { signupInputValidationSchema } from "./user.validations";
 import UserRepositories from "./user.repositories";
 import redisClient from "../../configs/redis.configs";
 import { verifyAccessToken, verifyRefreshToken } from "../../utils/jwt.utils";
-import { TokenPayload } from "../../interfaces/jwtPayload.interfaces";
+import { TokenPayload, UserRole } from "../../interfaces/jwtPayload.interfaces";
 
 const { findUserByEmailOrPhone } = UserRepositories;
 
@@ -57,6 +57,18 @@ const UserMiddlewares = {
       return;
     }
     req.user = isUserExist;
+    next();
+  },
+  isAdmin: async (req: Request, res: Response, next: NextFunction) => {
+    const role = req?.authenticateTokenDecoded?.role;
+    console.log(role);
+    if (role !== UserRole.Admin) {
+      res.status(403).json({
+        status: "error",
+        message: "You do not have permission to access this resource",
+      });
+      return;
+    }
     next();
   },
   checkVerificationOtp: async (

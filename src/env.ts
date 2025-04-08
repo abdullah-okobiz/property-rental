@@ -11,4 +11,7 @@ export const env: IEnvConfig = {
   SMTP_PORT: parseInt(getEnvVariable("SMTP_PORT")),
   SMTP_USER: getEnvVariable("SMTP_USER"),
   SMTP_PASS: getEnvVariable("SMTP_PASS"),
+  ADMIN_EMAIL: getEnvVariable("ADMIN_EMAIL"),
+  ADMIN_NAME: getEnvVariable("ADMIN_NAME"),
+  ADMIN_PASSWORD: getEnvVariable("ADMIN_PASSWORD"),
 };
