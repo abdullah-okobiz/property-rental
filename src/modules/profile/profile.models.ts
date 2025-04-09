@@ -12,7 +12,7 @@ const ProfileSchema = new Schema<IProfile>({
     unique: true,
     default: null,
   },
-});
+},{timestamps:true});
 
 const Profile: Model<IProfile> = model<IProfile>("Profile", ProfileSchema);
 

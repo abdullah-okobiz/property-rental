@@ -3,21 +3,24 @@ import { IUser } from "./user.interfaces";
 import { hashPassword } from "../../utils/password.utils";
 import mongoose from "mongoose";
 
-const UserSchema = new Schema<IUser>({
-  avatar: { type: String, default: null },
-  email: { type: String, required: true },
-  isVerified: { type: Boolean, default: false },
-  name: { type: String, required: true },
-  phone: { type: String },
-  password: { type: String, minlength: 8, required: true },
-  role: { type: String },
-  profile: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Profile",
-    unique: true,
-    default: null,
+const UserSchema = new Schema<IUser>(
+  {
+    avatar: { type: String, default: null },
+    email: { type: String, required: true },
+    isVerified: { type: Boolean, default: false },
+    name: { type: String, required: true },
+    phone: { type: String },
+    password: { type: String, minlength: 8, required: true },
+    role: { type: String },
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      unique: true,
+      default: null,
+    },
   },
-});
+  { timestamps: true }
+);
 
 UserSchema.pre("save", async function (next) {
   const user = this;
