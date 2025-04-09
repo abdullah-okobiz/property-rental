@@ -11,5 +11,6 @@ const BlogRepositories = {
       throw new Error("Unknown Error Occurred In Blog Creation Operation");
     }
   },
+  // findAllBlogs
 };
 export default BlogRepositories;
