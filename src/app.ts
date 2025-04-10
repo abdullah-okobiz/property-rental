@@ -37,6 +37,7 @@ import {
   FaqRoutes,
   MissionRoutes,
   VissionRoutes,
+  WhyChooseUs,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -47,6 +48,7 @@ app.use(baseUrl.v1, CategoryRoutes);
 app.use(baseUrl.v1, FaqRoutes);
 app.use(baseUrl.v1, MissionRoutes);
 app.use(baseUrl.v1, VissionRoutes);
+app.use(baseUrl.v1, WhyChooseUs);
 
 app.use(globalErrorMiddleware);
 
