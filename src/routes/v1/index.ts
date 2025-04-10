@@ -7,6 +7,7 @@ import FaqRoutes from "./faq.routes";
 import MissionRoutes from "./mission.routes";
 import VissionRoutes from "./vission.routes";
 import WhyChooseUs from "./whyChooseUs.routes";
+import Partner from "./partner.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -16,5 +17,6 @@ export {
   FaqRoutes,
   MissionRoutes,
   VissionRoutes,
-  WhyChooseUs
+  WhyChooseUs,
+  Partner,
 };
