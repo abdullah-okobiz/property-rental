@@ -39,6 +39,7 @@ import {
   VissionRoutes,
   WhyChooseUs,
   Partner,
+  Banner,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -51,6 +52,7 @@ app.use(baseUrl.v1, MissionRoutes);
 app.use(baseUrl.v1, VissionRoutes);
 app.use(baseUrl.v1, WhyChooseUs);
 app.use(baseUrl.v1, Partner);
+app.use(baseUrl.v1, Banner);
 
 app.use(globalErrorMiddleware);
 

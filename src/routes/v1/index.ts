@@ -8,6 +8,7 @@ import MissionRoutes from "./mission.routes";
 import VissionRoutes from "./vission.routes";
 import WhyChooseUs from "./whyChooseUs.routes";
 import Partner from "./partner.routes";
+import Banner from "./team.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -19,4 +20,5 @@ export {
   VissionRoutes,
   WhyChooseUs,
   Partner,
+  Banner,
 };
