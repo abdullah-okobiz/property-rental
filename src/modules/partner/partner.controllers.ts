@@ -57,6 +57,7 @@ const PartnerControllers = {
   ) => {
     try {
       const { id } = req.params;
+
       const partnerImage = req?.file?.filename;
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -67,6 +68,7 @@ const PartnerControllers = {
       }
 
       const partnerId = new mongoose.Types.ObjectId(id);
+
       const data = await processUpdatePartner({
         partnerId,
         partnerImage,
@@ -91,6 +93,7 @@ const PartnerControllers = {
   ) => {
     try {
       const { id } = req.params;
+      const { partnerImage } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
         res
@@ -100,12 +103,12 @@ const PartnerControllers = {
       }
 
       const partnerId = new mongoose.Types.ObjectId(id);
-      const data = await processDeletePartner({ partnerId });
+       await processDeletePartner({ partnerId, partnerImage });
 
       res.status(200).json({
         status: "success",
         message: "Partner deleted successfully",
-        data,
+        
       });
     } catch (error) {
       const err = error as Error;

@@ -50,7 +50,10 @@ const PartnerServices = {
     }
   },
 
-  processUpdatePartner: async ({ partnerImage }: IPartnerPayload) => {
+  processUpdatePartner: async ({
+    partnerImage,
+    partnerId,
+  }: IPartnerPayload) => {
     const filePath = join(
       __dirname,
       "../../../public",
@@ -59,6 +62,7 @@ const PartnerServices = {
     try {
       const data = await updatePartner({
         partnerImage: `/public/${partnerImage}`,
+        partnerId,
       });
       if (!data) {
         try {
@@ -80,10 +84,17 @@ const PartnerServices = {
     }
   },
 
-  processDeletePartner: async (payload: IPartnerPayload) => {
+  processDeletePartner: async ({
+    partnerId,
+    partnerImage,
+  }: IPartnerPayload) => {
+    const image = partnerImage as string;
+    const relativeImagePath = image.replace("/public/", "");
+    const filePath = join(__dirname, "../../../public", relativeImagePath);
     try {
-      const data = await deletePartner(payload);
-      return data;
+      await fs.unlink(filePath);
+      await deletePartner({ partnerId });
+      return;
     } catch (error) {
       if (error instanceof Error) {
         throw error;

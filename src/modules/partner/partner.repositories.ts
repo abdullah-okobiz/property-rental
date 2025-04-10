@@ -23,6 +23,7 @@ const PartnerRepositories = {
 
   updatePartner: async ({ partnerImage, partnerId }: IPartnerPayload) => {
     try {
+      console.log(partnerId);
       const updatedData = await Partner.findByIdAndUpdate(
         partnerId,
         { $set: { partnerImage } },
@@ -36,6 +37,7 @@ const PartnerRepositories = {
 
   deletePartner: async ({ partnerId }: IPartnerPayload) => {
     try {
+      console.log(partnerId);
       const deletedData = await Partner.findByIdAndDelete(partnerId);
       if (!deletedData) throw new Error("Partner delete failed");
       return;
