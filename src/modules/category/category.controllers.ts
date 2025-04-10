@@ -3,8 +3,12 @@ import logger from "../../configs/logger.configs";
 import CategoryServices from "./category.services";
 import { Types } from "mongoose";
 import { ICategoryPayload } from "./category.interfaces";
-const { processCreateCategory, processUpdateCategory, processRetriveCategory } =
-  CategoryServices;
+const {
+  processCreateCategory,
+  processUpdateCategory,
+  processRetriveCategory,
+  processDeleteCategory,
+} = CategoryServices;
 const CategoryControllers = {
   handleCreateCategory: async (
     req: Request,
@@ -77,6 +81,32 @@ const CategoryControllers = {
       res.status(200).json({
         status: "success",
         message: "Category update successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleDeleteCategory: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!Types?.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid category ID" });
+        return;
+      }
+      const categoryId = new Types.ObjectId(id);
+      const data = await processDeleteCategory({ categoryId });
+      res.status(200).json({
+        status: "success",
+        message: "Category delete successful",
         data,
       });
     } catch (error) {

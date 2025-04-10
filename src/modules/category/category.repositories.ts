@@ -36,15 +36,15 @@ const CategoryRepositories = {
       throw new Error("Unknown Error Occurred In category update Operation");
     }
   },
-  daleteFeature: async ({  }: ICategoryPayload) => {
-      try {
-        const updatedData = await Feature.findByIdAndDelete(featureId);
-        if (!updatedData) throw new Error("Feature delete fail");
-        return;
-      } catch (error) {
-        throw new Error("Unknown Error Occurred In Feature update Operation");
-      }
-    },
+  daleteCategory: async ({ categoryId }: ICategoryPayload) => {
+    try {
+      const updatedData = await Category.findByIdAndDelete(categoryId);
+      if (!updatedData) throw new Error("category delete fail");
+      return;
+    } catch (error) {
+      throw new Error("Unknown Error Occurred In category update Operation");
+    }
+  },
 };
 
 export default CategoryRepositories;
