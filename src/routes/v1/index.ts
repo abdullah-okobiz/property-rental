@@ -4,6 +4,7 @@ import ProfileRoutes from "./profile.routes";
 import FeatureRoutes from "./feature.routes";
 import CategoryRoutes from "./category.routes";
 import FaqRoutes from "./faq.routes";
+import MissionRoutes from "./mission.routes";
 
 export {
   UserRoutes,
@@ -12,4 +13,5 @@ export {
   FeatureRoutes,
   CategoryRoutes,
   FaqRoutes,
+  MissionRoutes,
 };
