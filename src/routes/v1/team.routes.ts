@@ -1,26 +1,39 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import upload from "../../middlewares/multer.middleware";
-import BannerControllers from "../../modules/banner/banner.controllers";
+import TeamControllers from "../../modules/team/team.controllers";
+import TeamMiddlewares from "../../modules/team/team.middlewares";
 
 const { checkAccessToken, isAdmin } = UserMiddlewares;
-const { handleCreateBanner, handleDeleteBanner, handleRetrieveAllBanner } =
-  BannerControllers;
+const { isTeamMemberExist } = TeamMiddlewares;
+const {
+  handleCreateTeamMember,
+  handleDeleteTeamMember,
+  handleRetrieveAllTeamMembers,
+  handleUpdateOneTeamMember,
+} = TeamControllers;
 
 const router = Router();
 
 router
-  .route("/admin/banner")
+  .route("/admin/team")
   .post(
     checkAccessToken,
     isAdmin,
-    upload.single("bannerImage"),
-    handleCreateBanner
+    upload.single("teamMemberImage"),
+    handleCreateTeamMember
   )
-  .get(checkAccessToken, isAdmin, handleRetrieveAllBanner);
+  .get(checkAccessToken, isAdmin, handleRetrieveAllTeamMembers);
 
 router
-  .route("/admin/banner/:id")
-  .delete(checkAccessToken, isAdmin, handleDeleteBanner);
+  .route("/admin/team/:id")
+  .put(
+    checkAccessToken,
+    isAdmin,
+    isTeamMemberExist,
+    upload.single("teamMemberImage"),
+    handleUpdateOneTeamMember
+  )
+  .delete(checkAccessToken, isAdmin, isTeamMemberExist, handleDeleteTeamMember);
 
 export default router;
