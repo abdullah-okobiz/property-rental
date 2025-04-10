@@ -13,16 +13,12 @@ const router = Router();
 
 router
   .route("/admin/feature")
-  .post(checkAccessToken, isAdmin, handleCreateFeature);
-router
-  .route("/admin/feature")
+  .post(checkAccessToken, isAdmin, handleCreateFeature)
   .get(checkAccessToken, isAdmin, handleRetrieveAllFeature);
 
 router
   .route("/admin/feature/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateFeature);
-router
-  .route("/admin/feature/:id")
+  .put(checkAccessToken, isAdmin, handleUpdateFeature)
   .delete(checkAccessToken, isAdmin, handleDeleteFeature);
 
 export default router;
