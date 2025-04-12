@@ -11,6 +11,8 @@ const {
   checkVerificationOtp,
   checkAccessToken,
   checkRefreshToken,
+  checkPassword,
+  checkRole,
 } = UserMiddlewares;
 const {
   handleSignup,
@@ -28,7 +30,10 @@ router
   .post(signupInputValidation, isSignupUserExist, handleSignup);
 router.route("/verify").post(checkVerificationOtp, handleVerify);
 router.route("/resend").post(isUserExist, handleResend);
-router.route("/login").post(isUserExist, handleLogin);
+router.route("/login").post(isUserExist, checkPassword, handleLogin);
+router
+  .route("/admin/login")
+  .post(isUserExist, checkRole, checkPassword, handleLogin);
 router.route("/refresh").post(checkRefreshToken, handleRefreshTokens);
 router.route("/check").post(checkAccessToken, handleCheck);
 router.route("/logout").post(checkAccessToken, handleLogout);

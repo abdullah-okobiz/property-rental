@@ -9,6 +9,7 @@ export enum UserRole {
 export interface TokenPayload extends JwtPayload {
   userId: mongoose.Schema.Types.ObjectId;
   email: string;
+  name:string
   role: UserRole;
   isVerified: boolean;
 }

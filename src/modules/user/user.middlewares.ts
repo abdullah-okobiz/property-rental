@@ -4,6 +4,8 @@ import UserRepositories from "./user.repositories";
 import redisClient from "../../configs/redis.configs";
 import { verifyAccessToken, verifyRefreshToken } from "../../utils/jwt.utils";
 import { TokenPayload, UserRole } from "../../interfaces/jwtPayload.interfaces";
+import { IUser } from "./user.interfaces";
+import { comparePassword } from "../../utils/password.utils";
 
 const { findUserByEmailOrPhone } = UserRepositories;
 
@@ -57,6 +59,27 @@ const UserMiddlewares = {
       return;
     }
     req.user = isUserExist;
+    next();
+  },
+  checkPassword: async (req: Request, res: Response, next: NextFunction) => {
+    const { password } = req.user as IUser;
+    if (!(await comparePassword(req?.body?.password, password))) {
+      res.status(400).json({ status: "error", message: "Invalid Password" });
+      return;
+    }
+    next();
+  },
+  checkRole: async (req: Request, res: Response, next: NextFunction) => {
+    const { role } = req.user as IUser;
+    if (role !== "admin") {
+      res
+        .status(400)
+        .json({
+          status: "error",
+          message: "Invalid credentials or insufficient permissions",
+        });
+      return;
+    }
     next();
   },
   isAdmin: async (req: Request, res: Response, next: NextFunction) => {
