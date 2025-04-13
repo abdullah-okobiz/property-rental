@@ -50,7 +50,7 @@ const FaqControllers = {
         return;
       }
       const faqId = new mongoose.Types.ObjectId(id);
-      const data = await processUpdateFaq({ faqId, faqQuestion });
+      const data = await processUpdateFaq({ faqId, faqQuestion, faqAnswer });
       res.status(200).json({
         status: "success",
         message: "Faq update successful",
