@@ -8,7 +8,7 @@ const cookieOption = (
   const option: CookieOptions = {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
-    sameSite: env.NODE_ENV === "production" ? "strict" : "none",
+    sameSite: env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
     domain: env.NODE_ENV === "production" ? "http://localhost:5173" : "",
   };
