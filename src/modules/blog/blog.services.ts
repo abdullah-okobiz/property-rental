@@ -1,10 +1,35 @@
 import path, { join } from "path";
 import { IBlogPayload } from "./blog.interfaces";
 import BlogRepositories from "./blog.repositories";
-const { createBlog, updateOneBlog, deletOneBlog } = BlogRepositories;
+const { createBlog, updateOneBlog, deletOneBlog, findAllBlogs, findOneBlog } =
+  BlogRepositories;
 import { promises as fs } from "fs";
 
 const BlogServices = {
+  processRetrieveBlog: async () => {
+    try {
+      return await findAllBlogs();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In blog retrieve service");
+      }
+    }
+  },
+  processRetrieveSingleBlog: async ({ blogId }: IBlogPayload) => {
+    try {
+      return await findOneBlog({ blogId });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In single blog retrieve service"
+        );
+      }
+    }
+  },
   processCreateBlog: async ({
     blogDescription,
     blogTitle,

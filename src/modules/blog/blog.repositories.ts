@@ -13,7 +13,7 @@ const BlogRepositories = {
   },
   findAllBlogs: async () => {
     try {
-      const data = await Blog.find({});
+      const data = await Blog.find({}).populate("feature", "featureName _id");
       return data;
     } catch (error) {
       throw new Error("Unknown Error Occurred In Blog Retrive Operation");
@@ -51,7 +51,7 @@ const BlogRepositories = {
   },
   findOneBlog: async ({ blogId }: IBlogPayload) => {
     try {
-      const data = await Blog.findById(blogId);
+      const data = await Blog.findById(blogId).populate("feature");
       return data;
     } catch (error) {
       throw new Error(

@@ -3,9 +3,56 @@ import logger from "../../configs/logger.configs";
 import BlogServices from "./blog.services";
 import { IBlogPayload } from "./blog.interfaces";
 import mongoose from "mongoose";
-const { processCreateBlog, processUpdateBlog, processDeleteBlog } =
-  BlogServices;
+const {
+  processCreateBlog,
+  processUpdateBlog,
+  processDeleteBlog,
+  processRetrieveBlog,
+  processRetrieveSingleBlog,
+} = BlogServices;
 const BlogControllers = {
+  handleRetrieveSingleBlog: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      return;
+    }
+    const blogId = new mongoose.Types.ObjectId(id);
+    try {
+      const data = await processRetrieveSingleBlog({ blogId });
+      res.status(200).json({
+        status: "success",
+        message: "blog retrieve successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleRetrieveBlog: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const data = await processRetrieveBlog();
+      res.status(200).json({
+        status: "success",
+        message: "blog retrieve successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
   handleCreateBlog: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogTitle, blogDescription, feature, tags } =
