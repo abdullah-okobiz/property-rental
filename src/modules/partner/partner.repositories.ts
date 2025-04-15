@@ -37,10 +37,17 @@ const PartnerRepositories = {
 
   deletePartner: async ({ partnerId }: IPartnerPayload) => {
     try {
-      console.log(partnerId);
       const deletedData = await Partner.findByIdAndDelete(partnerId);
       if (!deletedData) throw new Error("Partner delete failed");
       return;
+    } catch (error) {
+      throw new Error("Unknown Error Occurred In Partner Delete Operation");
+    }
+  },
+  findOnePartner: async ({ partnerId }: IPartnerPayload) => {
+    try {
+      const data = await Partner.findById(partnerId);
+      return data;
     } catch (error) {
       throw new Error("Unknown Error Occurred In Partner Delete Operation");
     }

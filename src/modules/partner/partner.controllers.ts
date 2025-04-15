@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import PartnerServices from "./partner.services";
 import mongoose from "mongoose";
+import IPartner from "./partner.interfaces";
 
 const {
   processCreatePartner,
@@ -93,7 +94,7 @@ const PartnerControllers = {
   ) => {
     try {
       const { id } = req.params;
-      const { partnerImage } = req.body;
+      const { partnerImage } = req.partner as IPartner;
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
         res
@@ -103,12 +104,11 @@ const PartnerControllers = {
       }
 
       const partnerId = new mongoose.Types.ObjectId(id);
-       await processDeletePartner({ partnerId, partnerImage });
+      await processDeletePartner({ partnerId, partnerImage });
 
       res.status(200).json({
         status: "success",
         message: "Partner deleted successfully",
-        
       });
     } catch (error) {
       const err = error as Error;

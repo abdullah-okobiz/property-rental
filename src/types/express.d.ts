@@ -1,4 +1,5 @@
 import { TokenPayload } from "../interfaces/jwtPayload.interfaces";
+import IPartner from "../modules/partner/partner.interfaces";
 import ITeam from "../modules/team/team.interfaces";
 import { IUser } from "../modules/user/user.interfaces";
 
@@ -7,7 +8,8 @@ declare global {
     interface Request {
       user?: IUser;
       authenticateTokenDecoded:TokenPayload,
-      teamMember?:ITeam
+      teamMember?:ITeam,
+      partner?:IPartner
     }
   }
 }
