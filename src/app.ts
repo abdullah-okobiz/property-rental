@@ -42,6 +42,7 @@ import {
   Partner,
   Banner,
   Team,
+  AboutUS,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -56,6 +57,7 @@ app.use(baseUrl.v1, WhyChooseUs);
 app.use(baseUrl.v1, Partner);
 app.use(baseUrl.v1, Banner);
 app.use(baseUrl.v1, Team);
+app.use(baseUrl.v1, AboutUS);
 
 app.use(globalErrorMiddleware);
 

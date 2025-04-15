@@ -10,6 +10,7 @@ import WhyChooseUs from "./whyChooseUs.routes";
 import Partner from "./partner.routes";
 import Banner from "./banner.routes";
 import Team from "./team.routes";
+import AboutUS from "./aboutUs.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -23,4 +24,5 @@ export {
   Partner,
   Banner,
   Team,
+  AboutUS,
 };
