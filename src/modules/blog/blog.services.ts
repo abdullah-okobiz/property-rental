@@ -1,7 +1,7 @@
 import path, { join } from "path";
 import { IBlogPayload } from "./blog.interfaces";
 import BlogRepositories from "./blog.repositories";
-const { createBlog, updateOneBlog } = BlogRepositories;
+const { createBlog, updateOneBlog, deletOneBlog } = BlogRepositories;
 import { promises as fs } from "fs";
 
 const BlogServices = {
@@ -82,6 +82,22 @@ const BlogServices = {
       } else {
         await fs.unlink(newImageFilePath);
         throw new Error("Unknown Error Occurred In update blog service");
+      }
+    }
+  },
+  processDeleteBlog: async ({ blogId, blogImage }: IBlogPayload) => {
+    const image = blogImage as string;
+    const relativeImagePath = image.replace("/public/", "");
+    const filePath = join(__dirname, "../../../public", relativeImagePath);
+    try {
+      await fs.unlink(filePath);
+      await deletOneBlog({ blogId });
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In delete blog service");
       }
     }
   },

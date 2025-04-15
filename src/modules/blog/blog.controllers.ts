@@ -3,7 +3,8 @@ import logger from "../../configs/logger.configs";
 import BlogServices from "./blog.services";
 import { IBlogPayload } from "./blog.interfaces";
 import mongoose from "mongoose";
-const { processCreateBlog, processUpdateBlog } = BlogServices;
+const { processCreateBlog, processUpdateBlog, processDeleteBlog } =
+  BlogServices;
 const BlogControllers = {
   handleCreateBlog: async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -58,6 +59,26 @@ const BlogControllers = {
         status: "success",
         message: "blog update successful",
         data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleBlogDelete: async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { blogImage } = req.blog as IBlogPayload;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      return;
+    }
+    const blogId = new mongoose.Types.ObjectId(id);
+    try {
+      await processDeleteBlog({ blogId, blogImage });
+      res.status(200).json({
+        status: "success",
+        message: "blog delete successful",
       });
     } catch (error) {
       const err = error as Error;

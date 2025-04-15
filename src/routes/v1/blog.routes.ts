@@ -4,7 +4,7 @@ import upload from "../../middlewares/multer.middleware";
 import BlogControllers from "../../modules/blog/blog.controllers";
 import BlogMiddlewares from "../../modules/blog/blog.middlewares";
 const { checkAccessToken, isAdmin } = UserMiddlewares;
-const { handleCreateBlog, handleUpdateBlog } = BlogControllers;
+const { handleCreateBlog, handleUpdateBlog ,handleBlogDelete} = BlogControllers;
 const { isTeamMemberExist } = BlogMiddlewares;
 const router = Router();
 
@@ -26,6 +26,6 @@ router
     upload.single("blogImage"),
     handleUpdateBlog
   )
-  .delete(checkAccessToken, isAdmin, isTeamMemberExist);
+  .delete(checkAccessToken, isAdmin, isTeamMemberExist,handleBlogDelete);
 
 export default router;
