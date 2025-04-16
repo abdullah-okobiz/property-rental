@@ -11,7 +11,7 @@ const {
   handleRetrieveBlog,
   handleRetrieveSingleBlog,
 } = BlogControllers;
-const { isTeamMemberExist } = BlogMiddlewares;
+const { isBlogExist } = BlogMiddlewares;
 const router = Router();
 
 router
@@ -30,10 +30,10 @@ router
   .put(
     checkAccessToken,
     isAdmin,
-    isTeamMemberExist,
+    isBlogExist,
     upload.single("blogImage"),
     handleUpdateBlog
   )
-  .delete(checkAccessToken, isAdmin, isTeamMemberExist, handleBlogDelete);
+  .delete(checkAccessToken, isAdmin, isBlogExist, handleBlogDelete);
 
 export default router;

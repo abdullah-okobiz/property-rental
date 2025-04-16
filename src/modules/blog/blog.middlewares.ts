@@ -4,11 +4,7 @@ import BlogRepositories from "./blog.repositories";
 
 const { findOneBlog } = BlogRepositories;
 const BlogMiddlewares = {
-  isTeamMemberExist: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  isBlogExist: async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       res.status(400).json({ status: "error", message: "Invalid blog ID" });
