@@ -11,6 +11,7 @@ import Partner from "./partner.routes";
 import Banner from "./banner.routes";
 import Team from "./team.routes";
 import AboutUS from "./aboutUs.routes";
+import SubCategory from "./subCategory.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -25,4 +26,5 @@ export {
   Banner,
   Team,
   AboutUS,
+  SubCategory,
 };

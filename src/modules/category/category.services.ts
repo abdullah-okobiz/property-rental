@@ -1,6 +1,6 @@
 import { ICategoryPayload } from "./category.interfaces";
 import CategoryRepositories from "./category.repositories";
-const { createCategory, updateCategory, findCategories, daleteCategory } =
+const { createCategory, updateCategory, findCategories, deleteCategory } =
   CategoryRepositories;
 const CategoryServices = {
   processCreateCategory: async (payload: ICategoryPayload) => {
@@ -27,7 +27,7 @@ const CategoryServices = {
       }
     }
   },
-  processRetriveCategory: async (payload: ICategoryPayload) => {
+  processRetrieveCategory: async (payload: ICategoryPayload) => {
     try {
       const data = await findCategories(payload);
       return data;
@@ -41,7 +41,7 @@ const CategoryServices = {
   },
   processDeleteCategory: async (payload: ICategoryPayload) => {
     try {
-      const data = await daleteCategory(payload);
+      const data = await deleteCategory(payload);
       return data;
     } catch (error) {
       if (error instanceof Error) {

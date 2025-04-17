@@ -12,12 +12,12 @@ const {
 const router = Router();
 
 router
-  .route("/admin/category")
+  .route("/admin/sub_category")
   .post(checkAccessToken, isAdmin, handleCreateCategory)
   .get(handleRetrieveCategories);
 
 router
-  .route("/admin/category/:id")
+  .route("/admin/sub_category/:id")
   .put(checkAccessToken, isAdmin, handleUpdateCategory)
   .delete(checkAccessToken, isAdmin, handleDeleteCategory);
 

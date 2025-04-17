@@ -6,7 +6,7 @@ import { ICategoryPayload } from "./category.interfaces";
 const {
   processCreateCategory,
   processUpdateCategory,
-  processRetriveCategory,
+  processRetrieveCategory,
   processDeleteCategory,
 } = CategoryServices;
 const CategoryControllers = {
@@ -59,7 +59,7 @@ const CategoryControllers = {
       next();
     }
   },
-  handleRetriveCategories: async (
+  handleRetrieveCategories: async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -77,10 +77,10 @@ const CategoryControllers = {
       if (feature_id) {
         payload = { feature: id };
       }
-      const data = await processRetriveCategory(payload);
+      const data = await processRetrieveCategory(payload);
       res.status(200).json({
         status: "success",
-        message: "Category update successful",
+        message: "Category retrieved successful",
         data,
       });
     } catch (error) {

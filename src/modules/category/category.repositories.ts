@@ -8,7 +8,11 @@ const CategoryRepositories = {
       await newCategory.save();
       return newCategory;
     } catch (error) {
-      throw new Error("Unknown Error Occurred In Feature Creation Operation");
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Category Creation Operation");
+      }
     }
   },
   findCategories: async ({ feature }: ICategoryPayload) => {
@@ -17,7 +21,13 @@ const CategoryRepositories = {
       const data = await Category.find(query);
       return data;
     } catch (error) {
-      throw new Error("Unknown Error Occurred In Category Retrive Operation");
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Category Retrieve Operation"
+        );
+      }
     }
   },
   updateCategory: async ({
@@ -33,16 +43,24 @@ const CategoryRepositories = {
       );
       return updatedData;
     } catch (error) {
-      throw new Error("Unknown Error Occurred In category update Operation");
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In category update Operation");
+      }
     }
   },
-  daleteCategory: async ({ categoryId }: ICategoryPayload) => {
+  deleteCategory: async ({ categoryId }: ICategoryPayload) => {
     try {
       const updatedData = await Category.findByIdAndDelete(categoryId);
       if (!updatedData) throw new Error("category delete fail");
       return;
     } catch (error) {
-      throw new Error("Unknown Error Occurred In category update Operation");
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In category delete Operation");
+      }
     }
   },
 };
