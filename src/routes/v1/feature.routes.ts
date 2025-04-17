@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/admin/feature")
   .post(checkAccessToken, isAdmin, handleCreateFeature)
-  .get(checkAccessToken, isAdmin, handleRetrieveAllFeature);
+  .get(handleRetrieveAllFeature);
 
 router
   .route("/admin/feature/:id")

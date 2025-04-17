@@ -16,7 +16,7 @@ const BlogRepositories = {
       const data = await Blog.find({}).populate("feature", "featureName _id");
       return data;
     } catch (error) {
-      throw new Error("Unknown Error Occurred In Blog Retrive Operation");
+      throw new Error("Unknown Error Occurred In Blog Retrieve Operation");
     }
   },
   updateOneBlog: async ({

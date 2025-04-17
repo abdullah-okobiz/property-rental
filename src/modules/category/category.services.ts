@@ -11,7 +11,7 @@ const CategoryServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In create feature service");
+        throw new Error("Unknown Error Occurred In create  category service");
       }
     }
   },
@@ -34,7 +34,7 @@ const CategoryServices = {
     } catch (error) {
       if (error instanceof Error) {
         throw error;
-      } else {
+      } else {    
         throw new Error("Unknown Error Occurred In Retrieve Category service");
       }
     }

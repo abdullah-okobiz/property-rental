@@ -11,14 +11,19 @@ const CategoryRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Category Creation Operation");
+        throw new Error(
+          "Unknown Error Occurred In Category Creation Operation"
+        );
       }
     }
   },
   findCategories: async ({ feature }: ICategoryPayload) => {
     try {
       const query = feature ? { feature } : {};
-      const data = await Category.find(query);
+      const data = await Category.find(query).populate(
+        "feature",
+        "featureName _id"
+      );
       return data;
     } catch (error) {
       if (error instanceof Error) {

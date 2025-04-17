@@ -17,9 +17,13 @@ const SubCategoryRepositories = {
       }
     }
   },
-  findSubCategories: async () => {
+  findSubCategories: async ({ category }: ISubCategoryPayload) => {
     try {
-      const data = await SubCategory.find({});
+      const query = category ? { category } : {};
+      const data = await SubCategory.find(query).populate(
+        "category",
+        "categoryName _id"
+      );
       return data;
     } catch (error) {
       if (error instanceof Error) {
