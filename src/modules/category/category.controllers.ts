@@ -35,7 +35,7 @@ const CategoryControllers = {
   ) => {
     try {
       const { id } = req.params;
-      const { categoryName, feature } = req.body;
+      const { categoryName } = req.body;
       if (!Types.ObjectId.isValid(id)) {
         res
           .status(400)
@@ -46,7 +46,6 @@ const CategoryControllers = {
       const data = await processUpdateCategory({
         categoryId,
         categoryName,
-        feature,
       });
       res.status(200).json({
         status: "success",
@@ -65,19 +64,7 @@ const CategoryControllers = {
     next: NextFunction
   ) => {
     try {
-      const { feature_id } = req.query;
-      const id = new Types.ObjectId(feature_id as string);
-      let payload: ICategoryPayload = {};
-      if (!Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
-        return;
-      }
-      if (feature_id) {
-        payload = { feature: id };
-      }
-      const data = await processRetrieveCategory(payload);
+      const data = await processRetrieveCategory();
       res.status(200).json({
         status: "success",
         message: "Category retrieved successful",

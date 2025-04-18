@@ -17,13 +17,9 @@ const CategoryRepositories = {
       }
     }
   },
-  findCategories: async ({ feature }: ICategoryPayload) => {
+  findCategories: async () => {
     try {
-      const query = feature ? { feature } : {};
-      const data = await Category.find(query).populate(
-        "feature",
-        "featureName _id"
-      );
+      const data = await Category.find({});
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -35,15 +31,11 @@ const CategoryRepositories = {
       }
     }
   },
-  updateCategory: async ({
-    categoryId,
-    categoryName,
-    feature,
-  }: ICategoryPayload) => {
+  updateCategory: async ({ categoryId, categoryName }: ICategoryPayload) => {
     try {
       const updatedData = await Category.findByIdAndUpdate(
         categoryId,
-        { $set: { categoryName, feature } },
+        { $set: { categoryName } },
         { new: true }
       );
       return updatedData;

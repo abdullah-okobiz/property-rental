@@ -27,14 +27,14 @@ const CategoryServices = {
       }
     }
   },
-  processRetrieveCategory: async (payload: ICategoryPayload) => {
+  processRetrieveCategory: async () => {
     try {
-      const data = await findCategories(payload);
+      const data = await findCategories();
       return data;
     } catch (error) {
       if (error instanceof Error) {
         throw error;
-      } else {    
+      } else {
         throw new Error("Unknown Error Occurred In Retrieve Category service");
       }
     }
