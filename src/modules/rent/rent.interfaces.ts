@@ -1,32 +1,39 @@
-import { Document, Types } from "mongoose";
+import { Types } from "mongoose";
 
-enum Status {
+export enum Status {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
   APPROVED = "approved",
 }
 
-interface IRent {
-  title: string;
-  images: [string];
-  coverImage: string;
-  description: string;
-  floorPlan: {
-    guestCount: number;
-    bathCount: number;
-    bedCount: number;
-    bedRoomCount: number;
-  };
-  location: string;
-  price: string;
-  category: Types.ObjectId;
-  listingFor: Types.ObjectId;
-  cancellationPolicy: [string];
-  houseRules: [string];
-  allowableThings: [string];
-  amenities: [Types.ObjectId];
-  status: Status;
-  host: Types.ObjectId;
+export interface IFloorPlan {
+  guestCount: number;
+  bathCount: number;
+  bedCount: number;
+  bedRoomCount: number;
 }
 
-export default IRent
+interface IRent {
+  title?: string;
+  images?: string[];
+  coverImage?: string;
+  description?: string;
+  floorPlan?: IFloorPlan;
+  location?: string;
+  price?: number;
+  category?: Types.ObjectId;
+  listingFor?: Types.ObjectId;
+  cancellationPolicy?: string[];
+  houseRules?: string[];
+  allowableThings?: string[];
+  amenities?: Types.ObjectId[];
+  status?: Status;
+  host?: Types.ObjectId;
+}
+
+export interface IRentPayload {
+  payload?: IRent;
+  rentId?: Types.ObjectId;
+}
+
+export default IRent;
