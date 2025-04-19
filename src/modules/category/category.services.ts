@@ -27,9 +27,9 @@ const CategoryServices = {
       }
     }
   },
-  processRetrieveCategory: async () => {
+  processRetrieveCategory: async (payload: ICategoryPayload) => {
     try {
-      const data = await findCategories();
+      const data = await findCategories(payload);
       return data;
     } catch (error) {
       if (error instanceof Error) {

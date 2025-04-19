@@ -17,9 +17,10 @@ const CategoryRepositories = {
       }
     }
   },
-  findCategories: async () => {
+  findCategories: async ({ feature }: ICategoryPayload) => {
     try {
-      const data = await Category.find({});
+      const query = feature ? { feature } : {};
+      const data = await Category.find(query);
       return data;
     } catch (error) {
       if (error instanceof Error) {
