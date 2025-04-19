@@ -12,6 +12,7 @@ import Banner from "./banner.routes";
 import Team from "./team.routes";
 import AboutUS from "./aboutUs.routes";
 import SubCategory from "./subCategory.routes";
+import Amenities from "./amenities.routes"
 export {
   UserRoutes,
   ProfileRoutes,
@@ -27,4 +28,5 @@ export {
   Team,
   AboutUS,
   SubCategory,
+  Amenities
 };

@@ -1,7 +1,7 @@
-import { join } from "path";
 import { IBannerPayload } from "./banner.interfaces";
 import BannerRepositories from "./banner.repositories";
 import { promises as fs } from "fs";
+import { join } from "path";
 
 const { createBanner, deleteBanner, findAllBanners } = BannerRepositories;
 

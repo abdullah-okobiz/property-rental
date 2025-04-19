@@ -21,12 +21,15 @@ const fileFilter = (
   if (
     file.mimetype === "image/jpeg" ||
     file.mimetype === "image/png" ||
-    file.mimetype === "image/webp"
+    file.mimetype === "image/webp" ||
+    file.mimetype === "image/svg+xml"
   ) {
     cb(null, true);
   } else {
     cb(
-      new Error("Only .jpeg and .png and .webp files are allowed!") as any,
+      new Error(
+        "Only .jpeg and .png and .webp and .svg files are allowed!"
+      ) as any,
       false
     );
   }

@@ -1,4 +1,5 @@
 import { TokenPayload } from "../interfaces/jwtPayload.interfaces";
+import { IAmenitiesPayload } from "../modules/amenities/amenities.interfaces";
 import { IBlogPayload } from "../modules/blog/blog.interfaces";
 import IPartner from "../modules/partner/partner.interfaces";
 import ITeam from "../modules/team/team.interfaces";
@@ -12,6 +13,7 @@ declare global {
       teamMember?: ITeam;
       partner?: IPartner;
       blog?: IBlogPayload;
+      amenities?: IAmenitiesPayload;
     }
   }
 }
