@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export enum Status {
+export enum RentListingStatus {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
   APPROVED = "approved",
@@ -27,13 +27,15 @@ interface IRent {
   houseRules?: string[];
   allowableThings?: string[];
   amenities?: Types.ObjectId[];
-  status?: Status;
+  status?: RentListingStatus;
   host?: Types.ObjectId;
 }
 
 export interface IRentPayload {
   payload?: IRent;
   rentId?: Types.ObjectId;
+  listingStatus?: RentListingStatus;
+  host?: Types.ObjectId;
 }
 
 export default IRent;

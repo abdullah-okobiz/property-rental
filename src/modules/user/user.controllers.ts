@@ -3,6 +3,7 @@ import UserServices from "./user.services";
 import logger from "../../configs/logger.configs";
 import { IUser } from "./user.interfaces";
 import cookieOption from "../../utils/cookie.utils";
+import { Types } from "mongoose";
 
 const {
   processSignup,
@@ -115,7 +116,7 @@ const UserControllers = {
       const { userId } = req.authenticateTokenDecoded;
       const authHeader = req.headers.authorization;
       const accesstoken = authHeader?.split(" ")[1] as string;
-      const isDeleted = await processDeleteUser({ id: userId, accesstoken });
+      const isDeleted = await processDeleteUser({ id: userId as Types.ObjectId, accesstoken });
       if (!isDeleted)
         res.status(404).json({ status: "error", message: "user not found" });
       res.clearCookie("refreshtoken");

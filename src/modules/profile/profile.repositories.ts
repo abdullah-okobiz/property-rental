@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import {
   IAvatar,
   IBio,
@@ -28,7 +28,7 @@ const ProfileRepositories = {
       }
     }
   },
-  findWorksAt: async (payload: mongoose.Schema.Types.ObjectId) => {
+  findWorksAt: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
         "worksAt -_id"
@@ -62,7 +62,7 @@ const ProfileRepositories = {
       }
     }
   },
-  findLocation: async (payload: mongoose.Schema.Types.ObjectId) => {
+  findLocation: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
         "location -_id"
@@ -97,7 +97,7 @@ const ProfileRepositories = {
       }
     }
   },
-  findLanguage: async (payload: mongoose.Schema.Types.ObjectId) => {
+  findLanguage: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
         "language -_id"
@@ -132,7 +132,7 @@ const ProfileRepositories = {
       }
     }
   },
-  findBio: async (payload: mongoose.Schema.Types.ObjectId) => {
+  findBio: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
         "intro -_id"
@@ -164,7 +164,7 @@ const ProfileRepositories = {
       }
     }
   },
-  findAvatar: async (payload: mongoose.Schema.Types.ObjectId) => {
+  findAvatar: async (payload: Types.ObjectId) => {
     try {
       const data = await User.findById(payload).select("avatar -_id");
       return data;

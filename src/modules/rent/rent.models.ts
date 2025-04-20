@@ -1,5 +1,5 @@
 import { model, Model, Schema, Types } from "mongoose";
-import IRent, { IFloorPlan } from "./rent.interfaces";
+import IRent, { IFloorPlan, RentListingStatus } from "./rent.interfaces";
 
 const FloorPlanSchema = new Schema<IFloorPlan>(
   {
@@ -26,7 +26,7 @@ const RentSchema = new Schema<IRent>({
   allowableThings: { type: [String], default: null },
   floorPlan: { type: FloorPlanSchema, default: null },
   cancellationPolicy: { type: [String], default: null },
-  host: [{ type: Types.ObjectId, ref: "User", unique: true, require: true }],
+  host: { type: Types.ObjectId, ref: "User", unique: true, require: true },
   houseRules: { type: [String], default: null },
   listingFor: [
     { type: Types.ObjectId, ref: "Feature", unique: true, require: true },
@@ -35,8 +35,8 @@ const RentSchema = new Schema<IRent>({
   price: { type: Number, default: null },
   status: {
     type: String,
-    enum: ["in_progress", "pending", "approved"],
-    default: "in_progress",
+    enum: RentListingStatus,
+    default: RentListingStatus.IN_PROGRESS,
   },
 });
 

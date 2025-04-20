@@ -45,6 +45,7 @@ import {
   AboutUS,
   SubCategory,
   Amenities,
+  Rent,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -62,6 +63,7 @@ app.use(baseUrl.v1, Team);
 app.use(baseUrl.v1, AboutUS);
 app.use(baseUrl.v1, SubCategory);
 app.use(baseUrl.v1, Amenities);
+app.use(baseUrl.v1, Rent);
 
 app.use(globalErrorMiddleware);
 

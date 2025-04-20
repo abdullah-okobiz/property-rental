@@ -6,3 +6,4 @@ export const emailRegex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
 export const baseUrl = {
   v1: "/api/v1",
 };
+export const documentPerPage = 9;

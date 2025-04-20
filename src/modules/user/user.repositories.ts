@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import Profile from "../profile/profile.models";
 import { ISignupPayload, IUser } from "./user.interfaces";
 import User from "./user.model";
@@ -11,7 +11,7 @@ const UserRepositories = {
       const user = new User(signupPayload);
 
       const profile = new Profile({ user: user.id });
-      user.profile = profile._id as ObjectId;
+      user.profile = profile._id as Types.ObjectId;
       const savedUser = await user.save({ session });
       await profile.save({ session });
       await session.commitTransaction();
@@ -57,7 +57,7 @@ const UserRepositories = {
       }
     }
   },
-  deleteUser: async (payload: mongoose.Schema.Types.ObjectId) => {
+  deleteUser: async (payload: Types.ObjectId) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {

@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
 export interface IUser extends Document {
@@ -9,7 +9,7 @@ export interface IUser extends Document {
   role: UserRole;
   isVerified: boolean;
   password: string;
-  profile: mongoose.Schema.Types.ObjectId;
+  profile: Types.ObjectId;
 }
 
 export interface ISignupPayload {
@@ -25,7 +25,7 @@ export interface ITokenProcessReturn {
 }
 
 export interface IProcessDeleteUserPayload {
-  id: mongoose.Schema.Types.ObjectId;
+  id: Types.ObjectId;
   accesstoken: string;
 }
 

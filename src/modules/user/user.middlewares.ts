@@ -69,22 +69,20 @@ const UserMiddlewares = {
     }
     next();
   },
+  // check role middleware for admin login usage.to check with login credential user is a admin or not
   checkRole: async (req: Request, res: Response, next: NextFunction) => {
     const { role } = req.user as IUser;
     if (role !== "admin") {
-      res
-        .status(400)
-        .json({
-          status: "error",
-          message: "Invalid credentials or insufficient permissions",
-        });
+      res.status(400).json({
+        status: "error",
+        message: "Invalid credentials or insufficient permissions",
+      });
       return;
     }
     next();
   },
   isAdmin: async (req: Request, res: Response, next: NextFunction) => {
     const role = req?.authenticateTokenDecoded?.role;
-    console.log(role);
     if (role !== UserRole.Admin) {
       res.status(403).json({
         status: "error",
@@ -92,6 +90,29 @@ const UserMiddlewares = {
       });
       return;
     }
+    next();
+  },
+  isHost: async (req: Request, res: Response, next: NextFunction) => {
+    const role = req?.authenticateTokenDecoded?.role;
+    if (role !== UserRole.Host) {
+      res.status(403).json({
+        status: "error",
+        message: "You do not have permission to access this resource",
+      });
+      return;
+    }
+    next();
+  },
+  isAdminOrHost: async (req: Request, res: Response, next: NextFunction) => {
+    const role = req?.authenticateTokenDecoded?.role;
+
+    if (role !== UserRole.Admin && role !== UserRole.Host) {
+      return res.status(403).json({
+        status: "error",
+        message: "You do not have permission to access this resource",
+      });
+    }
+
     next();
   },
   checkVerificationOtp: async (

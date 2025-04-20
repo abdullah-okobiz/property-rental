@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import {
   IAvatar,
   IBio,
@@ -36,7 +36,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveWorksAt: async (payload: mongoose.Schema.Types.ObjectId) => {
+  processRetrieveWorksAt: async (payload: Types.ObjectId) => {
     try {
       const data = await findWorksAt(payload);
       return data;
@@ -60,7 +60,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveLocation: async (payload: mongoose.Schema.Types.ObjectId) => {
+  processRetrieveLocation: async (payload: Types.ObjectId) => {
     try {
       const data = await findLocation(payload);
       return data;
@@ -86,7 +86,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveLanguage: async (payload: mongoose.Schema.Types.ObjectId) => {
+  processRetrieveLanguage: async (payload:Types.ObjectId) => {
     try {
       const data = await findLanguage(payload);
       return data;
@@ -110,7 +110,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveBio: async (payload: mongoose.Schema.Types.ObjectId) => {
+  processRetrieveBio: async (payload: Types.ObjectId) => {
     try {
       const data = await findBio(payload);
       return data;
@@ -145,7 +145,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveAvatar: async (payload: mongoose.Schema.Types.ObjectId) => {
+  processRetrieveAvatar: async (payload: Types.ObjectId) => {
     try {
       const data = await findAvatar(payload);
       return data;
