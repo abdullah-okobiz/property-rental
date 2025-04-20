@@ -9,6 +9,7 @@ const {
   processProgressRentListing,
   processUploadImage,
   processUnlinkImage,
+  processHostListedRentProperties,
 } = RentServices;
 const RentControllers = {
   handleInitializeRentListing: async (
@@ -17,6 +18,12 @@ const RentControllers = {
     next: NextFunction
   ) => {
     try {
+      if (req.body) {
+        res.status(400).json({
+          status: "error",
+          message: "this endpoint doesn't accept any data",
+        });
+      }
       const { userId } = req.authenticateTokenDecoded;
       const data = await processInitializeRentListing({
         host: userId,
@@ -38,6 +45,13 @@ const RentControllers = {
     next: NextFunction
   ) => {
     try {
+      const { status } = req.body;
+      if (status) {
+        res.status(403).json({
+          status: "error",
+          message: "You are not allowed to modify the status field.",
+        });
+      }
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
         res
@@ -94,6 +108,26 @@ const RentControllers = {
       res.status(200).json({
         status: "success",
         message: "Image delete successful",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetAllHostListedPropertiesForRent: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded;
+      const host = userId;
+      const data = await processHostListedRentProperties({ host });
+      res.status(200).json({
+        status: "success",
+        message: "Listed Properties For Rent Retrieve successful",
+        data,
       });
     } catch (error) {
       const err = error as Error;

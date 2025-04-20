@@ -9,6 +9,7 @@ const {
   handleProgressCreatingRentListing,
   handleUploadImage,
   handleUnlinkImage,
+  handleGetAllHostListedPropertiesForRent,
 } = RentControllers;
 const router = Router();
 
@@ -17,16 +18,16 @@ router
   .post(checkAccessToken, isHost, handleInitializeRentListing);
 
 router
-  .route("/host/rent/new/:id")
+  .route("/host/rent/:id")
   .patch(checkAccessToken, isHost, handleProgressCreatingRentListing);
 
 router
   .route("/host/rent/upload")
   .post(checkAccessToken, isHost, upload.array("rentImages"), handleUploadImage)
   .delete(checkAccessToken, isHost, handleUnlinkImage);
+
 router
-  .route("/admin/sub_category/:id")
-  .put(checkAccessToken, isHost)
-  .delete(checkAccessToken, isHost);
+  .route("/host/rent")
+  .get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForRent);
 
 export default router;

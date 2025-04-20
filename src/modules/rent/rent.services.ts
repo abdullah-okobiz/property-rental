@@ -3,7 +3,8 @@ import { IRentPayload } from "./rent.interfaces";
 import RentRepositories from "./rent.repositories";
 import { promises as fs } from "fs";
 
-const { initializedRentListing, creatingRentListingById } = RentRepositories;
+const { initializedRentListing, creatingRentListingById, findAllForHost } =
+  RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host }: IRentPayload) => {
     try {
@@ -43,6 +44,19 @@ const RentServices = {
     const filePath = join(__dirname, "../../../public", relativeImagePath);
     try {
       await fs.unlink(filePath);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In unlink rent listing image service"
+        );
+      }
+    }
+  },
+  processHostListedRentProperties: async ({ host }: IRentPayload) => {
+    try {
+      return await findAllForHost({ host });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

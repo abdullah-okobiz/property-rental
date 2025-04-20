@@ -63,6 +63,21 @@ const RentRepositories = {
       }
     }
   },
+  findAllForHost: async ({ host }: IRentPayload) => {
+    try {
+      const data = await Rent.find({ host });
+      if (!data) return null;
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Get Rent Properties For Host Operation"
+        );
+      }
+    }
+  },
   getAllApprovedRentProperties: async (page: number) => {
     try {
       const skip = (page - 1) * documentPerPage;
