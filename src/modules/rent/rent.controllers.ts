@@ -8,6 +8,7 @@ const {
   processInitializeRentListing,
   processProgressRentListing,
   processUploadImage,
+  processUnlinkImage,
 } = RentServices;
 const RentControllers = {
   handleInitializeRentListing: async (
@@ -82,7 +83,24 @@ const RentControllers = {
       next();
     }
   },
-  
+  handleUnlinkImage: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { imageUrl } = req.query;
+      await processUnlinkImage({ singleImage: imageUrl as string });
+      res.status(200).json({
+        status: "success",
+        message: "Image delete successful",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
 };
 
 export default RentControllers;

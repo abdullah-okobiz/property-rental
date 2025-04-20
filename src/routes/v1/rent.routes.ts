@@ -8,6 +8,7 @@ const {
   handleInitializeRentListing,
   handleProgressCreatingRentListing,
   handleUploadImage,
+  handleUnlinkImage,
 } = RentControllers;
 const router = Router();
 
@@ -21,13 +22,8 @@ router
 
 router
   .route("/host/rent/upload")
-  .post(
-    checkAccessToken,
-    isHost,
-    upload.array("rentImages"),
-    handleUploadImage
-  );
-
+  .post(checkAccessToken, isHost, upload.array("rentImages"), handleUploadImage)
+  .delete(checkAccessToken, isHost, handleUnlinkImage);
 router
   .route("/admin/sub_category/:id")
   .put(checkAccessToken, isHost)
