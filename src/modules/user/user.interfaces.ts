@@ -1,5 +1,8 @@
-import mongoose, { Document, Types } from "mongoose";
-import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+import { Document, Types } from "mongoose";
+import {
+  AccountStatus,
+  UserRole,
+} from "../../interfaces/jwtPayload.interfaces";
 
 export interface IUser extends Document {
   avatar: string;
@@ -10,6 +13,7 @@ export interface IUser extends Document {
   isVerified: boolean;
   password: string;
   profile: Types.ObjectId;
+  accountStatus: AccountStatus;
 }
 
 export interface ISignupPayload {

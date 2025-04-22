@@ -1,23 +1,18 @@
 import { Model, model, Models, Schema } from "mongoose";
 import { IUser } from "./user.interfaces";
 import { hashPassword } from "../../utils/password.utils";
-import mongoose from "mongoose";
+import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 
 const UserSchema = new Schema<IUser>(
   {
     avatar: { type: String, default: null },
     email: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
+    accountStatus: { type: String, default: AccountStatus.INACTIVE },
     name: { type: String, required: true },
     phone: { type: String },
     password: { type: String, minlength: 8, required: true },
     role: { type: String },
-    profile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Profile",
-      unique: true,
-      default: null,
-    },
   },
   { timestamps: true }
 );
