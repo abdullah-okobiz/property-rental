@@ -22,8 +22,8 @@ router
   .patch(checkAccessToken, isHost, handleProgressCreatingRentListing);
 
 router
-  .route("/host/rent/upload")
-  .post(checkAccessToken, isHost, upload.array("rentImages"), handleUploadImage)
+  .route("/host/rent/upload/:id")
+  .patch(checkAccessToken, isHost, upload.array("rentImages"), handleUploadImage)
   .delete(checkAccessToken, isHost, handleUnlinkImage);
 
 router

@@ -18,12 +18,6 @@ const RentControllers = {
     next: NextFunction
   ) => {
     try {
-      if (req.body) {
-        res.status(400).json({
-          status: "error",
-          message: "this endpoint doesn't accept any data",
-        });
-      }
       const { userId } = req.authenticateTokenDecoded;
       const data = await processInitializeRentListing({
         host: userId,
@@ -82,11 +76,19 @@ const RentControllers = {
     next: NextFunction
   ) => {
     try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const rentId = new mongoose.Types.ObjectId(id);
       const images = (req?.files as IRentImagesPath[])?.map(
         (item) => item.filename
       );
-      const data = processUploadImage({ images });
-      res.status(201).json({
+      const data = await processUploadImage({ images, rentId });
+      res.status(200).json({
         status: "success",
         message: "Image upload successful",
         data,
@@ -103,8 +105,20 @@ const RentControllers = {
     next: NextFunction
   ) => {
     try {
-      const { imageUrl } = req.query;
-      await processUnlinkImage({ singleImage: imageUrl as string });
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const rentId = new mongoose.Types.ObjectId(id);
+      const { images, imageUrl } = req.body;
+      await processUnlinkImage({
+        rentId,
+        images,
+        singleImage: imageUrl as string,
+      });
       res.status(200).json({
         status: "success",
         message: "Image delete successful",

@@ -37,7 +37,8 @@ export interface IRentPayload {
   listingStatus?: RentListingStatus;
   host?: Types.ObjectId;
   images?: string[];
-  singleImage?:string
+  singleImage?: string;
+  coverImageIndex?: number;
 }
 export interface IRentImagesPath {
   filename: string;

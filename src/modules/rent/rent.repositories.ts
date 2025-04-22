@@ -5,7 +5,7 @@ const RentRepositories = {
   initializedRentListing: async ({ host }: IRentPayload) => {
     try {
       const data = new Rent({ host });
-      data.save();
+      await data.save();
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -19,13 +19,14 @@ const RentRepositories = {
     try {
       const { price } = payload as IRent;
       if (!price) {
-        const data = Rent.findByIdAndUpdate(rentId, payload, {
+        console.log(payload);
+        const data = await Rent.findByIdAndUpdate(rentId, payload, {
           new: true,
           runValidators: true,
         });
         return data;
       } else {
-        const data = Rent.findByIdAndUpdate(
+        const data = await Rent.findByIdAndUpdate(
           rentId,
           {
             $set: {

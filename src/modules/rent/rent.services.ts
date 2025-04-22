@@ -1,5 +1,5 @@
 import { join } from "path";
-import { IRentPayload } from "./rent.interfaces";
+import IRent, { IRentPayload } from "./rent.interfaces";
 import RentRepositories from "./rent.repositories";
 import { promises as fs } from "fs";
 
@@ -22,7 +22,7 @@ const RentServices = {
   },
   processProgressRentListing: async ({ rentId, payload }: IRentPayload) => {
     try {
-      const data = creatingRentListingById({ payload, rentId });
+      const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -34,16 +34,42 @@ const RentServices = {
       }
     }
   },
-  processUploadImage: ({ images }: IRentPayload) => {
-    const data = images?.map((item) => `/public/${item}`);
-    return data;
+  processUploadImage: async ({ images, rentId }: IRentPayload) => {
+    try {
+      const uploadedImages = images?.map(
+        (item) => `/public/${item}`
+      ) as string[];
+      const payload: IRent = {
+        images: uploadedImages,
+        coverImage: uploadedImages[0],
+      };
+      const data = await creatingRentListingById({ payload, rentId });
+      console.log(data);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In rent listing image upload service"
+        );
+      }
+    }
   },
-  processUnlinkImage: async ({ singleImage }: IRentPayload) => {
+  processUnlinkImage: async ({ singleImage, images, rentId }: IRentPayload) => {
     const image = singleImage as String;
     const relativeImagePath = image.replace("/public/", "");
     const filePath = join(__dirname, "../../../public", relativeImagePath);
     try {
-      await fs.unlink(filePath);
+      const payload: IRent = {};
+      if (images) {
+        payload.coverImage = images[0];
+        payload.images = images;
+      }
+      await Promise.all([
+        fs.unlink(filePath),
+        creatingRentListingById({ payload, rentId }),
+      ]);
     } catch (error) {
       if (error instanceof Error) {
         throw error;

@@ -26,7 +26,7 @@ const RentSchema = new Schema<IRent>({
   allowableThings: { type: [String], default: null },
   floorPlan: { type: FloorPlanSchema, default: null },
   cancellationPolicy: { type: [String], default: null },
-  host: { type: Types.ObjectId, ref: "User", unique: true, require: true },
+  host: { type: Types.ObjectId, ref: "User", require: true },
   houseRules: { type: [String], default: null },
   listingFor: [
     { type: Types.ObjectId, ref: "Feature", unique: true, require: true },
