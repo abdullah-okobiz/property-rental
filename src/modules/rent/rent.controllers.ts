@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import RentServices from "./rent.services";
 import mongoose from "mongoose";
-import { IRentImagesPath } from "./rent.interfaces";
+import IRent, { IRentImagesPath } from "./rent.interfaces";
 
 const {
   processInitializeRentListing,
@@ -10,6 +10,7 @@ const {
   processUploadImage,
   processUnlinkImage,
   processHostListedRentProperties,
+  processChangeStatus,
 } = RentServices;
 const RentControllers = {
   handleInitializeRentListing: async (
@@ -138,6 +139,36 @@ const RentControllers = {
       const { userId } = req.authenticateTokenDecoded;
       const host = userId;
       const data = await processHostListedRentProperties({ host });
+      res.status(200).json({
+        status: "success",
+        message: "Listed Properties For Rent Retrieve successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleChangeStatus: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const rentId = new mongoose.Types.ObjectId(id);
+      const { status } = req.body;
+      const payload: IRent = {
+        status,
+      };
+      const data = await processChangeStatus({ rentId, payload });
       res.status(200).json({
         status: "success",
         message: "Listed Properties For Rent Retrieve successful",

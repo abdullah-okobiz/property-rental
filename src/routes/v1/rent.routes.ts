@@ -3,13 +3,14 @@ import UserMiddlewares from "../../modules/user/user.middlewares";
 import RentControllers from "../../modules/rent/rent.controllers";
 import upload from "../../middlewares/multer.middleware";
 
-const { checkAccessToken, isHost } = UserMiddlewares;
+const { checkAccessToken, isHost, isAdmin } = UserMiddlewares;
 const {
   handleInitializeRentListing,
   handleProgressCreatingRentListing,
   handleUploadImage,
   handleUnlinkImage,
   handleGetAllHostListedPropertiesForRent,
+  handleChangeStatus,
 } = RentControllers;
 const router = Router();
 
@@ -23,11 +24,22 @@ router
 
 router
   .route("/host/rent/upload/:id")
-  .patch(checkAccessToken, isHost, upload.array("rentImages"), handleUploadImage)
+  .patch(
+    checkAccessToken,
+    isHost,
+    upload.array("rentImages"),
+    handleUploadImage
+  )
   .delete(checkAccessToken, isHost, handleUnlinkImage);
 
 router
   .route("/host/rent")
   .get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForRent);
 
+router
+  .route("/admin/rent/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStatus)
+  .delete(checkAccessToken, isAdmin);
+
+router.route("/rent").get()
 export default router;

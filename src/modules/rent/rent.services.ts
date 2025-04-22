@@ -93,6 +93,20 @@ const RentServices = {
       }
     }
   },
+  processChangeStatus: async ({ rentId, payload }: IRentPayload) => {
+    try {
+      const data = await creatingRentListingById({ payload, rentId });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In unlink rent listing image service"
+        );
+      }
+    }
+  },
 };
 
 export default RentServices;
