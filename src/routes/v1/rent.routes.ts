@@ -11,6 +11,8 @@ const {
   handleUnlinkImage,
   handleGetAllHostListedPropertiesForRent,
   handleChangeStatus,
+  handleGetApprovedRentListedItems,
+  handleDeleteListedRentItem,
 } = RentControllers;
 const router = Router();
 
@@ -39,7 +41,8 @@ router
 router
   .route("/admin/rent/:id")
   .patch(checkAccessToken, isAdmin, handleChangeStatus)
-  .delete(checkAccessToken, isAdmin);
+  .delete(checkAccessToken, isAdmin, handleDeleteListedRentItem);
 
-router.route("/rent").get()
+router.route("/rent").get(handleGetApprovedRentListedItems);
+
 export default router;

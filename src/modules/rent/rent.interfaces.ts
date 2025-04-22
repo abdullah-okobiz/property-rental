@@ -39,6 +39,7 @@ export interface IRentPayload {
   images?: string[];
   singleImage?: string;
   coverImageIndex?: number;
+  page?:number
 }
 export interface IRentImagesPath {
   filename: string;

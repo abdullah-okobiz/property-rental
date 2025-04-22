@@ -79,9 +79,9 @@ const RentRepositories = {
       }
     }
   },
-  getAllApprovedRentProperties: async (page: number) => {
+  getAllApprovedRentProperties: async ({ page }: IRentPayload) => {
     try {
-      const skip = (page - 1) * documentPerPage;
+      const skip = ((page as number) - 1) * documentPerPage;
       const [data, total] = await Promise.all([
         Rent.find({ status: RentListingStatus.APPROVED })
           .limit(documentPerPage)
@@ -95,6 +95,20 @@ const RentRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In Get All Rent Properties Operation"
+        );
+      }
+    }
+  },
+  deleteListedRentItem: async ({ rentId }: IRentPayload) => {
+    try {
+      const data = await Rent.findByIdAndDelete(rentId);
+      return data
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In delete listed rent item Operation"
         );
       }
     }

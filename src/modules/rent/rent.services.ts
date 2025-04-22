@@ -3,8 +3,13 @@ import IRent, { IRentPayload } from "./rent.interfaces";
 import RentRepositories from "./rent.repositories";
 import { promises as fs } from "fs";
 
-const { initializedRentListing, creatingRentListingById, findAllForHost } =
-  RentRepositories;
+const {
+  initializedRentListing,
+  creatingRentListingById,
+  findAllForHost,
+  getAllApprovedRentProperties,
+  deleteListedRentItem,
+} = RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host }: IRentPayload) => {
     try {
@@ -101,8 +106,44 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
+        throw new Error("Unknown Error Occurred In change status service");
+      }
+    }
+  },
+  processGetApprovedRentListedItems: async ({ page }: IRentPayload) => {
+    try {
+      const data = await getAllApprovedRentProperties({ page });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
         throw new Error(
-          "Unknown Error Occurred In unlink rent listing image service"
+          "Unknown Error Occurred In retrieve approved rent listed items service"
+        );
+      }
+    }
+  },
+  processDeleteListedRentItem: async ({ rentId }: IRentPayload) => {
+    try {
+      const { images } = (await deleteListedRentItem({ rentId })) as IRent;
+      if (images !== null) {
+        const relativeImagePath = images?.map((item) =>
+          item.replace("/public/", "")
+        );
+        const filePaths = relativeImagePath?.map((item) =>
+          join(__dirname, "../../../public", item)
+        );
+        await Promise.all([filePaths?.map((item) => fs.unlink(item))]);
+        return;
+      }
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In delete listed rent item service"
         );
       }
     }
