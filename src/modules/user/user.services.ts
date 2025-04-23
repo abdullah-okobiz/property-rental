@@ -52,20 +52,22 @@ const UserServices = {
     const data = await verifyUser(email);
     try {
       if (data) {
-        const { email, isVerified, role, id,name } = data;
+        const { email, isVerified, role, id, name, accountStatus } = data;
         const accessToken = generateAccessToken({
           email,
           isVerified,
           role,
           userId: id,
-          name
+          name,
+          accountStatus,
         }) as string;
         const refreshToken = generateRefreshToken({
           email,
           isVerified,
           role,
           userId: id,
-          name
+          name,
+          accountStatus,
         }) as string;
 
         return { accessToken, refreshToken } as ITokenProcessReturn;
@@ -80,33 +82,36 @@ const UserServices = {
     }
   },
   processLogin: (payload: IUser): ITokenProcessReturn => {
-    const { email, isVerified, role, id,name } = payload;
+    const { email, isVerified, role, id, name, accountStatus } = payload;
     const accessToken = generateAccessToken({
       email,
       isVerified,
       role,
       userId: id,
-      name
+      name,
+      accountStatus,
     }) as string;
     const refreshToken = generateRefreshToken({
       email,
       isVerified,
       role,
       userId: id,
-      name
+      name,
+      accountStatus,
     }) as string;
 
     return { accessToken, refreshToken } as ITokenProcessReturn;
   },
   processTokens: (payload: TokenPayload): ITokenProcessReturn => {
-    const { email, isVerified, role, userId,name } = payload;
+    const { email, isVerified, role, userId, name, accountStatus } = payload;
 
     const accessToken = generateAccessToken({
       email,
       isVerified,
       role,
       userId,
-      name
+      name,
+      accountStatus,
     }) as string;
 
     const refreshToken = generateRefreshToken({
@@ -114,7 +119,8 @@ const UserServices = {
       isVerified,
       role,
       userId,
-      name
+      name,
+      accountStatus,
     }) as string;
 
     return { accessToken, refreshToken } as ITokenProcessReturn;

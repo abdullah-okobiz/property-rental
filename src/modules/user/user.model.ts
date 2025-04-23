@@ -1,5 +1,5 @@
-import { Model, model, Models, Schema } from "mongoose";
-import { IUser } from "./user.interfaces";
+import { Model, model, Models, Schema, Types } from "mongoose";
+import { IIdentityDocument, IUser } from "./user.interfaces";
 import { hashPassword } from "../../utils/password.utils";
 import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 
@@ -17,6 +17,13 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
+const IdentityDocumentSchema = new Schema<IIdentityDocument>({
+  documentType: { type: String },
+  frontSide: { type: String },
+  backSide: { type: String },
+  user: { type: Types.ObjectId, ref: "User", unique: true },
+});
+
 UserSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password") || user.isNew) {
@@ -30,6 +37,9 @@ UserSchema.pre("save", async function (next) {
     }
   }
 });
+
+export const IdentityDocument: Model<IIdentityDocument> =
+  model<IIdentityDocument>("IdentityDocument", IdentityDocumentSchema);
 
 const User: Model<IUser> = model<IUser>("User", UserSchema);
 

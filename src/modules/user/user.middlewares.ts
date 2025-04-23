@@ -3,7 +3,11 @@ import { signupInputValidationSchema } from "./user.validations";
 import UserRepositories from "./user.repositories";
 import redisClient from "../../configs/redis.configs";
 import { verifyAccessToken, verifyRefreshToken } from "../../utils/jwt.utils";
-import { TokenPayload, UserRole } from "../../interfaces/jwtPayload.interfaces";
+import {
+  AccountStatus,
+  TokenPayload,
+  UserRole,
+} from "../../interfaces/jwtPayload.interfaces";
 import { IUser } from "./user.interfaces";
 import { comparePassword } from "../../utils/password.utils";
 
@@ -93,13 +97,35 @@ const UserMiddlewares = {
     next();
   },
   isHost: async (req: Request, res: Response, next: NextFunction) => {
-    const role = req?.authenticateTokenDecoded?.role;
+    const { role, accountStatus } = req?.authenticateTokenDecoded;
     if (role !== UserRole.Host) {
       res.status(403).json({
         status: "error",
         message: "You do not have permission to access this resource",
       });
       return;
+    }
+    switch (accountStatus) {
+      case AccountStatus.INACTIVE:
+        res.status(403).json({
+          status: "error",
+          message: "Identity verification is required to use this feature.",
+        });
+        return;
+      case AccountStatus.PENDING:
+        res.status(403).json({
+          status: "error",
+          message:
+            "Your identity verification is pending. Please wait for admin approval.",
+        });
+        return;
+      case AccountStatus.SUSPENDED:
+        res.status(403).json({
+          status: "error",
+          message:
+            "Your account is suspended. Please contact support for assistance.",
+        });
+        return;
     }
     next();
   },

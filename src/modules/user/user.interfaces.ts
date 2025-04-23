@@ -3,6 +3,7 @@ import {
   AccountStatus,
   UserRole,
 } from "../../interfaces/jwtPayload.interfaces";
+import { DocumentType } from "./user.enums";
 
 export interface IUser extends Document {
   avatar: string;
@@ -36,4 +37,11 @@ export interface IProcessDeleteUserPayload {
 export interface IProcessResendEmailPayload {
   name: string;
   email: string;
+}
+
+export interface IIdentityDocument {
+  documentType?: DocumentType;
+  frontSide?: string;
+  backSide?: string;
+  user?: Types.ObjectId;
 }
