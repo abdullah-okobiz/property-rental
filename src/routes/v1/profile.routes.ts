@@ -4,7 +4,7 @@ import ProfileControllers from "../../modules/profile/profile.controllers";
 import upload from "../../middlewares/multer.middleware";
 
 const router = Router();
-const { checkAccessToken } = UserMiddlewares;
+const { checkAccessToken, isAdmin } = UserMiddlewares;
 const {
   handleCreateWorksAt,
   handleGetWorksAt,
@@ -17,6 +17,8 @@ const {
   handleUpdateAvatar,
   handleGetAvatar,
   handleIdentityUpload,
+  handleGetAllUsers,
+  handleChangeUserIdentityStatus,
 } = ProfileControllers;
 
 router.route("/profile/work").patch(checkAccessToken, handleCreateWorksAt);
@@ -35,4 +37,8 @@ router.route("/profile/avatar").get(checkAccessToken, handleGetAvatar);
 router
   .route("/profile/identity-document")
   .post(checkAccessToken, upload.array("documents"), handleIdentityUpload);
+
+router.route("/admin/users").get(checkAccessToken, isAdmin, handleGetAllUsers);
+router.route("/admin/users/:id").patch(handleChangeUserIdentityStatus);
+
 export default router;

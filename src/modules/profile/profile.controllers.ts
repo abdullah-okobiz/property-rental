@@ -2,8 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import ProfileServices from "./profile.services";
 import { TokenPayload } from "../../interfaces/jwtPayload.interfaces";
-import { IIdentityDocumentPaths } from "./profile.interfaces";
+import {
+  IGetAllUserRequestedQuery,
+  IIdentityDocumentPaths,
+} from "./profile.interfaces";
 import { IIdentityDocument } from "../user/user.interfaces";
+import { documentPerPage } from "../../const";
 
 const {
   processCreateWorksAt,
@@ -17,6 +21,7 @@ const {
   processCreateAvatar,
   processRetrieveAvatar,
   processIdentityUpload,
+  processGetAllUsers,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -195,6 +200,76 @@ const ProfileControllers = {
         status: "success",
         message: "Identity document upload successful",
       });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetAllUsers: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { accountStatus, page, role, sort }: IGetAllUserRequestedQuery =
+        req.query;
+      const { data, total } = await processGetAllUsers({
+        accountStatus,
+        page: page,
+        role,
+        sort,
+      });
+      const totalPages = Math.ceil(total / documentPerPage);
+      const totalUsers = total;
+      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+        req.path
+      }`;
+      const buildQuery = (pageNumber: number) => {
+        const query = new URLSearchParams();
+
+        if (role) query.set("role", role);
+        if (accountStatus) query.set("accountStatus", accountStatus);
+        if (sort) query.set("sort", String(sort));
+        query.set("page", String(pageNumber));
+        return `${baseUrl}?${query.toString()}`;
+      };
+      const currentPage = Number(page) || 1;
+      const currentPageUrl = buildQuery(currentPage);
+      const nextPageUrl =
+        currentPage < totalPages ? buildQuery(currentPage + 1) : null;
+      const previousPageUrl =
+        currentPage > 1 ? buildQuery(currentPage - 1) : null;
+      res.status(200).json({
+        status: "success",
+        message: "All pending request found successful",
+        totalUsers,
+        totalPages,
+        currentPageUrl,
+        nextPageUrl,
+        previousPageUrl,
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleChangeUserIdentityStatus: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const { identityDocument } = req.query;
+      console.log(id, identityDocument);
+      res.status(200).json({
+        status: "success",
+        message: "All pending request found successful",
+      });
+      return;
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

@@ -4,12 +4,15 @@ import {
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
+  IGetAllUserPayload,
+  IGetAllUserQuery,
   IIdentityDocumentPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import Profile from "./profile.models";
 import User, { IdentityDocument } from "../user/user.model";
 import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
+import { documentPerPage } from "../../const";
 
 const ProfileRepositories = {
   createWorksAt: async ({ id, worksAt }: IWorksAtPayload) => {
@@ -198,7 +201,10 @@ const ProfileRepositories = {
         await User.findByIdAndUpdate(
           userId,
           {
-            $set: { accountStatus: AccountStatus.PENDING },
+            $set: {
+              accountStatus: AccountStatus.PENDING,
+              identityDocument: newDocuments._id,
+            },
           },
           { new: true }
         );
@@ -213,6 +219,27 @@ const ProfileRepositories = {
       }
     } finally {
       session.endSession();
+    }
+  },
+  getAllUsers: async ({ query, page, sort }: IGetAllUserPayload) => {
+    try {
+      const currentPage = page ?? 1;
+      const skip = (currentPage - 1) * documentPerPage;
+      const sortOption: Record<string, 1 | -1> | undefined =
+        sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      const [data, total] = await Promise.all([
+        User.find(query).limit(documentPerPage).skip(skip).sort(sortOption),
+        User.countDocuments(query),
+      ]);
+      return { data, total };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In get all pending identity request Operation"
+        );
+      }
     }
   },
 };

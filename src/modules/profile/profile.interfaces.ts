@@ -43,3 +43,21 @@ export interface IIdentityDocumentPayload {
   userId?: Types.ObjectId;
   documentType: DocumentType;
 }
+
+export interface IGetAllUserRequestedQuery {
+  role?: string;
+  accountStatus?: string;
+  page?: number;
+  sort?: 1|-1;
+}
+
+export interface IGetAllUserQuery {
+  role: string;
+  accountStatus?: string;
+}
+
+export interface IGetAllUserPayload {
+  query: IGetAllUserQuery;
+  page?: number;
+  sort?: 1|-1;
+}

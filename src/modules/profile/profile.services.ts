@@ -4,6 +4,9 @@ import {
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
+  IGetAllUserPayload,
+  IGetAllUserQuery,
+  IGetAllUserRequestedQuery,
   IIdentityDocumentPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
@@ -23,6 +26,7 @@ const {
   createAvatar,
   findAvatar,
   uploadIdentityDocuments,
+  getAllUsers,
 } = ProfileRepositories;
 
 const ProfileServices = {
@@ -178,6 +182,29 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred identity upload service");
+      }
+    }
+  },
+  processGetAllUsers: async ({
+    accountStatus,
+    page,
+    role,
+    sort,
+  }: IGetAllUserRequestedQuery) => {
+    try {
+      const query: IGetAllUserQuery = { role: String(role) };
+      const payload: IGetAllUserPayload = { query };
+      if (accountStatus) query.accountStatus = accountStatus;
+      if (page) payload.page = page;
+      if (sort) payload.sort = sort;
+      return await getAllUsers(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred find pending identity requests service"
+        );
       }
     }
   },

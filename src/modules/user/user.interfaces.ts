@@ -15,6 +15,7 @@ export interface IUser extends Document {
   password: string;
   profile: Types.ObjectId;
   accountStatus: AccountStatus;
+  identityDocument: Types.ObjectId;
 }
 
 export interface ISignupPayload {
@@ -39,7 +40,7 @@ export interface IProcessResendEmailPayload {
   email: string;
 }
 
-export interface IIdentityDocument {
+export interface IIdentityDocument extends Document {
   documentType?: DocumentType;
   frontSide?: string;
   backSide?: string;
