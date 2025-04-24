@@ -7,3 +7,7 @@ export const baseUrl = {
   v1: "/api/v1",
 };
 export const documentPerPage = 9;
+export const rejectionEmailSubject =
+  "Identity Verification Failed – Action Needed";
+export const approvedEmailSubject="Success! Your Identity Has Been Verified on Stayverz"
+export const accountSuspendedEmailSubject='Your Stayverz Account Has Been Suspended Due to Policy Violation'

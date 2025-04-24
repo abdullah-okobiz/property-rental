@@ -6,7 +6,6 @@ import { IVerificationEmailData } from "../interfaces/verificationEmailData.inte
 
 const sendVerificationEmail = async (data: IVerificationEmailData) => {
   try {
-    console.log(data);
     const template = Handlebars.compile(verificationEmailTemplate);
     const personalizedTemplate = template(data);
     await mailTransporter.sendMail(
