@@ -4,6 +4,7 @@ import {
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
+  IIdentityDocumentPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import ProfileRepositories from "./profile.repositories";
@@ -21,6 +22,7 @@ const {
   findBio,
   createAvatar,
   findAvatar,
+  uploadIdentityDocuments,
 } = ProfileRepositories;
 
 const ProfileServices = {
@@ -86,7 +88,7 @@ const ProfileServices = {
       }
     }
   },
-  processRetrieveLanguage: async (payload:Types.ObjectId) => {
+  processRetrieveLanguage: async (payload: Types.ObjectId) => {
     try {
       const data = await findLanguage(payload);
       return data;
@@ -154,6 +156,28 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred In retrieve avatar service");
+      }
+    }
+  },
+  processIdentityUpload: async ({
+    documents,
+    userId,
+    documentType,
+  }: IIdentityDocumentPayload) => {
+    try {
+      const uploadedDocuments = documents?.map(
+        (item) => `/public/${item}`
+      ) as string[];
+      await uploadIdentityDocuments({
+        documentType,
+        documents: uploadedDocuments,
+        userId,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred identity upload service");
       }
     }
   },

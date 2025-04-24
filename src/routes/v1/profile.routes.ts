@@ -16,6 +16,7 @@ const {
   handleGetBio,
   handleUpdateAvatar,
   handleGetAvatar,
+  handleIdentityUpload,
 } = ProfileControllers;
 
 router.route("/profile/work").patch(checkAccessToken, handleCreateWorksAt);
@@ -31,4 +32,7 @@ router
   .patch(checkAccessToken, upload.single("avatar"), handleUpdateAvatar);
 
 router.route("/profile/avatar").get(checkAccessToken, handleGetAvatar);
+router
+  .route("/profile/identity-document")
+  .post(checkAccessToken, upload.array("documents"), handleIdentityUpload);
 export default router;

@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import ProfileServices from "./profile.services";
 import { TokenPayload } from "../../interfaces/jwtPayload.interfaces";
+import { IIdentityDocumentPaths } from "./profile.interfaces";
+import { IIdentityDocument } from "../user/user.interfaces";
 
 const {
   processCreateWorksAt,
@@ -14,6 +16,7 @@ const {
   processRetrieveBio,
   processCreateAvatar,
   processRetrieveAvatar,
+  processIdentityUpload,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -169,6 +172,28 @@ const ProfileControllers = {
         status: "success",
         message: "avatar retrieved successful",
         data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleIdentityUpload: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded as TokenPayload;
+      const documents = (req?.files as IIdentityDocumentPaths[])?.map(
+        (item) => item.filename
+      );
+      const { documentType } = req.body;
+      await processIdentityUpload({ userId, documents, documentType });
+      res.status(200).json({
+        status: "success",
+        message: "Identity document upload successful",
       });
     } catch (error) {
       const err = error as Error;

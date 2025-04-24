@@ -9,7 +9,6 @@ const UserRepositories = {
     session.startTransaction();
     try {
       const user = new User(signupPayload);
-
       const profile = new Profile({ user: user.id });
       user.profile = profile._id as Types.ObjectId;
       const savedUser = await user.save({ session });

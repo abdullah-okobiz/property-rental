@@ -12,6 +12,7 @@ export enum AccountStatus {
   ACTIVE = "active",
   PENDING = "pending",
   SUSPENDED = "suspended",
+  REJECTED = "rejected",
 }
 export interface TokenPayload extends JwtPayload {
   userId: Types.ObjectId;
@@ -19,5 +20,5 @@ export interface TokenPayload extends JwtPayload {
   name: string;
   role: UserRole;
   isVerified: boolean;
-  accountStatus:AccountStatus
+  accountStatus: AccountStatus;
 }

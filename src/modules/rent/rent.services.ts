@@ -49,7 +49,6 @@ const RentServices = {
         coverImage: uploadedImages[0],
       };
       const data = await creatingRentListingById({ payload, rentId });
-      console.log(data);
       return data;
     } catch (error) {
       if (error instanceof Error) {

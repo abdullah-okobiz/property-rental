@@ -1,13 +1,15 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import {
   IAvatar,
   IBio,
   ICreateLanguagePayload,
   ICreateLocationPayload,
+  IIdentityDocumentPayload,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import Profile from "./profile.models";
-import User from "../user/user.model";
+import User, { IdentityDocument } from "../user/user.model";
+import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 
 const ProfileRepositories = {
   createWorksAt: async ({ id, worksAt }: IWorksAtPayload) => {
@@ -176,6 +178,41 @@ const ProfileRepositories = {
           "Unknown Error Occurred In Profile avatar find Operation"
         );
       }
+    }
+  },
+  uploadIdentityDocuments: async ({
+    documents,
+    userId,
+    documentType,
+  }: IIdentityDocumentPayload) => {
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        const newDocuments = new IdentityDocument({
+          frontSide: documents?.[0],
+          backSide: documents?.[1],
+          documentType,
+          user: userId,
+        });
+        await newDocuments.save();
+        await User.findByIdAndUpdate(
+          userId,
+          {
+            $set: { accountStatus: AccountStatus.PENDING },
+          },
+          { new: true }
+        );
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Upload Identity Document Operation"
+        );
+      }
+    } finally {
+      session.endSession();
     }
   },
 };

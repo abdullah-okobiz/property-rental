@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+import { DocumentType } from "../user/user.enums";
 
 export interface IProfile extends Document {
   worksAt: string;
@@ -27,7 +28,18 @@ export interface IBio {
   id: Types.ObjectId;
   intro: string;
 }
+
 export interface IAvatar {
   id: Types.ObjectId;
   avatar: string;
+}
+
+export interface IIdentityDocumentPaths {
+  filename: string;
+}
+
+export interface IIdentityDocumentPayload {
+  documents?: string[];
+  userId?: Types.ObjectId;
+  documentType: DocumentType;
 }
