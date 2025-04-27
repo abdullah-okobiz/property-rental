@@ -14,6 +14,7 @@ import AboutUS from "./aboutUs.routes";
 import SubCategory from "./subCategory.routes";
 import Amenities from "./amenities.routes";
 import Rent from "./rent.routes";
+import Flat from "./flat.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -31,4 +32,5 @@ export {
   SubCategory,
   Amenities,
   Rent,
+  Flat,
 };

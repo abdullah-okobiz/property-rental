@@ -219,6 +219,7 @@ const ProfileControllers = {
     try {
       const { accountStatus, page, role, sort }: IGetAllUserRequestedQuery =
         req.query;
+      console.log(accountStatus);
       const { data, total } = await processGetAllUsers({
         accountStatus,
         page: page,
@@ -247,7 +248,7 @@ const ProfileControllers = {
         currentPage > 1 ? buildQuery(currentPage - 1) : null;
       res.status(200).json({
         status: "success",
-        message: "All pending request found successful",
+        message: `All ${accountStatus} request found successful`,
         totalUsers,
         totalPages,
         currentPageUrl,
