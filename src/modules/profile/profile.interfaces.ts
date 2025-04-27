@@ -1,5 +1,7 @@
 import { Document, Types } from "mongoose";
 import { DocumentType } from "../user/user.enums";
+import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
+import { IIdentityDocument, IUser } from "../user/user.interfaces";
 
 export interface IProfile extends Document {
   worksAt: string;
@@ -48,7 +50,7 @@ export interface IGetAllUserRequestedQuery {
   role?: string;
   accountStatus?: string;
   page?: number;
-  sort?: 1|-1;
+  sort?: 1 | -1;
 }
 
 export interface IGetAllUserQuery {
@@ -59,5 +61,15 @@ export interface IGetAllUserQuery {
 export interface IGetAllUserPayload {
   query: IGetAllUserQuery;
   page?: number;
-  sort?: 1|-1;
+  sort?: 1 | -1;
+}
+
+export interface IChangeUserStatus {
+  userId?: Types.ObjectId;
+  accountStatus?: AccountStatus;
+  identityDocument?: Types.ObjectId;
+}
+export interface IChangeUserStatusRepository {
+  updatedUser?: IUser;
+  deletedIdentity?: IIdentityDocument;
 }

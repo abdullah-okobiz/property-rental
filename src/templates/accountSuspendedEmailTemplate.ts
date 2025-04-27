@@ -66,7 +66,7 @@ export const accountSuspendedEmailTemplate = `
   <div class="container">
     <div class="header">Account Suspended</div>
     <div class="body">
-      <p>Hi {{userName}},</p>
+      <p>Hi {{name}},</p>
       <p>We regret to inform you that your account on <strong>Stayverz</strong> has been <strong>suspended</strong>.</p>
       <p>This action was taken due to a violation of our platform policies or terms of use. As a result, you no longer have access to any buying, selling, or listing features on your account.</p>
 

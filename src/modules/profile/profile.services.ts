@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import {
   IAvatar,
   IBio,
+  IChangeUserStatus,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IGetAllUserPayload,
@@ -13,6 +14,9 @@ import {
 import ProfileRepositories from "./profile.repositories";
 import { join } from "path";
 import { promises as fs } from "fs";
+import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
+import IdentityVerificationUtils from "../../utils/identityVerificationEmail.utils";
+import { DocumentType } from "../user/user.enums";
 
 const {
   createWorksAt,
@@ -27,7 +31,14 @@ const {
   findAvatar,
   uploadIdentityDocuments,
   getAllUsers,
+  changeUserAccountStatus,
 } = ProfileRepositories;
+
+const {
+  sendApprovedEmailUtils,
+  sendRejectionEmailUtils,
+  sendSuspendedEmailUtils,
+} = IdentityVerificationUtils;
 
 const ProfileServices = {
   processCreateWorksAt: async (payload: IWorksAtPayload) => {
@@ -205,6 +216,88 @@ const ProfileServices = {
         throw new Error(
           "Unknown Error Occurred find pending identity requests service"
         );
+      }
+    }
+  },
+  processChangeUserAccountStatus: async ({
+    accountStatus,
+    identityDocument,
+    userId,
+  }: IChangeUserStatus) => {
+    try {
+      switch (accountStatus) {
+        case AccountStatus.ACTIVE: {
+          const { updatedUser } = await changeUserAccountStatus({
+            accountStatus,
+            identityDocument,
+            userId,
+          });
+          await sendApprovedEmailUtils({
+            name: updatedUser?.name!,
+            email: updatedUser?.email!,
+          });
+          return updatedUser;
+        }
+        case AccountStatus.SUSPENDED: {
+          const { updatedUser } = await changeUserAccountStatus({
+            accountStatus,
+            identityDocument,
+            userId,
+          });
+          await sendSuspendedEmailUtils({
+            name: updatedUser?.name!,
+            email: updatedUser?.email!,
+          });
+          return updatedUser;
+        }
+        case AccountStatus.REJECTED: {
+          const { updatedUser, deletedIdentity } =
+            await changeUserAccountStatus({
+              accountStatus,
+              identityDocument,
+              userId,
+            });
+          switch (deletedIdentity?.documentType) {
+            case DocumentType.DRIVING_LICENSE:
+            case DocumentType.NID: {
+              const documents: string[] = [];
+              documents[0] = deletedIdentity?.frontSide!;
+              documents[1] = deletedIdentity?.backSide!;
+              const relativeImagePaths = documents.map((item) =>
+                item.replace("/public/", "")
+              );
+              const filePaths = relativeImagePaths.map((item) =>
+                join(__dirname, "../../../public", item)
+              );
+              for (const item of filePaths) {
+                await fs.unlink(item);
+              }
+              break;
+            }
+            case DocumentType.PASSPORT: {
+              const image = deletedIdentity?.frontSide!;
+              const relativeImagePath = image.replace("/public/", "");
+              const filePath = join(
+                __dirname,
+                "../../../public",
+                relativeImagePath
+              );
+              await fs.unlink(filePath);
+              break;
+            }
+          }
+          await sendRejectionEmailUtils({
+            name: updatedUser?.name!,
+            email: updatedUser?.email!,
+          });
+          return updatedUser;
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred change account status service");
       }
     }
   },

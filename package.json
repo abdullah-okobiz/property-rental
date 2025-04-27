@@ -8,7 +8,7 @@
     "start": "node ./dist/server.js",
     "dev": "nodemon",
     "create:module": "node ./scripts/createModule.js",
-    "create-admin": "node ./scripts/createAdminRunner.js"
+    "create:admin": "node ./scripts/createAdminRunner.js"
   },
   "keywords": [],
   "author": "",

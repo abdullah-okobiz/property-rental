@@ -2,6 +2,8 @@ import mongoose, { Types } from "mongoose";
 import {
   IAvatar,
   IBio,
+  IChangeUserStatus,
+  IChangeUserStatusRepository,
   ICreateLanguagePayload,
   ICreateLocationPayload,
   IGetAllUserPayload,
@@ -13,6 +15,7 @@ import Profile from "./profile.models";
 import User, { IdentityDocument } from "../user/user.model";
 import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 import { documentPerPage } from "../../const";
+import { IIdentityDocument, IUser } from "../user/user.interfaces";
 
 const ProfileRepositories = {
   createWorksAt: async ({ id, worksAt }: IWorksAtPayload) => {
@@ -238,6 +241,80 @@ const ProfileRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In get all pending identity request Operation"
+        );
+      }
+    }
+  },
+  changeUserAccountStatus: async ({
+    accountStatus,
+    identityDocument,
+    userId,
+  }: IChangeUserStatus): Promise<IChangeUserStatusRepository> => {
+    const session = await User.startSession();
+    session.startTransaction();
+
+    try {
+      let updatedUser: IUser | null = null;
+      let deletedIdentity: IIdentityDocument | null;
+
+      switch (accountStatus) {
+        case AccountStatus.ACTIVE:
+        case AccountStatus.SUSPENDED: {
+          updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { accountStatus } },
+            { new: true, session }
+          );
+
+          if (!updatedUser) {
+            throw new Error("User not found or update failed.");
+          }
+
+          break;
+        }
+
+        case AccountStatus.REJECTED: {
+          updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { accountStatus, identityDocument: null } },
+            { new: true, session }
+          );
+
+          if (!updatedUser) {
+            throw new Error("User not found or update failed.");
+          }
+
+          deletedIdentity = await IdentityDocument.findOneAndDelete(
+            { _id: identityDocument },
+            { session }
+          );
+
+          if (!deletedIdentity) {
+            throw new Error("Identity document not found or deletion failed.");
+          }
+
+          break;
+        }
+
+        default:
+          throw new Error("Invalid account status provided.");
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return {
+        updatedUser: updatedUser!,
+        deletedIdentity: deletedIdentity!,
+      };
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In change user account status Operation"
         );
       }
     }

@@ -66,7 +66,7 @@ export const identityVerificationApprovedEmailTemplate = `
   <div class="container">
     <div class="header">Identity Verification Successful</div>
     <div class="body">
-      <p>Hi {{userName}},</p>
+      <p>Hi {{name}},</p>
       <p>We're pleased to inform you that your identity has been <strong>successfully verified</strong>.</p>
       <p>Your Stayverz account is now <strong>fully active</strong>, and you have access to all features including buying, selling, and managing your listings or rentals.</p>
 

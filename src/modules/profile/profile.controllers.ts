@@ -1,13 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import ProfileServices from "./profile.services";
-import { TokenPayload } from "../../interfaces/jwtPayload.interfaces";
+import {
+  AccountStatus,
+  TokenPayload,
+} from "../../interfaces/jwtPayload.interfaces";
 import {
   IGetAllUserRequestedQuery,
   IIdentityDocumentPaths,
 } from "./profile.interfaces";
 import { IIdentityDocument } from "../user/user.interfaces";
 import { documentPerPage } from "../../const";
+import mongoose from "mongoose";
 
 const {
   processCreateWorksAt,
@@ -22,6 +26,7 @@ const {
   processRetrieveAvatar,
   processIdentityUpload,
   processGetAllUsers,
+  processChangeUserAccountStatus,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -263,13 +268,56 @@ const ProfileControllers = {
   ) => {
     try {
       const { id } = req.params;
-      const { identityDocument } = req.query;
-      console.log(id, identityDocument);
-      res.status(200).json({
-        status: "success",
-        message: "All pending request found successful",
-      });
-      return;
+      const { identityDocument, accountStatus } = req.body;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid partner ID" });
+        return;
+      }
+
+      const userId = new mongoose.Types.ObjectId(id);
+      switch (accountStatus) {
+        case AccountStatus.ACTIVE: {
+          const data = await processChangeUserAccountStatus({
+            identityDocument,
+            accountStatus,
+            userId,
+          });
+          res.status(200).json({
+            status: "success",
+            message: "User Is Now Active",
+            data,
+          });
+          return;
+        }
+        case AccountStatus.SUSPENDED: {
+          const data = await processChangeUserAccountStatus({
+            identityDocument,
+            accountStatus,
+            userId,
+          });
+          res.status(200).json({
+            status: "success",
+            message: "User Is Now Suspend",
+            data,
+          });
+          return;
+        }
+        case AccountStatus.REJECTED: {
+          const data = await processChangeUserAccountStatus({
+            identityDocument,
+            accountStatus,
+            userId,
+          });
+          res.status(200).json({
+            status: "success",
+            message: "User Is Now Rejected",
+            data,
+          });
+          return;
+        }
+      }
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

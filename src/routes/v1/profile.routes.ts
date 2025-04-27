@@ -39,6 +39,8 @@ router
   .post(checkAccessToken, upload.array("documents"), handleIdentityUpload);
 
 router.route("/admin/users").get(checkAccessToken, isAdmin, handleGetAllUsers);
-router.route("/admin/users/:id").patch(handleChangeUserIdentityStatus);
+router
+  .route("/admin/users/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeUserIdentityStatus);
 
 export default router;

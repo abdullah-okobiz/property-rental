@@ -79,7 +79,7 @@ export const identityVerificationRejectionEmailTemplate = `
       Identity Verification Unsuccessful
     </div>
     <div class="email-body">
-      <p>Hi {{userName}},</p>
+      <p>Hi {{name}},</p>
       <p>Thank you for submitting your identity verification documents to <strong>Stayverz</strong>.</p>
       <p>After a thorough review, we regret to inform you that your verification was <span class="highlight">not approved</span> at this time. This may have been caused by unclear images, missing information, or discrepancies with your personal details.</p>
       

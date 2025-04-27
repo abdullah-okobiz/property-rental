@@ -9,6 +9,7 @@ import { accountSuspendedEmailTemplate } from "../templates/accountSuspendedEmai
 import { identityVerificationApprovedEmailTemplate } from "../templates/identityVerificationApprovedEmailTemplate";
 import { identityVerificationRejectionEmailTemplate } from "../templates/identityVerificationRejectionEmailTemplate";
 import mailOption from "./mailOption.utils";
+import Handlebars from "handlebars";
 
 const IdentityVerificationUtils = {
   sendRejectionEmailUtils: async ({
