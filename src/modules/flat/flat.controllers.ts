@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import FlatServices from "./flat.services";
 
-const { processInitializeFlatListing } = FlatServices;
+const { processInitializeFlatListing, processUpdateFlatListing } = FlatServices;
 
 const FlatControllers = {
   handleInitializeFlatListing: async (
@@ -39,9 +39,10 @@ const FlatControllers = {
           .json({ status: "error", message: "Invalid feature ID" });
         return;
       }
+      const reqBody = req.body;
       const flatId = new mongoose.Types.ObjectId(id);
-      const data = await processInitializeFlatListing({ userId });
-      res.status(201).json({
+      const data = await processUpdateFlatListing({ flatId, reqBody });
+      res.status(200).json({
         status: "success",
         message: "new flat listing initialized",
         data,

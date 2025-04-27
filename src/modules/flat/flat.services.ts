@@ -1,7 +1,7 @@
 import { IFlatPayload } from "./flat.interfaces";
 import FlatRepositories from "./flat.repositories";
 
-const { initializeFlatListing } = FlatRepositories;
+const { initializeFlatListing, updateFlatListing } = FlatRepositories;
 
 const FlatServices = {
   processInitializeFlatListing: async ({ userId }: IFlatPayload) => {
@@ -17,9 +17,9 @@ const FlatServices = {
       }
     }
   },
-  processUpdateFlatListing:async ({  }: IFlatPayload) => {
+  processUpdateFlatListing: async ({ flatId, reqBody }: IFlatPayload) => {
     try {
-      
+      return await updateFlatListing({ flatId, reqBody });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

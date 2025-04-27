@@ -35,7 +35,8 @@ interface IFlat extends Document {
 
 export interface IFlatPayload {
   userId?: Types.ObjectId;
-  reqBody?:IFlat
+  reqBody?: IFlat;
+  flatId?: Types.ObjectId;
 }
 
 export default IFlat;

@@ -17,6 +17,7 @@ const RentRepositories = {
   },
   creatingRentListingById: async ({ payload, rentId }: IRentPayload) => {
     try {
+      const rent = await Rent.findById(rentId);
       const { price } = payload as IRent;
       if (!price) {
         console.log(payload);
@@ -26,6 +27,24 @@ const RentRepositories = {
         });
         return data;
       } else {
+        if (
+          rent?.status === RentListingStatus.APPROVED ||
+          rent?.status === RentListingStatus.PENDING
+        ) {
+          const data = await Rent.findByIdAndUpdate(
+            rentId,
+            {
+              $set: {
+                price,
+              },
+            },
+            {
+              new: true,
+              runValidators: true,
+            }
+          );
+          return data;
+        }
         const data = await Rent.findByIdAndUpdate(
           rentId,
           {
@@ -102,7 +121,7 @@ const RentRepositories = {
   deleteListedRentItem: async ({ rentId }: IRentPayload) => {
     try {
       const data = await Rent.findByIdAndDelete(rentId);
-      return data
+      return data;
     } catch (error) {
       if (error instanceof Error) {
         throw error;
