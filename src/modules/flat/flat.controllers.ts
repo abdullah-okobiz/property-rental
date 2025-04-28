@@ -53,6 +53,30 @@ const FlatControllers = {
       next();
     }
   },
+  handleUploadImage:async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const flatId = new mongoose.Types.ObjectId(id);
+      res.status(200).json({
+        status: "success",
+        message: "Image upload successful",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  }
 };
 
 export default FlatControllers;

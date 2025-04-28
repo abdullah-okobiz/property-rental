@@ -16,7 +16,9 @@ router
 router
   .route("/host/flat/:id")
   .patch(checkAccessToken, isHost, handleUpdateFlatListingField);
-router.route("/host/flat/image/:id").patch(checkAccessToken, isHost);
+router
+  .route("/host/flat/image/:id")
+  .patch(checkAccessToken, isHost, upload.array("images"));
 router.route("/host/flat/image/:id").delete(checkAccessToken, isHost);
 router.route("/host/flat").get(checkAccessToken, isHost);
 
