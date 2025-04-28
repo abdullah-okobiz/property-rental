@@ -64,6 +64,21 @@ const FlatRepositories = {
       }
     }
   },
+  findAllForHost: async ({ userId }: IFlatPayload) => {
+    try {
+      const data = await Flat.find({ host: userId });
+      if (!data) return null;
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Get Rent Properties For Host Operation"
+        );
+      }
+    }
+  },
 };
 
 export default FlatRepositories;

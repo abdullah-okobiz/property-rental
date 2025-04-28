@@ -3,7 +3,8 @@ import FlatRepositories from "./flat.repositories";
 import { join } from "path";
 import { promises as fs } from "fs";
 
-const { initializeFlatListing, updateFlatListing } = FlatRepositories;
+const { initializeFlatListing, updateFlatListing, findAllForHost } =
+  FlatRepositories;
 
 const FlatServices = {
   processInitializeFlatListing: async ({ userId }: IFlatPayload) => {
@@ -64,6 +65,19 @@ const FlatServices = {
         fs.unlink(filePath),
         updateFlatListing({ reqBody, flatId }),
       ]);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In unlink flat listing image service"
+        );
+      }
+    }
+  },
+  processHostListedFlatProperties: async ({ userId }: IFlatPayload) => {
+    try {
+      return await findAllForHost({ userId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

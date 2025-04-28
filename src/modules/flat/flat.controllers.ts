@@ -10,6 +10,7 @@ const {
   processUpdateFlatListing,
   processUploadImage,
   processUnlinkImage,
+  processHostListedFlatProperties,
 } = FlatServices;
 
 const FlatControllers = {
@@ -111,6 +112,26 @@ const FlatControllers = {
       res.status(200).json({
         status: "success",
         message: "Image delete successful",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetAllHostListedPropertiesForRent: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded;
+      const host = userId;
+      const data = await processHostListedFlatProperties({ userId: host });
+      res.status(200).json({
+        status: "success",
+        message: "Listed Properties For Flat Retrieve successful",
+        data,
       });
     } catch (error) {
       const err = error as Error;
