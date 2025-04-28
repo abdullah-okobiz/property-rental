@@ -1,21 +1,12 @@
 import { Types } from "mongoose";
 
-export interface IFlatFloorPlan {
-  unitCount?: number;
-  drawing?: boolean;
-  dinning?: boolean;
-  balconyCount?: number;
-  bedroomCount?: number;
-  bathroomCount?: number;
-}
-
 export enum ListingPublishStatus {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
   APPROVED = "approved",
 }
 
-interface IFlat {
+interface ILand {
   title?: string;
   description?: string;
   location?: string;
@@ -25,40 +16,38 @@ interface IFlat {
   coverImage?: string;
   category?: Types.ObjectId;
   listingFor?: Types.ObjectId;
-  buildingYear?: string;
-  floorPlan?: IFlatFloorPlan;
-  amenities?: string[];
+  landSize?: number;
   host?: Types.ObjectId;
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
 }
 
-export interface IFlatPayload {
+export interface ILandPayload {
   userId?: Types.ObjectId;
-  reqBody?: IFlat;
-  flatId?: Types.ObjectId;
+  reqBody?: ILand;
+  landId?: Types.ObjectId;
   images?: string[];
   singleImage?: string;
 }
 
-export interface IFlatImagesPath {
+export interface ILandImagesPath {
   filename: string;
 }
 
-export interface IGetAllFlatRequestedQuery {
+export interface IGetAllLandRequestedQuery {
   publishStatus?: string;
   page?: number;
   sort?: 1 | -1;
 }
 
-export interface IGetAllFlatQuery {
+export interface IGetAllLandQuery {
   publishStatus?: string;
 }
 
-export interface IGetAllFlatPayload {
-  query: IGetAllFlatQuery;
+export interface IGetAllLandPayload {
+  query: IGetAllLandQuery;
   page?: number;
   sort?: 1 | -1;
 }
 
-export default IFlat;
+export default ILand;
