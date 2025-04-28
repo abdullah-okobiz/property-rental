@@ -3,7 +3,10 @@ import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import FlatServices from "./flat.services";
-import { IFlatImagesPath, IGetAllFlatRequestedQuery } from "./flat.interfaces";
+import IFlat, {
+  IFlatImagesPath,
+  IGetAllFlatRequestedQuery,
+} from "./flat.interfaces";
 
 const {
   processInitializeFlatListing,
@@ -12,6 +15,7 @@ const {
   processUnlinkImage,
   processHostListedFlatProperties,
   processGetAllListedFlat,
+  processChangeStatus,
 } = FlatServices;
 
 const FlatControllers = {
@@ -175,6 +179,35 @@ const FlatControllers = {
         currentPageUrl,
         nextPageUrl,
         previousPageUrl,
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleChangeStatus: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const flatId = new mongoose.Types.ObjectId(id);
+      const { status } = req.body;
+      const reqBody: IFlat = {};
+      reqBody.publishStatus = status;
+      const data = await processChangeStatus({ flatId, reqBody });
+      res.status(200).json({
+        status: "success",
+        message: `Listed item status Changed to ${status}`,
         data,
       });
     } catch (error) {

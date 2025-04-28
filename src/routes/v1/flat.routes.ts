@@ -11,6 +11,7 @@ const {
   handleUnlinkImage,
   handleGetAllHostListedPropertiesForRent,
   handleGetAllFlat,
+  handleChangeStatus,
 } = FlatControllers;
 
 const router = Router();
@@ -34,5 +35,11 @@ router
 
 // COMMON GET ALL LISTED FLAT ENDPOINT
 router.route("/flat").get(handleGetAllFlat);
+
+// ADMIN ROUTES
+
+router
+  .route("/admin/flat/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStatus);
 
 export default router;

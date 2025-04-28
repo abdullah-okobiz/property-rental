@@ -93,8 +93,7 @@ const FlatRepositories = {
       const [data, total] = await Promise.all([
         Flat.find(query).skip(skip).sort(sortOption),
         Flat.countDocuments(query),
-      ]);
-      console.log(data, total);
+      ]);   
       return { data, total };
     } catch (error) {
       if (error instanceof Error) {
