@@ -10,6 +10,7 @@ const {
   handleUploadImage,
   handleUnlinkImage,
   handleGetAllHostListedPropertiesForRent,
+  handleGetAllFlat,
 } = FlatControllers;
 
 const router = Router();
@@ -30,5 +31,8 @@ router
 router
   .route("/host/flat")
   .get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForRent);
+
+// COMMON GET ALL LISTED FLAT ENDPOINT
+router.route("/flat").get(handleGetAllFlat);
 
 export default router;

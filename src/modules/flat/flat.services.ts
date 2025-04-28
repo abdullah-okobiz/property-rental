@@ -1,10 +1,19 @@
-import IFlat, { IFlatPayload } from "./flat.interfaces";
+import IFlat, {
+  IFlatPayload,
+  IGetAllFlatPayload,
+  IGetAllFlatQuery,
+  IGetAllFlatRequestedQuery,
+} from "./flat.interfaces";
 import FlatRepositories from "./flat.repositories";
 import { join } from "path";
 import { promises as fs } from "fs";
 
-const { initializeFlatListing, updateFlatListing, findAllForHost } =
-  FlatRepositories;
+const {
+  initializeFlatListing,
+  updateFlatListing,
+  findAllForHost,
+  findAllListedFlat,
+} = FlatRepositories;
 
 const FlatServices = {
   processInitializeFlatListing: async ({ userId }: IFlatPayload) => {
@@ -85,6 +94,26 @@ const FlatServices = {
         throw new Error(
           "Unknown Error Occurred In unlink flat listing image service"
         );
+      }
+    }
+  },
+  processGetAllListedFlat: async ({
+    page,
+    publishStatus,
+    sort,
+  }: IGetAllFlatRequestedQuery) => {
+    try {
+      const query: IGetAllFlatQuery = {};
+      if (publishStatus) query.publishStatus = String(publishStatus);
+      const payload: IGetAllFlatPayload = { query };
+      if (page) payload.page = page;
+      if (sort) payload.sort = sort;
+      return await findAllListedFlat(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred get all listed flat service");
       }
     }
   },

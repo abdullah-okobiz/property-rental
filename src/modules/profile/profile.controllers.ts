@@ -219,10 +219,9 @@ const ProfileControllers = {
     try {
       const { accountStatus, page, role, sort }: IGetAllUserRequestedQuery =
         req.query;
-      console.log(accountStatus);
       const { data, total } = await processGetAllUsers({
         accountStatus,
-        page: page,
+        page,
         role,
         sort,
       });

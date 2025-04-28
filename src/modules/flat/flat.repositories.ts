@@ -1,4 +1,9 @@
-import IFlat, { IFlatPayload, ListingPublishStatus } from "./flat.interfaces";
+import { documentPerPage } from "../../const";
+import IFlat, {
+  IFlatPayload,
+  IGetAllFlatPayload,
+  ListingPublishStatus,
+} from "./flat.interfaces";
 import Flat from "./flat.models";
 
 const FlatRepositories = {
@@ -75,6 +80,28 @@ const FlatRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In Get Rent Properties For Host Operation"
+        );
+      }
+    }
+  },
+  findAllListedFlat: async ({ query, page, sort }: IGetAllFlatPayload) => {
+    try {
+      const currentPage = page ?? 1;
+      const skip = (currentPage - 1) * documentPerPage;
+      const sortOption: Record<string, 1 | -1> | undefined =
+        sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      const [data, total] = await Promise.all([
+        Flat.find(query).skip(skip).sort(sortOption),
+        Flat.countDocuments(query),
+      ]);
+      console.log(data, total);
+      return { data, total };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Get All Listed Flat Operation"
         );
       }
     }

@@ -3,7 +3,7 @@ import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import FlatServices from "./flat.services";
-import { IFlatImagesPath } from "./flat.interfaces";
+import { IFlatImagesPath, IGetAllFlatRequestedQuery } from "./flat.interfaces";
 
 const {
   processInitializeFlatListing,
@@ -11,6 +11,7 @@ const {
   processUploadImage,
   processUnlinkImage,
   processHostListedFlatProperties,
+  processGetAllListedFlat,
 } = FlatServices;
 
 const FlatControllers = {
@@ -131,6 +132,49 @@ const FlatControllers = {
       res.status(200).json({
         status: "success",
         message: "Listed Properties For Flat Retrieve successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleGetAllFlat: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { publishStatus, page, sort } =
+        req.query as IGetAllFlatRequestedQuery;
+      const { data, total } = await processGetAllListedFlat({
+        publishStatus,
+        page,
+        sort,
+      });
+      const totalPages = Math.ceil(total / documentPerPage);
+      const totalUsers = total;
+      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+        req.path
+      }`;
+      const buildQuery = (pageNumber: number) => {
+        const query = new URLSearchParams();
+        if (publishStatus) query.set("publishStatus", publishStatus);
+        if (sort) query.set("sort", String(sort));
+        query.set("page", String(pageNumber));
+        return `${baseUrl}?${query.toString()}`;
+      };
+      const currentPage = Number(page) || 1;
+      const currentPageUrl = buildQuery(currentPage);
+      const nextPageUrl =
+        currentPage < totalPages ? buildQuery(currentPage + 1) : null;
+      const previousPageUrl =
+        currentPage > 1 ? buildQuery(currentPage - 1) : null;
+      res.status(200).json({
+        status: "success",
+        message: `All ${publishStatus} request found successful`,
+        totalUsers,
+        totalPages,
+        currentPageUrl,
+        nextPageUrl,
+        previousPageUrl,
         data,
       });
     } catch (error) {

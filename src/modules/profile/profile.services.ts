@@ -214,7 +214,7 @@ const ProfileServices = {
         throw error;
       } else {
         throw new Error(
-          "Unknown Error Occurred find pending identity requests service"
+          "Unknown Error Occurred get all user service"
         );
       }
     }

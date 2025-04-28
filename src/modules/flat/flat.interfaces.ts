@@ -45,4 +45,20 @@ export interface IFlatImagesPath {
   filename: string;
 }
 
+export interface IGetAllFlatRequestedQuery {
+  publishStatus?: string;
+  page?: number;
+  sort?: 1 | -1;
+}
+
+export interface IGetAllFlatQuery {
+  publishStatus?: string;
+}
+
+export interface IGetAllFlatPayload {
+  query: IGetAllFlatQuery;
+  page?: number;
+  sort?: 1 | -1;
+}
+
 export default IFlat;
