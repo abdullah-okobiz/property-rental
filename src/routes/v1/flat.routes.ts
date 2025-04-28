@@ -8,6 +8,7 @@ const {
   handleInitializeFlatListing,
   handleUpdateFlatListingField,
   handleUploadImage,
+  handleUnlinkImage,
 } = FlatControllers;
 
 const router = Router();
@@ -22,7 +23,9 @@ router
 router
   .route("/host/flat/image/:id")
   .patch(checkAccessToken, isHost, upload.array("images"), handleUploadImage);
-router.route("/host/flat/image/:id").delete(checkAccessToken, isHost);
+router
+  .route("/host/flat/image/:id")
+  .delete(checkAccessToken, isHost, handleUnlinkImage);
 router.route("/host/flat").get(checkAccessToken, isHost);
 
 export default router;

@@ -9,6 +9,7 @@ const {
   processInitializeFlatListing,
   processUpdateFlatListing,
   processUploadImage,
+  processUnlinkImage,
 } = FlatServices;
 
 const FlatControllers = {
@@ -80,6 +81,36 @@ const FlatControllers = {
         status: "success",
         message: "Image upload successful",
         data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleUnlinkImage: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const flatId = new mongoose.Types.ObjectId(id);
+      const { images, imageUrl } = req.body;
+      await processUnlinkImage({
+        flatId,
+        images,
+        singleImage: imageUrl as string,
+      });
+      res.status(200).json({
+        status: "success",
+        message: "Image delete successful",
       });
     } catch (error) {
       const err = error as Error;

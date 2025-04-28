@@ -38,6 +38,7 @@ export interface IFlatPayload {
   reqBody?: IFlat;
   flatId?: Types.ObjectId;
   images?: string[];
+  singleImage?: string;
 }
 
 export interface IFlatImagesPath {
