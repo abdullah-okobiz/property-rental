@@ -3,13 +3,12 @@ import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import LandServices from "./land.services";
-import ILand, {
+import  {
   IGetAllLandRequestedQuery,
   ILandImagesPath,
 } from "./land.interfaces";
 
 const {
-  processChangeStatus,
   processDeleteListedLandItem,
   processGetAllListedLand,
   processHostListedLandProperties,
@@ -180,35 +179,6 @@ const LandControllers = {
         currentPageUrl,
         nextPageUrl,
         previousPageUrl,
-        data,
-      });
-    } catch (error) {
-      const err = error as Error;
-      logger.error(err.message);
-      next();
-    }
-  },
-  handleChangeStatus: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const { id } = req.params;
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
-        return;
-      }
-      const landId = new mongoose.Types.ObjectId(id);
-      const { status } = req.body;
-      const reqBody: ILand = {};
-      reqBody.publishStatus = status;
-      const data = await processChangeStatus({ landId, reqBody });
-      res.status(200).json({
-        status: "success",
-        message: `Listed item status Changed to ${status}`,
         data,
       });
     } catch (error) {

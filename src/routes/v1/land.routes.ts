@@ -11,7 +11,6 @@ const {
   handleUnlinkImage,
   handleGetAllHostListedLand,
   handleGetAllLand,
-  handleChangeStatus,
   handleDeleteListedLandItem,
 } = LandControllers;
 
@@ -41,7 +40,6 @@ router.route("/land").get(handleGetAllLand);
 
 router
   .route("/admin/land/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStatus)
   .patch(checkAccessToken, isAdmin, handleUpdateLandListingField)
   .delete(checkAccessToken, isAdmin, handleDeleteListedLandItem);
 

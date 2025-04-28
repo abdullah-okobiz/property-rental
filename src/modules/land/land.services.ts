@@ -118,18 +118,6 @@ const LandServices = {
       }
     }
   },
-  processChangeStatus: async ({ landId, reqBody }: ILandPayload) => {
-    try {
-      const data = await updateLandListing({ reqBody, landId });
-      return data;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error("Unknown Error Occurred In change status service");
-      }
-    }
-  },
   processDeleteListedLandItem: async ({ landId }: ILandPayload) => {
     try {
       const { images } = (await deleteListedLandItem({ landId })) as ILand;

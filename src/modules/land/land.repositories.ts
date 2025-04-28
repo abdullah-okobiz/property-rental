@@ -22,17 +22,18 @@ const LandRepositories = {
   },
   updateLandListing: async ({ landId, reqBody }: ILandPayload) => {
     try {
-      const flat = await Land.findById(landId);
+      const land = await Land.findById(landId);
       const { price } = reqBody as ILand;
       if (!price) {
+        console.log(reqBody)
         return await Land.findByIdAndUpdate(landId, reqBody, {
           new: true,
           runValidators: true,
         });
       } else {
         if (
-          flat?.publishStatus === ListingPublishStatus.APPROVED ||
-          flat?.publishStatus === ListingPublishStatus.PENDING
+          land?.publishStatus === ListingPublishStatus.APPROVED ||
+          land?.publishStatus === ListingPublishStatus.PENDING
         ) {
           return await Land.findByIdAndUpdate(
             landId,
