@@ -13,6 +13,7 @@ const {
   updateFlatListing,
   findAllForHost,
   findAllListedFlat,
+  deleteListedFlatItem,
 } = FlatRepositories;
 
 const FlatServices = {
@@ -126,6 +127,30 @@ const FlatServices = {
         throw error;
       } else {
         throw new Error("Unknown Error Occurred In change status service");
+      }
+    }
+  },
+  processDeleteListedFlatItem: async ({ flatId }: IFlatPayload) => {
+    try {
+      const { images } = (await deleteListedFlatItem({ flatId })) as IFlat;
+      if (images !== null) {
+        const relativeImagePath = images?.map((item) =>
+          item.replace("/public/", "")
+        );
+        const filePaths = relativeImagePath?.map((item) =>
+          join(__dirname, "../../../public", item)
+        );
+        await Promise.all([filePaths?.map((item) => fs.unlink(item))]);
+        return;
+      }
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In delete listed flat item service"
+        );
       }
     }
   },

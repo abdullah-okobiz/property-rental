@@ -16,6 +16,7 @@ const {
   processHostListedFlatProperties,
   processGetAllListedFlat,
   processChangeStatus,
+  processDeleteListedFlatItem,
 } = FlatServices;
 
 const FlatControllers = {
@@ -209,6 +210,31 @@ const FlatControllers = {
         status: "success",
         message: `Listed item status Changed to ${status}`,
         data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleDeleteListedFlatItem: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const flatId = new mongoose.Types.ObjectId(id);
+      await processDeleteListedFlatItem({ flatId });
+      res.status(200).json({
+        status: "success",
+        message: `Item delete successful`,
       });
     } catch (error) {
       const err = error as Error;

@@ -251,7 +251,7 @@ const RentControllers = {
         return;
       }
       const rentId = new mongoose.Types.ObjectId(id);
-      processDeleteListedRentItem({ rentId });
+      await processDeleteListedRentItem({ rentId });
       res.status(200).json({
         status: "success",
         message: `Item delete successful`,

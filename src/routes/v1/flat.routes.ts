@@ -12,6 +12,7 @@ const {
   handleGetAllHostListedPropertiesForRent,
   handleGetAllFlat,
   handleChangeStatus,
+  handleDeleteListedFlatItem,
 } = FlatControllers;
 
 const router = Router();
@@ -40,6 +41,7 @@ router.route("/flat").get(handleGetAllFlat);
 
 router
   .route("/admin/flat/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStatus);
+  .patch(checkAccessToken, isAdmin, handleChangeStatus)
+  .delete(checkAccessToken, isAdmin, handleDeleteListedFlatItem);
 
 export default router;

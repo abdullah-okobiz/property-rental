@@ -93,7 +93,7 @@ const FlatRepositories = {
       const [data, total] = await Promise.all([
         Flat.find(query).skip(skip).sort(sortOption),
         Flat.countDocuments(query),
-      ]);   
+      ]);
       return { data, total };
     } catch (error) {
       if (error instanceof Error) {
@@ -101,6 +101,20 @@ const FlatRepositories = {
       } else {
         throw new Error(
           "Unknown Error Occurred In Get All Listed Flat Operation"
+        );
+      }
+    }
+  },
+  deleteListedFlatItem: async ({ flatId }: IFlatPayload) => {
+    try {
+      const data = await Flat.findByIdAndDelete(flatId);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In delete listed flat item Operation"
         );
       }
     }
