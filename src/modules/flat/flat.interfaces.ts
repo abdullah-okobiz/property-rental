@@ -15,7 +15,7 @@ export enum ListingPublishStatus {
   APPROVED = "approved",
 }
 
-interface IFlat extends Document {
+interface IFlat {
   title?: string;
   description?: string;
   location?: string;
@@ -37,6 +37,11 @@ export interface IFlatPayload {
   userId?: Types.ObjectId;
   reqBody?: IFlat;
   flatId?: Types.ObjectId;
+  images?: string[];
+}
+
+export interface IFlatImagesPath {
+  filename: string;
 }
 
 export default IFlat;

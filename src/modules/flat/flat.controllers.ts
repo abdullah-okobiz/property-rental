@@ -3,8 +3,13 @@ import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import FlatServices from "./flat.services";
+import { IFlatImagesPath } from "./flat.interfaces";
 
-const { processInitializeFlatListing, processUpdateFlatListing } = FlatServices;
+const {
+  processInitializeFlatListing,
+  processUpdateFlatListing,
+  processUploadImage,
+} = FlatServices;
 
 const FlatControllers = {
   handleInitializeFlatListing: async (
@@ -53,7 +58,7 @@ const FlatControllers = {
       next();
     }
   },
-  handleUploadImage:async (
+  handleUploadImage: async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -67,16 +72,21 @@ const FlatControllers = {
         return;
       }
       const flatId = new mongoose.Types.ObjectId(id);
+      const images = (req?.files as IFlatImagesPath[])?.map(
+        (item) => item.filename
+      );
+      const data = await processUploadImage({ flatId, images });
       res.status(200).json({
         status: "success",
         message: "Image upload successful",
+        data,
       });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);
       next();
     }
-  }
+  },
 };
 
 export default FlatControllers;

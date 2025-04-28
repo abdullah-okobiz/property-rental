@@ -4,8 +4,11 @@ import upload from "../../middlewares/multer.middleware";
 import FlatControllers from "../../modules/flat/flat.controllers";
 
 const { checkAccessToken, isHost, isAdmin } = UserMiddlewares;
-const { handleInitializeFlatListing, handleUpdateFlatListingField } =
-  FlatControllers;
+const {
+  handleInitializeFlatListing,
+  handleUpdateFlatListingField,
+  handleUploadImage,
+} = FlatControllers;
 
 const router = Router();
 
@@ -18,7 +21,7 @@ router
   .patch(checkAccessToken, isHost, handleUpdateFlatListingField);
 router
   .route("/host/flat/image/:id")
-  .patch(checkAccessToken, isHost, upload.array("images"));
+  .patch(checkAccessToken, isHost, upload.array("images"), handleUploadImage);
 router.route("/host/flat/image/:id").delete(checkAccessToken, isHost);
 router.route("/host/flat").get(checkAccessToken, isHost);
 
