@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import RentServices from "./rent.services";
 import mongoose from "mongoose";
-import IRent, { IRentImagesPath } from "./rent.interfaces";
+import IRent, {
+  IGetAllRentRequestedQuery,
+  IRentImagesPath,
+} from "./rent.interfaces";
 import { documentPerPage } from "../../const";
 
 const {
@@ -12,7 +15,7 @@ const {
   processUnlinkImage,
   processHostListedRentProperties,
   processChangeStatus,
-  processGetApprovedRentListedItems,
+  processGetAllListedRent,
   processDeleteListedRentItem,
 } = RentServices;
 const RentControllers = {
@@ -183,54 +186,43 @@ const RentControllers = {
       next();
     }
   },
-  handleGetApprovedRentListedItems: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleGetAllRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { page } = req.query;
-      const queryPage: number = Number(page);
-      if (!page) {
-        const { data, total } = await processGetApprovedRentListedItems({
-          page: 1,
-        });
-        const totalPages = Math.ceil(total / documentPerPage);
-        res.status(200).json({
-          status: "success",
-          message: `Retrieve All Approved Rent Listed Items`,
-          totalPages,
-          totalItems: total,
-          currentPage: `http://localhost:5000/api/v1/rent`,
-          previousPage: null,
-          nextPage:
-            queryPage < totalPages
-              ? `http://localhost:5000/api/v1/rent?page=${queryPage + 1}`
-              : null,
-          data,
-        });
-      } else {
-        const { data, total } = await processGetApprovedRentListedItems({
-          page: queryPage,
-        });
-        const totalPages = Math.ceil(total / documentPerPage);
-        res.status(200).json({
-          status: "success",
-          message: `Retrieve All Approved Rent Listed Items`,
-          totalPages,
-          totalItems: total,
-          currentPage: `http://localhost:5000/api/v1/rent?page=${queryPage}`,
-          previousPage:
-            queryPage !== 1
-              ? `http://localhost:5000/api/v1/rent?page=${queryPage - 1}`
-              : null,
-          nextPage:
-            queryPage < totalPages
-              ? `http://localhost:5000/api/v1/rent?page=${queryPage + 1}`
-              : null,
-          data,
-        });
-      }
+      const { publishStatus, page, sort } =
+        req.query as IGetAllRentRequestedQuery;
+      const { data, total } = await processGetAllListedRent({
+        publishStatus,
+        page,
+        sort,
+      });
+      const totalPages = Math.ceil(total / documentPerPage);
+      const totalUsers = total;
+      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+        req.path
+      }`;
+      const buildQuery = (pageNumber: number) => {
+        const query = new URLSearchParams();
+        if (publishStatus) query.set("publishStatus", publishStatus);
+        if (sort) query.set("sort", String(sort));
+        query.set("page", String(pageNumber));
+        return `${baseUrl}?${query.toString()}`;
+      };
+      const currentPage = Number(page) || 1;
+      const currentPageUrl = buildQuery(currentPage);
+      const nextPageUrl =
+        currentPage < totalPages ? buildQuery(currentPage + 1) : null;
+      const previousPageUrl =
+        currentPage > 1 ? buildQuery(currentPage - 1) : null;
+      res.status(200).json({
+        status: "success",
+        message: `All ${publishStatus} request found successful`,
+        totalUsers,
+        totalPages,
+        currentPageUrl,
+        nextPageUrl,
+        previousPageUrl,
+        data,
+      });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);

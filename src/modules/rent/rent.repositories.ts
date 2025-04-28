@@ -1,5 +1,9 @@
 import { documentPerPage } from "../../const";
-import IRent, { IRentPayload, RentListingStatus } from "./rent.interfaces";
+import IRent, {
+  IGetAllRentPayload,
+  IRentPayload,
+  RentListingStatus,
+} from "./rent.interfaces";
 import Rent from "./rent.models";
 const RentRepositories = {
   initializedRentListing: async ({ host }: IRentPayload) => {
@@ -98,14 +102,15 @@ const RentRepositories = {
       }
     }
   },
-  getAllApprovedRentProperties: async ({ page }: IRentPayload) => {
+  findAllListedRent: async ({ query, page, sort }: IGetAllRentPayload) => {
     try {
-      const skip = ((page as number) - 1) * documentPerPage;
+      const currentPage = page ?? 1;
+      const skip = (currentPage - 1) * documentPerPage;
+      const sortOption: Record<string, 1 | -1> | undefined =
+        sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
       const [data, total] = await Promise.all([
-        Rent.find({ status: RentListingStatus.APPROVED })
-          .limit(documentPerPage)
-          .skip(skip),
-        Rent.countDocuments(),
+        Rent.find(query).skip(skip).sort(sortOption),
+        Rent.countDocuments(query),
       ]);
       return { data, total };
     } catch (error) {
@@ -113,7 +118,7 @@ const RentRepositories = {
         throw error;
       } else {
         throw new Error(
-          "Unknown Error Occurred In Get All Rent Properties Operation"
+          "Unknown Error Occurred In Get All Listed Rent Operation"
         );
       }
     }

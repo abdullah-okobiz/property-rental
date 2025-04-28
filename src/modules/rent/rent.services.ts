@@ -1,5 +1,10 @@
 import { join } from "path";
-import IRent, { IRentPayload } from "./rent.interfaces";
+import IRent, {
+  IGetAllRentPayload,
+  IGetAllRentQuery,
+  IGetAllRentRequestedQuery,
+  IRentPayload,
+} from "./rent.interfaces";
 import RentRepositories from "./rent.repositories";
 import { promises as fs } from "fs";
 
@@ -7,7 +12,7 @@ const {
   initializedRentListing,
   creatingRentListingById,
   findAllForHost,
-  getAllApprovedRentProperties,
+  findAllListedRent,
   deleteListedRentItem,
 } = RentRepositories;
 const RentServices = {
@@ -109,17 +114,23 @@ const RentServices = {
       }
     }
   },
-  processGetApprovedRentListedItems: async ({ page }: IRentPayload) => {
+  processGetAllListedRent: async ({
+    page,
+    publishStatus,
+    sort,
+  }: IGetAllRentRequestedQuery) => {
     try {
-      const data = await getAllApprovedRentProperties({ page });
-      return data;
+      const query: IGetAllRentQuery = {};
+      if (publishStatus) query.publishStatus = String(publishStatus);
+      const payload: IGetAllRentPayload = { query };
+      if (page) payload.page = page;
+      if (sort) payload.sort = sort;
+      return await findAllListedRent(payload);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In retrieve approved rent listed items service"
-        );
+        throw new Error("Unknown Error Occurred get all listed rent service");
       }
     }
   },

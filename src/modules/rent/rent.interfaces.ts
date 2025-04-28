@@ -44,4 +44,21 @@ export interface IRentPayload {
 export interface IRentImagesPath {
   filename: string;
 }
+
+export interface IGetAllRentRequestedQuery {
+  publishStatus?: string;
+  page?: number;
+  sort?: 1 | -1;
+}
+
+export interface IGetAllRentQuery {
+  publishStatus?: string;
+}
+
+export interface IGetAllRentPayload {
+  query: IGetAllRentQuery;
+  page?: number;
+  sort?: 1 | -1;
+}
+
 export default IRent;
