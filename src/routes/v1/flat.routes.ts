@@ -11,7 +11,6 @@ const {
   handleUnlinkImage,
   handleGetAllHostListedPropertiesForRent,
   handleGetAllFlat,
-  handleChangeStatus,
   handleDeleteListedFlatItem,
 } = FlatControllers;
 
@@ -41,7 +40,6 @@ router.route("/flat").get(handleGetAllFlat);
 
 router
   .route("/admin/flat/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStatus)
   .patch(checkAccessToken, isAdmin, handleUpdateFlatListingField)
   .delete(checkAccessToken, isAdmin, handleDeleteListedFlatItem);
 

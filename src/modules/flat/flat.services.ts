@@ -118,18 +118,6 @@ const FlatServices = {
       }
     }
   },
-  processChangeStatus: async ({ flatId, reqBody }: IFlatPayload) => {
-    try {
-      const data = await updateFlatListing({ reqBody, flatId });
-      return data;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error("Unknown Error Occurred In change status service");
-      }
-    }
-  },
   processDeleteListedFlatItem: async ({ flatId }: IFlatPayload) => {
     try {
       const { images } = (await deleteListedFlatItem({ flatId })) as IFlat;
