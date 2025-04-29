@@ -277,8 +277,8 @@ const ProfileControllers = {
           data,
         });
       } else {
-        res.status(200).json({
-          status: "success",
+        res.status(400).json({
+          status: "error",
           message: `Search user with this ${user} not found`,
           data,
         });
