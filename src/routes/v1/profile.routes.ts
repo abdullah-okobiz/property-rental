@@ -45,6 +45,6 @@ router
   .patch(checkAccessToken, isAdmin, handleChangeUserIdentityStatus);
 router
   .route("/admin/search/users/")
-  .patch(checkAccessToken, isAdmin, handleSearchUser);
+  .get(checkAccessToken, isAdmin, handleSearchUser);
 
 export default router;

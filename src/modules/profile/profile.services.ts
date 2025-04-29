@@ -9,6 +9,7 @@ import {
   IGetAllUserQuery,
   IGetAllUserRequestedQuery,
   IIdentityDocumentPayload,
+  ISearchUserQuery,
   IWorksAtPayload,
 } from "./profile.interfaces";
 import ProfileRepositories from "./profile.repositories";
@@ -17,6 +18,7 @@ import { promises as fs } from "fs";
 import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 import IdentityVerificationUtils from "../../utils/identityVerificationEmail.utils";
 import { DocumentType } from "../user/user.enums";
+import UserRepositories from "../user/user.repositories";
 
 const {
   createWorksAt,
@@ -33,6 +35,8 @@ const {
   getAllUsers,
   changeUserAccountStatus,
 } = ProfileRepositories;
+
+const { findUserByEmailOrPhone } = UserRepositories;
 
 const {
   sendApprovedEmailUtils,
@@ -213,9 +217,7 @@ const ProfileServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred get all user service"
-        );
+        throw new Error("Unknown Error Occurred get all user service");
       }
     }
   },
@@ -301,9 +303,9 @@ const ProfileServices = {
       }
     }
   },
-  processSearchUser:({role,}:IGetAllUserRequestedQuery)=>{
+  processSearchUser: async ({ role, user }: ISearchUserQuery) => {
     try {
-      
+      return await findUserByEmailOrPhone({ role, user });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -311,7 +313,7 @@ const ProfileServices = {
         throw new Error("Unknown Error Occurred search user service");
       }
     }
-  }
+  },
 };
 
 export default ProfileServices;

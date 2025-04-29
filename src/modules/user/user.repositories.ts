@@ -1,7 +1,8 @@
 import mongoose, { Types } from "mongoose";
 import Profile from "../profile/profile.models";
-import { ISerachUserQuery, ISignupPayload, IUser } from "./user.interfaces";
+import { ISignupPayload, IUser } from "./user.interfaces";
 import User from "./user.model";
+import { ISearchUserQuery } from "../profile/profile.interfaces";
 
 const UserRepositories = {
   createUser: async (signupPayload: ISignupPayload): Promise<IUser> => {
@@ -27,15 +28,12 @@ const UserRepositories = {
     }
   },
   findUserByEmailOrPhone: async ({
-    email,
-    phone,
     role,
-  }: ISerachUserQuery): Promise<IUser | null> => {
+    user,
+  }: ISearchUserQuery): Promise<IUser | null> => {
     try {
-      const query: ISerachUserQuery = {};
-      query.role = role;
-      query.email = email;
-      query.phone = phone;
+      const isEmail = user.includes("@");
+      const query = isEmail ? { email: user, role } : { phone: user, role };
       const foundedUser = await User.findOne(query);
       if (!foundedUser) return null;
       return foundedUser;

@@ -46,10 +46,12 @@ export interface IIdentityDocumentPayload {
   documentType: DocumentType;
 }
 
-const 
+export interface ISearchUserQuery {
+  role: string;
+  user: string;
+}
 
 export interface IGetAllUserRequestedQuery {
-  payload?:string;
   role?: string;
   accountStatus?: string;
   page?: number;

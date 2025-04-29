@@ -8,6 +8,7 @@ import {
 import {
   IGetAllUserRequestedQuery,
   IIdentityDocumentPaths,
+  ISearchUserQuery,
 } from "./profile.interfaces";
 import { IIdentityDocument } from "../user/user.interfaces";
 import { documentPerPage } from "../../const";
@@ -264,16 +265,24 @@ const ProfileControllers = {
   },
   handleSearchUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { role }: IGetAllUserRequestedQuery = req.query;
-      const { data } = await processSearchUser({
-        role,
-        req.body
+      const { role, user } = req.query;
+      const data = await processSearchUser({
+        role: String(role),
+        user: String(user),
       });
-      res.status(200).json({
-        status: "success",
-        message: `Search found successful`,
-        data,
-      });
+      if (data) {
+        res.status(200).json({
+          status: "success",
+          message: `Search user found successful`,
+          data,
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          message: `Search user with this ${user} not found`,
+          data,
+        });
+      }
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);
