@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import Profile from "../profile/profile.models";
-import { ISignupPayload, IUser } from "./user.interfaces";
+import { ISerachUserQuery, ISignupPayload, IUser } from "./user.interfaces";
 import User from "./user.model";
 
 const UserRepositories = {
@@ -26,10 +26,16 @@ const UserRepositories = {
       }
     }
   },
-  findUserByEmailOrPhone: async (payload: string): Promise<IUser | null> => {
+  findUserByEmailOrPhone: async ({
+    email,
+    phone,
+    role,
+  }: ISerachUserQuery): Promise<IUser | null> => {
     try {
-      const isEmail = payload.includes("@");
-      const query = isEmail ? { email: payload } : { phone: payload };
+      const query: ISerachUserQuery = {};
+      query.role = role;
+      query.email = email;
+      query.phone = phone;
       const foundedUser = await User.findOne(query);
       if (!foundedUser) return null;
       return foundedUser;

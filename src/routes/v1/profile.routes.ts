@@ -19,6 +19,7 @@ const {
   handleIdentityUpload,
   handleGetAllUsers,
   handleChangeUserIdentityStatus,
+  handleSearchUser,
 } = ProfileControllers;
 
 router.route("/profile/work").patch(checkAccessToken, handleCreateWorksAt);
@@ -42,5 +43,8 @@ router.route("/admin/users").get(checkAccessToken, isAdmin, handleGetAllUsers);
 router
   .route("/admin/users/:id")
   .patch(checkAccessToken, isAdmin, handleChangeUserIdentityStatus);
+router
+  .route("/admin/search/users/")
+  .patch(checkAccessToken, isAdmin, handleSearchUser);
 
 export default router;

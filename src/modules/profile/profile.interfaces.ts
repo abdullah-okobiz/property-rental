@@ -46,7 +46,10 @@ export interface IIdentityDocumentPayload {
   documentType: DocumentType;
 }
 
+const 
+
 export interface IGetAllUserRequestedQuery {
+  payload?:string;
   role?: string;
   accountStatus?: string;
   page?: number;

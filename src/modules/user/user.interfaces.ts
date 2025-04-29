@@ -40,6 +40,12 @@ export interface IProcessResendEmailPayload {
   email: string;
 }
 
+export interface ISerachUserQuery {
+  role?: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface IIdentityDocument extends Document {
   documentType?: DocumentType;
   frontSide?: string;

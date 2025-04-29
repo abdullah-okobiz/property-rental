@@ -301,6 +301,17 @@ const ProfileServices = {
       }
     }
   },
+  processSearchUser:({role,}:IGetAllUserRequestedQuery)=>{
+    try {
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred search user service");
+      }
+    }
+  }
 };
 
 export default ProfileServices;

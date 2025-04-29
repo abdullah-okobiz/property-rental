@@ -231,7 +231,14 @@ const ProfileRepositories = {
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
       const [data, total] = await Promise.all([
-        User.find(query).limit(documentPerPage).skip(skip).sort(sortOption),
+        User.find(query)
+          .limit(documentPerPage)
+          .skip(skip)
+          .sort(sortOption)
+          .populate({
+            path: "identityDocument",
+            select: "_id documentType frontSide backSide",
+          }),
         User.countDocuments(query),
       ]);
       return { data, total };

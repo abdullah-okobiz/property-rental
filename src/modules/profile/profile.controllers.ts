@@ -27,6 +27,7 @@ const {
   processIdentityUpload,
   processGetAllUsers,
   processChangeUserAccountStatus,
+  processSearchUser,
 } = ProfileServices;
 const ProfileControllers = {
   handleCreateWorksAt: async (
@@ -253,6 +254,24 @@ const ProfileControllers = {
         currentPageUrl,
         nextPageUrl,
         previousPageUrl,
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleSearchUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { role }: IGetAllUserRequestedQuery = req.query;
+      const { data } = await processSearchUser({
+        role,
+        req.body
+      });
+      res.status(200).json({
+        status: "success",
+        message: `Search found successful`,
         data,
       });
     } catch (error) {
