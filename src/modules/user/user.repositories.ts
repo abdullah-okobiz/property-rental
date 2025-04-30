@@ -31,6 +31,19 @@ const UserRepositories = {
       }
     }
   },
+  findUserByEmail: async (email: string): Promise<IUser | null> => {
+    try {
+      const foundedUser = await User.findOne({ email });
+      if (!foundedUser) return null;
+      return foundedUser;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In User Find Operation");
+      }
+    }
+  },
   findUserByEmailOrPhone: async ({
     role,
     user,

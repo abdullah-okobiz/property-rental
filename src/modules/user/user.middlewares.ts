@@ -11,7 +11,7 @@ import {
 import { IUser } from "./user.interfaces";
 import { comparePassword } from "../../utils/password.utils";
 
-const { findUserByEmailOrPhone } = UserRepositories;
+const { findUserByEmailOrPhone, findUserByEmail } = UserRepositories;
 
 const UserMiddlewares = {
   signupInputValidation: (req: Request, res: Response, next: NextFunction) => {
@@ -53,7 +53,7 @@ const UserMiddlewares = {
   },
   isUserExist: async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
-    const isUserExist = await findUserByEmailOrPhone(email);
+    const isUserExist = await findUserByEmail(email);
     if (!isUserExist) {
       res.status(404).json({ status: "error", message: "User Not Found" });
       return;
