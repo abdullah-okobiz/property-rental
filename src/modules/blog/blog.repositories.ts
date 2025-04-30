@@ -1,4 +1,4 @@
-import { IBlogPayload } from "./blog.interfaces";
+import { IBlogPayload, IBlogUpdateField } from "./blog.interfaces";
 import Blog from "./blog.models";
 
 const BlogRepositories = {
@@ -17,6 +17,16 @@ const BlogRepositories = {
       return data;
     } catch (error) {
       throw new Error("Unknown Error Occurred In Blog Retrieve Operation");
+    }
+  },
+  updateOneField: async ({ field, blogId }: IBlogUpdateField) => {
+    try {
+      const updatedData = await Blog.findByIdAndUpdate(blogId, field, {
+        new: true,
+      });
+      return updatedData;
+    } catch (error) {
+      throw new Error("Unknown Error Occurred In Blog Field Update Operation");
     }
   },
   updateOneBlog: async ({

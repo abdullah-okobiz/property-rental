@@ -1,8 +1,14 @@
 import path, { join } from "path";
-import { IBlogPayload } from "./blog.interfaces";
+import { IBlogPayload, IBlogUpdateField } from "./blog.interfaces";
 import BlogRepositories from "./blog.repositories";
-const { createBlog, updateOneBlog, deletOneBlog, findAllBlogs, findOneBlog } =
-  BlogRepositories;
+const {
+  createBlog,
+  updateOneBlog,
+  deletOneBlog,
+  findAllBlogs,
+  findOneBlog,
+  updateOneField,
+} = BlogRepositories;
 import { promises as fs } from "fs";
 
 const BlogServices = {
@@ -27,6 +33,17 @@ const BlogServices = {
         throw new Error(
           "Unknown Error Occurred In single blog retrieve service"
         );
+      }
+    }
+  },
+  processUpdateBlogField: async ({ field, blogId }: IBlogUpdateField) => {
+    try {
+      return await updateOneField({ field, blogId });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In blog field update service");
       }
     }
   },

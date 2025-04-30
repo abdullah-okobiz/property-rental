@@ -10,12 +10,17 @@ export interface IBlogPayload {
   blogOldImage?: string;
 }
 
+export interface IBlogUpdateField {
+  field: IBlogInterfces;
+  blogId?: Types.ObjectId;
+}
+
 interface IBlogInterfces extends Document {
-  blogTitle: string;
-  blogImage: string;
-  blogDescription: string;
-  feature: Types.ObjectId;
-  tags: string[];
+  blogTitle?: string;
+  blogImage?: string;
+  blogDescription?: string;
+  feature?: Types.ObjectId;
+  tags?: string[];
 }
 
 export default IBlogInterfces;

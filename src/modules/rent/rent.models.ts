@@ -19,8 +19,7 @@ const RentSchema = new Schema<IRent>({
   category: {
     type: Types.ObjectId,
     ref: "Category",
-    unique: true,
-    require: true,
+    default: null,
   },
   amenities: [{ type: Types.ObjectId, ref: "Amenities" }],
   allowableThings: { type: [String], default: null },
@@ -29,7 +28,7 @@ const RentSchema = new Schema<IRent>({
   host: { type: Types.ObjectId, ref: "User", require: true },
   houseRules: { type: [String], default: null },
   listingFor: [
-    { type: Types.ObjectId, ref: "Feature", unique: true, require: true },
+    { type: Types.ObjectId, ref: "Feature", unique: true, default: null },
   ],
   location: { type: String, default: null },
   price: { type: Number, default: null },
@@ -39,7 +38,10 @@ const RentSchema = new Schema<IRent>({
     default: RentListingStatus.IN_PROGRESS,
   },
 });
-
+RentSchema.index(
+  { category: 1 },
+  { unique: true, partialFilterExpression: { category: { $type: "objectId" } } }
+);
 const Rent: Model<IRent> = model<IRent>("Rent", RentSchema);
 
 export default Rent;

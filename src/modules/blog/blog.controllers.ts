@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import BlogServices from "./blog.services";
-import { IBlogPayload } from "./blog.interfaces";
+import IBlogInterfces, {
+  IBlogPayload,
+  IBlogUpdateField,
+} from "./blog.interfaces";
 import mongoose from "mongoose";
 const {
   processCreateBlog,
@@ -9,6 +12,7 @@ const {
   processDeleteBlog,
   processRetrieveBlog,
   processRetrieveSingleBlog,
+  processUpdateBlogField,
 } = BlogServices;
 const BlogControllers = {
   handleRetrieveSingleBlog: async (
@@ -126,6 +130,34 @@ const BlogControllers = {
       res.status(200).json({
         status: "success",
         message: "blog delete successful",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleUpdateBlogField: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    const field = req.body as IBlogInterfces;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      return;
+    }
+    const blogId = new mongoose.Types.ObjectId(id);
+    const payload = { blogId } as IBlogUpdateField;
+    payload.field = field;
+
+    try {
+      const data = await processUpdateBlogField(payload);
+      res.status(200).json({
+        status: "success",
+        message: "blog field successful",
+        data,
       });
     } catch (error) {
       const err = error as Error;

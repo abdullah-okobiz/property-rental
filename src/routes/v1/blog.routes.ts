@@ -10,6 +10,7 @@ const {
   handleBlogDelete,
   handleRetrieveBlog,
   handleRetrieveSingleBlog,
+  handleUpdateBlogField,
 } = BlogControllers;
 const { isBlogExist } = BlogMiddlewares;
 const router = Router();
@@ -27,6 +28,7 @@ router
 router
   .route("/admin/blog/:id")
   .get(handleRetrieveSingleBlog)
+  .patch(checkAccessToken, isAdmin, handleUpdateBlogField)
   .put(
     checkAccessToken,
     isAdmin,
