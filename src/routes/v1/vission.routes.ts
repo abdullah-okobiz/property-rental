@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/admin/vission")
   .post(checkAccessToken, isAdmin, handleCreateVission)
-  .get(checkAccessToken, isAdmin, handleRetrieveAllVission);
+  .get( handleRetrieveAllVission);
 
 router
   .route("/admin/vission/:id")

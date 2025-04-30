@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/admin/why-choose-us")
   .post(checkAccessToken, isAdmin, handleCreateWhyChooseUs)
-  .get(checkAccessToken, isAdmin, handleRetrieveAllWhyChooseUs);
+  .get(handleRetrieveAllWhyChooseUs);
 
 router
   .route("/admin/why-choose-us/:id")

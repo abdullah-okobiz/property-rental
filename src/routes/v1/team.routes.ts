@@ -23,7 +23,7 @@ router
     upload.single("teamMemberImage"),
     handleCreateTeamMember
   )
-  .get(checkAccessToken, isAdmin, handleRetrieveAllTeamMembers);
+  .get(handleRetrieveAllTeamMembers);
 
 router
   .route("/admin/team/:id")

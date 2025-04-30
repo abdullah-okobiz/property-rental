@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/admin/faq")
   .post(checkAccessToken, isAdmin, handleCreateFaq)
-  .get(checkAccessToken, isAdmin, handleRetrieveAllFaq);
+  .get( handleRetrieveAllFaq);
 
 router
   .route("/admin/faq/:id")

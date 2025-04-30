@@ -17,7 +17,7 @@ router
     upload.single("bannerImage"),
     handleCreateBanner
   )
-  .get(checkAccessToken, isAdmin, handleRetrieveAllBanner);
+  .get( handleRetrieveAllBanner);
 
 router
   .route("/admin/banner/:id")

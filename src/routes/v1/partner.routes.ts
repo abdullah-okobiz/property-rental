@@ -24,7 +24,7 @@ router
     upload.single("partnerImage"),
     handleCreatePartner
   )
-  .get(checkAccessToken, isAdmin, handleRetrieveAllPartner);
+  .get( handleRetrieveAllPartner);
 
 router
   .route("/admin/partner/:id")

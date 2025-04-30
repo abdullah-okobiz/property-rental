@@ -15,7 +15,7 @@ const router = Router();
 router
   .route("/admin/about_us")
   .post(checkAccessToken, isAdmin, handleCreateAboutUs)
-  .get(checkAccessToken, isAdmin, handleRetriveAboutUs);
+  .get(handleRetriveAboutUs);
 
 router
   .route("/admin/about_us/:id")

@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/admin/mission")
   .post(checkAccessToken, isAdmin, handleCreateMission)
-  .get(checkAccessToken, isAdmin, handleRetrieveAllMission);
+  .get( handleRetrieveAllMission);
 
 router
   .route("/admin/mission/:id")
