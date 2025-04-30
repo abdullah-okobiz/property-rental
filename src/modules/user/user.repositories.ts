@@ -1,6 +1,10 @@
 import mongoose, { Types } from "mongoose";
 import Profile from "../profile/profile.models";
-import { ISignupPayload, IUser } from "./user.interfaces";
+import {
+  ISearchUserDatabaseQuery,
+  ISignupPayload,
+  IUser,
+} from "./user.interfaces";
 import User from "./user.model";
 import { ISearchUserQuery } from "../profile/profile.interfaces";
 
@@ -32,9 +36,14 @@ const UserRepositories = {
     user,
   }: ISearchUserQuery): Promise<IUser | null> => {
     try {
-      const isEmail = user.includes("@");
-      const query = isEmail ? { email: user, role } : { phone: user, role };
-      const foundedUser = await User.findOne(query);
+      const query = { role } as ISearchUserDatabaseQuery;
+      if (typeof user === "string" && user.trim() !== "") {
+        query.email = { $regex: user.trim(), $options: "i" };
+      }
+      const foundedUser = await User.findOne(query).populate({
+        path: "identityDocument",
+        select: "_id documentType frontSide backSide",
+      });
       if (!foundedUser) return null;
       return foundedUser;
     } catch (error) {

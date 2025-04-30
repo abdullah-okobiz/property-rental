@@ -16,8 +16,7 @@ const UserSchema = new Schema<IUser>(
     identityDocument: {
       type: Schema.Types.ObjectId,
       ref: "IdentityDocument",
-      unique: true,
-      default:null
+      default: null,
     },
   },
   { timestamps: true }
@@ -25,9 +24,9 @@ const UserSchema = new Schema<IUser>(
 
 const IdentityDocumentSchema = new Schema<IIdentityDocument>(
   {
-    documentType: { type: String },
-    frontSide: { type: String },
-    backSide: { type: String },
+    documentType: { type: String, default: null },
+    frontSide: { type: String, default: null },
+    backSide: { type: String, default: null },
     user: { type: Types.ObjectId, ref: "User", unique: true },
   },
   { timestamps: true }

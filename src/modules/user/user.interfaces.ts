@@ -35,6 +35,14 @@ export interface IProcessDeleteUserPayload {
   accesstoken: string;
 }
 
+export interface ISearchUserDatabaseQuery {
+  email: {
+    $regex: string;
+    $options: string;
+  };
+  role: string;
+}
+
 export interface IProcessResendEmailPayload {
   name: string;
   email: string;
