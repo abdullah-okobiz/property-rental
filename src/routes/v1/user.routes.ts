@@ -7,12 +7,14 @@ const router = Router();
 const {
   signupInputValidation,
   isSignupUserExist,
+  isUserExistAndVerified,
   isUserExist,
   checkVerificationOtp,
   checkAccessToken,
   checkRefreshToken,
   checkPassword,
   checkRole,
+  isAdmin,
 } = UserMiddlewares;
 const {
   handleSignup,
@@ -30,12 +32,14 @@ router
   .post(signupInputValidation, isSignupUserExist, handleSignup);
 router.route("/verify").post(checkVerificationOtp, handleVerify);
 router.route("/resend").post(isUserExist, handleResend);
-router.route("/login").post(isUserExist, checkPassword, handleLogin);
+router.route("/login").post(isUserExistAndVerified, checkPassword, handleLogin);
 router
   .route("/admin/login")
-  .post(isUserExist, checkRole, checkPassword, handleLogin);
+  .post(isUserExistAndVerified, checkRole, checkPassword, handleLogin);
 router.route("/refresh").post(checkRefreshToken, handleRefreshTokens);
 router.route("/check").post(checkAccessToken, handleCheck);
 router.route("/logout").post(checkAccessToken, handleLogout);
-router.route("/delete").post(checkAccessToken, handleDeleteUser);
+router
+  .route("/admin/users/:id")
+  .delete(checkAccessToken, isAdmin, handleDeleteUser);
 export default router;

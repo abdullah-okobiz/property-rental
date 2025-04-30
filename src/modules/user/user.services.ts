@@ -1,4 +1,6 @@
 import redisClient from "../../configs/redis.configs";
+import { join } from "path";
+import { promises as fs } from "fs";
 import { TokenPayload } from "../../interfaces/jwtPayload.interfaces";
 import {
   generateAccessToken,
@@ -11,6 +13,7 @@ import {
   ITokenProcessReturn,
   IProcessDeleteUserPayload,
   IProcessResendEmailPayload,
+  IIdentityDocument,
 } from "./user.interfaces";
 import UserRepositories from "./user.repositories";
 import otpGenerator from "otp-generator";
@@ -132,11 +135,22 @@ const UserServices = {
       throw error;
     }
   },
-  processDeleteUser: async ({ accesstoken, id }: IProcessDeleteUserPayload) => {
+  processDeleteUser: async ({ id }: IProcessDeleteUserPayload) => {
     try {
-      const data = await deleteUser(id);
-      if (!data) return false;
-      await redisClient.set(`blacklist:${accesstoken}`, accesstoken);
+      const { deletedIdentityData, deletedUserData } = await deleteUser(id);
+      if (!deletedUserData) return false;
+      if (deletedIdentityData) {
+        const { frontSide, backSide } =
+          deletedIdentityData as IIdentityDocument;
+        const images = [frontSide, backSide];
+        const relativeImagePath = images?.map((item) =>
+          item?.replace("/public/", "")
+        );
+        const filePaths = relativeImagePath?.map((item) =>
+          join(__dirname, "../../../public", item!)
+        );
+        await Promise.all([filePaths?.map((item) => fs.unlink(item))]);
+      }
       return true;
     } catch (error) {
       throw error;

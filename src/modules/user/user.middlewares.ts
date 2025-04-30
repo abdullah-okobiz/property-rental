@@ -44,14 +44,18 @@ const UserMiddlewares = {
     next: NextFunction
   ) => {
     const { email } = req.body;
-    const isUserExist = await findUserByEmailOrPhone(email);
+    const isUserExist = await findUserByEmail(email);
     if (isUserExist) {
       res.status(409).json({ status: "error", message: "User already exists" });
       return;
     }
     next();
   },
-  isUserExist: async (req: Request, res: Response, next: NextFunction) => {
+  isUserExistAndVerified: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const { email } = req.body;
     const isUserExist = await findUserByEmail(email);
     if (!isUserExist) {
@@ -60,6 +64,16 @@ const UserMiddlewares = {
     }
     if (!isUserExist.isVerified) {
       res.status(400).json({ status: "error", message: "User Not Verified" });
+      return;
+    }
+    req.user = isUserExist;
+    next();
+  },
+  isUserExist: async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    const isUserExist = await findUserByEmail(email);
+    if (!isUserExist) {
+      res.status(404).json({ status: "error", message: "User Not Found" });
       return;
     }
     req.user = isUserExist;

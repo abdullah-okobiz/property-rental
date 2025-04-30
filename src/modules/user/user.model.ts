@@ -16,7 +16,6 @@ const UserSchema = new Schema<IUser>(
     identityDocument: {
       type: Schema.Types.ObjectId,
       ref: "IdentityDocument",
-      default: null,
     },
   },
   { timestamps: true }
@@ -27,10 +26,12 @@ const IdentityDocumentSchema = new Schema<IIdentityDocument>(
     documentType: { type: String, default: null },
     frontSide: { type: String, default: null },
     backSide: { type: String, default: null },
-    user: { type: Types.ObjectId, ref: "User", unique: true },
+    user: { type: Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
+UserSchema.index({ identityDocument: 1 }, { unique: true, sparse: true });
+IdentityDocumentSchema.index({ user: 1 }, { unique: true, sparse: true });
 
 UserSchema.pre("save", async function (next) {
   const user = this as HydratedDocument<IUser>;

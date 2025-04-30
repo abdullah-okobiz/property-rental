@@ -32,7 +32,6 @@ export interface ITokenProcessReturn {
 
 export interface IProcessDeleteUserPayload {
   id: Types.ObjectId;
-  accesstoken: string;
 }
 
 export interface ISearchUserDatabaseQuery {

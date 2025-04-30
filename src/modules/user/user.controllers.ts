@@ -3,7 +3,7 @@ import UserServices from "./user.services";
 import logger from "../../configs/logger.configs";
 import { IUser } from "./user.interfaces";
 import cookieOption from "../../utils/cookie.utils";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const {
   processSignup,
@@ -113,13 +113,18 @@ const UserControllers = {
   },
   handleDeleteUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId } = req.authenticateTokenDecoded;
-      const authHeader = req.headers.authorization;
-      const accesstoken = authHeader?.split(" ")[1] as string;
-      const isDeleted = await processDeleteUser({ id: userId as Types.ObjectId, accesstoken });
+      const { id } = req.params;
+      console.log("deleted user id",id)
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: "error", message: "Invalid feature ID" });
+        return;
+      }
+      const userId = new mongoose.Types.ObjectId(id);
+      const isDeleted = await processDeleteUser({ id: userId });
       if (!isDeleted)
         res.status(404).json({ status: "error", message: "user not found" });
-      res.clearCookie("refreshtoken");
       res.status(200).json({ status: "success", message: "user deleted" });
     } catch (error) {
       const err = error as Error;

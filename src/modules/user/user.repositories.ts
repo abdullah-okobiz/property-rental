@@ -5,15 +5,25 @@ import {
   ISignupPayload,
   IUser,
 } from "./user.interfaces";
-import User from "./user.model";
+import User, { IdentityDocument } from "./user.model";
 import { ISearchUserQuery } from "../profile/profile.interfaces";
 
 const UserRepositories = {
-  createUser: async (signupPayload: ISignupPayload): Promise<IUser> => {
+  createUser: async ({
+    email,
+    name,
+    password,
+    role,
+  }: ISignupPayload): Promise<IUser> => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const user = new User(signupPayload);
+      const user = new User({
+        name,
+        role,
+        password,
+        email,
+      });
       const profile = new Profile({ user: user.id });
       user.profile = profile._id as Types.ObjectId;
       const savedUser = await user.save({ session });
@@ -33,6 +43,7 @@ const UserRepositories = {
   },
   findUserByEmail: async (email: string): Promise<IUser | null> => {
     try {
+      console.log(email);
       const foundedUser = await User.findOne({ email });
       if (!foundedUser) return null;
       return foundedUser;
@@ -86,10 +97,15 @@ const UserRepositories = {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const verifiedUserData = await User.findByIdAndDelete(payload);
+      const deletedUserData = await User.findByIdAndDelete(payload);
       await Profile.findOneAndDelete({ user: payload });
+      const deletedIdentityData = deletedUserData?.identityDocument
+        ? await IdentityDocument.findByIdAndDelete(
+            deletedUserData?.identityDocument
+          )
+        : null;
       session.endSession();
-      return verifiedUserData;
+      return { deletedUserData, deletedIdentityData };
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
