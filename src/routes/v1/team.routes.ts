@@ -11,6 +11,7 @@ const {
   handleDeleteTeamMember,
   handleRetrieveAllTeamMembers,
   handleUpdateOneTeamMember,
+  handleUpdateTeamField,
 } = TeamControllers;
 
 const router = Router();
@@ -27,6 +28,7 @@ router
 
 router
   .route("/admin/team/:id")
+  .patch(checkAccessToken, isAdmin, handleUpdateTeamField)
   .put(
     checkAccessToken,
     isAdmin,

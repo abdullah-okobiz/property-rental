@@ -1,5 +1,5 @@
 import path, { join } from "path";
-import { ITeamPayload } from "./team.interfaces";
+import { ITeamPayload, ITeamUpdateFieldPayload } from "./team.interfaces";
 import TeamRepositories from "./team.repositories";
 import { promises as fs } from "fs";
 
@@ -8,6 +8,7 @@ const {
   deleteTeamMember,
   findAllTeamMembers,
   updateOneTeamMember,
+  updateTeamField,
 } = TeamRepositories;
 
 const TeamServices = {
@@ -48,7 +49,18 @@ const TeamServices = {
       }
     }
   },
-
+  processUpdateTeamField: async (payload: ITeamUpdateFieldPayload) => {
+    try {
+      const data = await updateTeamField(payload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In update team field service");
+      }
+    }
+  },
   processRetrieveAllTeamMembers: async () => {
     try {
       const data = await findAllTeamMembers();
