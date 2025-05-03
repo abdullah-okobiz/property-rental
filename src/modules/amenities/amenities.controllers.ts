@@ -7,6 +7,7 @@ const {
   processCreateAmenities,
   processDeleteAmenities,
   processRetrieveAllAmenities,
+  processUpdateAmenities,
 } = AmenitiesServices;
 const AmenitiesControllers = {
   handleCreateAmenities: async (
@@ -32,7 +33,41 @@ const AmenitiesControllers = {
       next();
     }
   },
+  handleUpdateAmenities: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    const { amenitiesImage } = req.amenities as IAmenitiesPayload;
+    const amenitiesOldImage = amenitiesImage;
+    const { amenitiesLabel } = req.body as IAmenitiesPayload;
 
+    const newImage = req?.file?.filename;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      return;
+    }
+    const amenitiesId = new mongoose.Types.ObjectId(id);
+    try {
+      const data = await processUpdateAmenities({
+        amenitiesId,
+        amenitiesImage: newImage,
+        amenitiesLabel,
+        amenitiesOldImage,
+      });
+      res.status(200).json({
+        status: "success",
+        message: "Amenities update successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
   handleRetrieveAllAmenities: async (
     req: Request,
     res: Response,

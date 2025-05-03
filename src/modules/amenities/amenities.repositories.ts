@@ -19,6 +19,24 @@ const AmenitiesRepositories = {
       throw new Error("Unknown Error Occurred In Amenities Retrieve Operation");
     }
   },
+  updateOneBlog: async ({
+    amenitiesId,
+    amenitiesImage,
+    amenitiesLabel,
+  }: IAmenitiesPayload) => {
+    try {
+      const updatedData = await Amenities.findByIdAndUpdate(
+        amenitiesId,
+        {
+          $set: { amenitiesImage, amenitiesLabel },
+        },
+        { new: true }
+      );
+      return updatedData;
+    } catch (error) {
+      throw new Error("Unknown Error Occurred In amenities Update Operation");
+    }
+  },
   findAllAmenities: async () => {
     try {
       const data = await Amenities.find({});

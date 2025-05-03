@@ -1,8 +1,8 @@
 import { promises as fs } from "fs";
-import { join } from "path";
+import path, { join } from "path";
 import { IAmenitiesPayload } from "./amenities.interfaces";
 import AmenitiesRepositories from "./amenities.repositories";
-const { createAmenities, deleteAmenities, findAllAmenities } =
+const { createAmenities, deleteAmenities, findAllAmenities, updateOneBlog } =
   AmenitiesRepositories;
 const AmenitiesServices = {
   processCreateAmenities: async ({
@@ -38,7 +38,41 @@ const AmenitiesServices = {
       }
     }
   },
-
+  processUpdateAmenities: async ({
+    amenitiesId,
+    amenitiesImage,
+    amenitiesLabel,
+    amenitiesOldImage,
+  }: IAmenitiesPayload) => {
+    const image = amenitiesOldImage as string;
+    const relativeImagePath = path.basename(image);
+    const oldFilePath = join(__dirname, "../../../public", relativeImagePath);
+    const newImageFilePath = join(
+      __dirname,
+      "../../../public",
+      amenitiesImage as string
+    );
+    try {
+      const updatedData = await updateOneBlog({
+        amenitiesId,
+        amenitiesLabel,
+        amenitiesImage: `/public/${amenitiesImage}`,
+      });
+      if (!updatedData) {
+        fs.unlink(newImageFilePath);
+      }
+      fs.unlink(oldFilePath);
+      return updatedData;
+    } catch (error) {
+      if (error instanceof Error) {
+        await fs.unlink(newImageFilePath);
+        throw error;
+      } else {
+        await fs.unlink(newImageFilePath);
+        throw new Error("Unknown Error Occurred In update amenities service");
+      }
+    }
+  },
   processRetrieveAllAmenities: async () => {
     try {
       const data = await findAllAmenities();
