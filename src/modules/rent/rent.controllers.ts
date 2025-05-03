@@ -17,6 +17,7 @@ const {
   processChangeStatus,
   processGetAllListedRent,
   processDeleteListedRentItem,
+  processCreateRent,
 } = RentServices;
 const RentControllers = {
   handleInitializeRentListing: async (
@@ -26,10 +27,10 @@ const RentControllers = {
   ) => {
     try {
       const { userId } = req.authenticateTokenDecoded;
-      const {listingFor}=req.body
-      const payload={listingFor} as IRent
+      const { listingFor } = req.body;
+      const payload = { listingFor } as IRent;
       const data = await processInitializeRentListing({
-payload,
+        payload,
         host: userId,
       });
       res.status(201).json({
@@ -72,6 +73,24 @@ payload,
       res.status(200).json({
         status: "success",
         message: "New Field Data Added",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleCreateRent: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = req.body as IRent;
+      const images = (req?.files as IRentImagesPath[])?.map(
+        (item) => item.filename
+      );
+      const data = await processCreateRent({ images, payload });
+      res.status(200).json({
+        status: "success",
+        message: "New Rent Created",
         data,
       });
     } catch (error) {
@@ -199,7 +218,7 @@ payload,
         sort,
       });
       const totalPages = Math.ceil(total / documentPerPage);
-      const totalUsers = total;
+      const totalRents = total;
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
@@ -219,7 +238,7 @@ payload,
       res.status(200).json({
         status: "success",
         message: `All ${publishStatus} request found successful`,
-        totalUsers,
+        totalRents,
         totalPages,
         currentPageUrl,
         nextPageUrl,

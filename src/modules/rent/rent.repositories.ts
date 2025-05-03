@@ -102,6 +102,21 @@ const RentRepositories = {
       }
     }
   },
+  createNewRent: async (payload: IRent) => {
+    try {
+      const newRent = new Rent(payload);
+      await newRent.save();
+      return newRent;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Get All Listed Rent Operation"
+        );
+      }
+    }
+  },
   findAllListedRent: async ({ query, page, sort }: IGetAllRentPayload) => {
     try {
       const currentPage = page ?? 1;

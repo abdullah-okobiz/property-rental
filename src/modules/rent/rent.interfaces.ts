@@ -30,7 +30,10 @@ interface IRent {
   status?: RentListingStatus;
   host?: Types.ObjectId;
 }
-
+export interface ICreateRentPayload {
+  images?: string[];
+  payload?:IRent
+}
 export interface IRentPayload {
   payload?: IRent;
   rentId?: Types.ObjectId;
@@ -39,7 +42,7 @@ export interface IRentPayload {
   images?: string[];
   singleImage?: string;
   coverImageIndex?: number;
-  page?:number
+  page?: number;
 }
 export interface IRentImagesPath {
   filename: string;

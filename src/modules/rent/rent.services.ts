@@ -1,5 +1,6 @@
 import { join } from "path";
 import IRent, {
+  ICreateRentPayload,
   IGetAllRentPayload,
   IGetAllRentQuery,
   IGetAllRentRequestedQuery,
@@ -14,11 +15,12 @@ const {
   findAllForHost,
   findAllListedRent,
   deleteListedRentItem,
+  createNewRent,
 } = RentRepositories;
 const RentServices = {
-  processInitializeRentListing: async ({ host,payload }: IRentPayload) => {
+  processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
     try {
-      const data = await initializedRentListing({ host,payload });
+      const data = await initializedRentListing({ host, payload });
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -40,6 +42,53 @@ const RentServices = {
       } else {
         throw new Error(
           "Unknown Error Occurred In initialize rent listing service"
+        );
+      }
+    }
+  },
+  processCreateRent: async ({ images, payload }: ICreateRentPayload) => {
+    try {
+      const {
+        allowableThings,
+        amenities,
+        cancellationPolicy,
+        category,
+        floorPlan,
+        description,
+        host,
+        houseRules,
+        listingFor,
+        price,
+        location,
+        title,
+      } = payload as IRent;
+      const uploadedImages = images?.map(
+        (item) => `/public/${item}`
+      ) as string[];
+      const postPayload: IRent = {
+        images: uploadedImages,
+        coverImage: uploadedImages[0],
+        allowableThings,
+        amenities,
+        cancellationPolicy,
+        category,
+        floorPlan,
+        description,
+        host,
+        houseRules,
+        listingFor,
+        price,
+        location,
+        title,
+      };
+      const data = await createNewRent(postPayload);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In rent listing image upload service"
         );
       }
     }

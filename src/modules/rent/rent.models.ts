@@ -27,12 +27,12 @@ const RentSchema = new Schema<IRent>({
   cancellationPolicy: { type: [String], default: null },
   host: { type: Types.ObjectId, ref: "User", require: true },
   houseRules: { type: [String], default: null },
-  listingFor: {
+  listingFor: [{
     type: Types.ObjectId,
     ref: "Feature",
     unique: true,
     default: null,
-  },
+  }],
   location: { type: String, default: null },
   price: { type: Number, default: null },
   status: {
@@ -41,6 +41,7 @@ const RentSchema = new Schema<IRent>({
     default: RentListingStatus.IN_PROGRESS,
   },
 });
+
 RentSchema.index(
   { category: 1 },
   { unique: true, partialFilterExpression: { category: { $type: "objectId" } } }
