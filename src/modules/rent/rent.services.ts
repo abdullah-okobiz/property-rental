@@ -16,9 +16,9 @@ const {
   deleteListedRentItem,
 } = RentRepositories;
 const RentServices = {
-  processInitializeRentListing: async ({ host }: IRentPayload) => {
+  processInitializeRentListing: async ({ host,payload }: IRentPayload) => {
     try {
-      const data = await initializedRentListing({ host });
+      const data = await initializedRentListing({ host,payload });
       return data;
     } catch (error) {
       if (error instanceof Error) {

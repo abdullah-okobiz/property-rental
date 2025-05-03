@@ -26,7 +26,10 @@ const RentControllers = {
   ) => {
     try {
       const { userId } = req.authenticateTokenDecoded;
+      const {listingFor}=req.body
+      const payload={listingFor} as IRent
       const data = await processInitializeRentListing({
+payload,
         host: userId,
       });
       res.status(201).json({

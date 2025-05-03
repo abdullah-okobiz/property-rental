@@ -6,9 +6,10 @@ import IRent, {
 } from "./rent.interfaces";
 import Rent from "./rent.models";
 const RentRepositories = {
-  initializedRentListing: async ({ host }: IRentPayload) => {
+  initializedRentListing: async ({ host, payload }: IRentPayload) => {
     try {
-      const data = new Rent({ host });
+      const { listingFor } = payload as IRent;
+      const data = new Rent({ host, listingFor });
       await data.save();
       return data;
     } catch (error) {
@@ -24,7 +25,6 @@ const RentRepositories = {
       const rent = await Rent.findById(rentId);
       const { price } = payload as IRent;
       if (!price) {
-        console.log(payload);
         const data = await Rent.findByIdAndUpdate(rentId, payload, {
           new: true,
           runValidators: true,
@@ -109,7 +109,12 @@ const RentRepositories = {
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
       const [data, total] = await Promise.all([
-        Rent.find(query).skip(skip).sort(sortOption),
+        Rent.find(query)
+          .skip(skip)
+          .sort(sortOption)
+          .populate("host")
+          .populate("listingFor")
+          .populate("category"),
         Rent.countDocuments(query),
       ]);
       return { data, total };
