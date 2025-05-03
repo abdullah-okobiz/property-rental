@@ -2,12 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import AmenitiesServices from "./amenities.services";
-import { IAmenitiesPayload } from "./amenities.interfaces";
+import IAmenities, { IAmenitiesPayload } from "./amenities.interfaces";
 const {
   processCreateAmenities,
   processDeleteAmenities,
   processRetrieveAllAmenities,
   processUpdateAmenities,
+  processUpdateAmenitiesField,
 } = AmenitiesServices;
 const AmenitiesControllers = {
   handleCreateAmenities: async (
@@ -33,6 +34,38 @@ const AmenitiesControllers = {
       next();
     }
   },
+  handleUpdateAmenitiesField: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    const { amenitiesLabel } = req.body as IAmenities;
+    console.log(amenitiesLabel);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res
+        .status(400)
+        .json({ status: "error", message: "Invalid amenities ID" });
+      return;
+    }
+    const amenitiesId = new mongoose.Types.ObjectId(id);
+
+    try {
+      const data = await processUpdateAmenitiesField({
+        amenitiesId,
+        amenitiesLabel,
+      });
+      res.status(200).json({
+        status: "success",
+        message: "Amenities field successful",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
   handleUpdateAmenities: async (
     req: Request,
     res: Response,
@@ -46,7 +79,9 @@ const AmenitiesControllers = {
     const newImage = req?.file?.filename;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      res
+        .status(400)
+        .json({ status: "error", message: "Invalid amenities ID" });
       return;
     }
     const amenitiesId = new mongoose.Types.ObjectId(id);

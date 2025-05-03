@@ -2,8 +2,13 @@ import { promises as fs } from "fs";
 import path, { join } from "path";
 import { IAmenitiesPayload } from "./amenities.interfaces";
 import AmenitiesRepositories from "./amenities.repositories";
-const { createAmenities, deleteAmenities, findAllAmenities, updateOneBlog } =
-  AmenitiesRepositories;
+const {
+  createAmenities,
+  deleteAmenities,
+  findAllAmenities,
+  updateOneBlog,
+  updateOneField,
+} = AmenitiesRepositories;
 const AmenitiesServices = {
   processCreateAmenities: async ({
     amenitiesImage,
@@ -35,6 +40,22 @@ const AmenitiesServices = {
       } else {
         await fs.unlink(filePath);
         throw new Error("Unknown Error Occurred In create amenities service");
+      }
+    }
+  },
+  processUpdateAmenitiesField: async ({
+    amenitiesId,
+    amenitiesLabel,
+  }: IAmenitiesPayload) => {
+    try {
+      return await updateOneField({ amenitiesId, amenitiesLabel });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Amenities field update service"
+        );
       }
     }
   },

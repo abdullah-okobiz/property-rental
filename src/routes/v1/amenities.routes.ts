@@ -10,6 +10,7 @@ const {
   handleDeleteAmenities,
   handleRetrieveAllAmenities,
   handleUpdateAmenities,
+  handleUpdateAmenitiesField,
 } = AmenitiesControllers;
 const router = Router();
 
@@ -31,7 +32,7 @@ router
     upload.single("amenitiesImage"),
     handleUpdateAmenities
   )
-  .patch(checkAccessToken, isAdmin)
+  .patch(checkAccessToken, isAdmin, handleUpdateAmenitiesField)
   .delete(checkAccessToken, isAdmin, isAmenitiesExist, handleDeleteAmenities);
 
 export default router;
