@@ -113,9 +113,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get All Listed Rent Operation"
-        );
+        throw new Error("Unknown Error Occurred In Rent Creation Operation");
       }
     }
   },

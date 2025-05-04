@@ -1,4 +1,6 @@
+import { Types } from "mongoose";
 import { documentPerPage } from "../../const";
+import User from "../user/user.model";
 import IFlat, {
   IFlatPayload,
   IGetAllFlatPayload,
@@ -31,7 +33,7 @@ const FlatRepositories = {
         });
       } else {
         if (
-          flat?.publishStatus === ListingPublishStatus.APPROVED ||
+          flat?.publishStatus === ListingPublishStatus.PUBLISHED ||
           flat?.publishStatus === ListingPublishStatus.PENDING
         ) {
           return await Flat.findByIdAndUpdate(
@@ -90,8 +92,22 @@ const FlatRepositories = {
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      if (query.email) {
+        const host = await User.findOne({ email: query.email });
+        if (host) {
+          query.host = host._id as Types.ObjectId;
+          delete query.email;
+        } else {
+          return { data: [], total: 0 };
+        }
+      }
       const [data, total] = await Promise.all([
-        Flat.find(query).skip(skip).sort(sortOption),
+        Flat.find(query)
+          .skip(skip)
+          .sort(sortOption)
+          .populate("host")
+          .populate("listingFor")
+          .populate("category"),
         Flat.countDocuments(query),
       ]);
       return { data, total };
@@ -102,6 +118,19 @@ const FlatRepositories = {
         throw new Error(
           "Unknown Error Occurred In Get All Listed Flat Operation"
         );
+      }
+    }
+  },
+  createNewFlat: async (payload: IFlat) => {
+    try {
+      const newRent = new Flat(payload);
+      await newRent.save();
+      return newRent;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Flat Creation Operation");
       }
     }
   },
