@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 export enum RentListingStatus {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
-  APPROVED = "approved",
+  PUBLISHED = "published",
+  UNPUBLISHED = "unpublished",
 }
 
 export interface IFloorPlan {
@@ -32,7 +33,7 @@ interface IRent {
 }
 export interface ICreateRentPayload {
   images?: string[];
-  payload?:IRent
+  payload?: IRent;
 }
 export interface IRentPayload {
   payload?: IRent;
@@ -49,13 +50,16 @@ export interface IRentImagesPath {
 }
 
 export interface IGetAllRentRequestedQuery {
-  publishStatus?: string;
+  search?: string;
+  status?: string;
   page?: number;
   sort?: 1 | -1;
 }
 
 export interface IGetAllRentQuery {
-  publishStatus?: string;
+  host?: Types.ObjectId;
+  email?: string;
+  status?: string;
 }
 
 export interface IGetAllRentPayload {

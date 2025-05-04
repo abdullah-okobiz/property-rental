@@ -83,7 +83,9 @@ const RentControllers = {
   },
   handleCreateRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { userId } = req.authenticateTokenDecoded;
       const payload = req.body as IRent;
+      payload.host = userId;
       const images = (req?.files as IRentImagesPath[])?.map(
         (item) => item.filename
       );
@@ -210,10 +212,11 @@ const RentControllers = {
   },
   handleGetAllRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { publishStatus, page, sort } =
+      const { status, page, sort, search } =
         req.query as IGetAllRentRequestedQuery;
       const { data, total } = await processGetAllListedRent({
-        publishStatus,
+        search,
+        status,
         page,
         sort,
       });
@@ -224,7 +227,8 @@ const RentControllers = {
       }`;
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
-        if (publishStatus) query.set("publishStatus", publishStatus);
+        if (search) query.set("search", search);
+        if (status) query.set("status", status);
         if (sort) query.set("sort", String(sort));
         query.set("page", String(pageNumber));
         return `${baseUrl}?${query.toString()}`;
@@ -237,7 +241,7 @@ const RentControllers = {
         currentPage > 1 ? buildQuery(currentPage - 1) : null;
       res.status(200).json({
         status: "success",
-        message: `All ${publishStatus} request found successful`,
+        message: `All Listed Item found successful`,
         totalRents,
         totalPages,
         currentPageUrl,

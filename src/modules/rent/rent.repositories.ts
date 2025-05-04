@@ -1,4 +1,6 @@
+import mongoose, { Types } from "mongoose";
 import { documentPerPage } from "../../const";
+import User from "../user/user.model";
 import IRent, {
   IGetAllRentPayload,
   IRentPayload,
@@ -32,7 +34,7 @@ const RentRepositories = {
         return data;
       } else {
         if (
-          rent?.status === RentListingStatus.APPROVED ||
+          rent?.status === RentListingStatus.PUBLISHED ||
           rent?.status === RentListingStatus.PENDING
         ) {
           const data = await Rent.findByIdAndUpdate(
@@ -123,13 +125,23 @@ const RentRepositories = {
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      if (query.email) {
+        const host = await User.findOne({ email: query.email });
+        if (host) {
+          query.host = host._id as Types.ObjectId;
+          delete query.email;
+        } else {
+          return { data: [], total: 0 };
+        }
+      }
       const [data, total] = await Promise.all([
         Rent.find(query)
           .skip(skip)
           .sort(sortOption)
           .populate("host")
           .populate("listingFor")
-          .populate("category"),
+          .populate("category")
+          .populate("amenities"),
         Rent.countDocuments(query),
       ]);
       return { data, total };

@@ -84,6 +84,10 @@ const RentServices = {
       const data = await createNewRent(postPayload);
       return data;
     } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
@@ -105,6 +109,10 @@ const RentServices = {
       const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
@@ -165,12 +173,14 @@ const RentServices = {
   },
   processGetAllListedRent: async ({
     page,
-    publishStatus,
+    status,
     sort,
+    search,
   }: IGetAllRentRequestedQuery) => {
     try {
       const query: IGetAllRentQuery = {};
-      if (publishStatus) query.publishStatus = String(publishStatus);
+      if (status) query.status = String(status);
+      if (search) query.email = String(search);
       const payload: IGetAllRentPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
