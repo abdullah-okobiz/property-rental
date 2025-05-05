@@ -162,8 +162,8 @@ const FlatServices = {
   }: IGetAllFlatRequestedQuery) => {
     try {
       const query: IGetAllFlatQuery = {};
-      if (isSold) query.isSold = isSold;
       if (search) query.email = String(search);
+      if (isSold) query.isSold = isSold;
       if (publishStatus) query.publishStatus = publishStatus;
       const payload: IGetAllFlatPayload = { query };
       if (page) payload.page = page;

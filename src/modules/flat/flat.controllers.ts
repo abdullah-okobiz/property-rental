@@ -178,18 +178,21 @@ const FlatControllers = {
         search,
       });
       const totalPages = Math.ceil(total / documentPerPage);
-      const totalUsers = total;
+      const totalFlat = total;
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
+
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
-        if (isSold) query.set("search", String(isSold));
+        if (isSold !== undefined) query.set("isSold", String(isSold));
         if (search) query.set("search", search);
         if (publishStatus) query.set("publishStatus", publishStatus);
         if (sort) query.set("sort", String(sort));
-        query.set("page", String(pageNumber));
-        return `${baseUrl}?${query.toString()}`;
+        if (pageNumber !== 1) query.set("page", String(pageNumber));
+
+        const queryString = query.toString();
+        return queryString ? `${baseUrl}?${queryString}` : baseUrl;
       };
       const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);
@@ -200,7 +203,7 @@ const FlatControllers = {
       res.status(200).json({
         status: "success",
         message: `All Listed Flat Item Retrieve successful`,
-        totalUsers,
+        totalFlat,
         totalPages,
         currentPageUrl,
         nextPageUrl,
@@ -221,9 +224,7 @@ const FlatControllers = {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
+        res.status(400).json({ status: "error", message: "Invalid Land ID" });
         return;
       }
       const flatId = new mongoose.Types.ObjectId(id);

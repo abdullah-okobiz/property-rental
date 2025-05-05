@@ -135,6 +135,7 @@ const RentRepositories = {
       const [data, total] = await Promise.all([
         Rent.find(query)
           .skip(skip)
+          .limit(documentPerPage)
           .sort(sortOption)
           .populate("host")
           .populate("listingFor")

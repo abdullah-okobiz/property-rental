@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 export enum ListingPublishStatus {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
-  APPROVED = "approved",
+  PUBLISHED = "published",
+  UNPUBLISHED = "unpublished",
 }
 
 interface ILand {
@@ -22,12 +23,19 @@ interface ILand {
   isSold?: boolean;
 }
 
+export interface ICreateLandPayload {
+  images?: string[];
+  payload?: ILand;
+}
+
 export interface ILandPayload {
   userId?: Types.ObjectId;
   reqBody?: ILand;
   landId?: Types.ObjectId;
   images?: string[];
   singleImage?: string;
+  isSold?: boolean;
+  publishStatus?: string;
 }
 
 export interface ILandImagesPath {
@@ -35,13 +43,18 @@ export interface ILandImagesPath {
 }
 
 export interface IGetAllLandRequestedQuery {
+  isSold?: boolean;
+  search?: string;
   publishStatus?: string;
   page?: number;
   sort?: 1 | -1;
 }
 
 export interface IGetAllLandQuery {
+  isSold?: boolean;
+  host?: Types.ObjectId;
   publishStatus?: string;
+  email?: string;
 }
 
 export interface IGetAllLandPayload {

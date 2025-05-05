@@ -225,13 +225,16 @@ const RentControllers = {
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
+
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
         if (search) query.set("search", search);
         if (status) query.set("status", status);
         if (sort) query.set("sort", String(sort));
-        query.set("page", String(pageNumber));
-        return `${baseUrl}?${query.toString()}`;
+        if (pageNumber !== 1) query.set("page", String(pageNumber));
+
+        const queryString = query.toString();
+        return queryString ? `${baseUrl}?${queryString}` : baseUrl;
       };
       const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);

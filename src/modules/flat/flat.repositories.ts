@@ -104,6 +104,7 @@ const FlatRepositories = {
       const [data, total] = await Promise.all([
         Flat.find(query)
           .skip(skip)
+          .limit(documentPerPage)
           .sort(sortOption)
           .populate("host")
           .populate("listingFor")
