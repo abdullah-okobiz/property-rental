@@ -178,7 +178,7 @@ const FlatControllers = {
         search,
       });
       const totalPages = Math.ceil(total / documentPerPage);
-      const totalFlat = total;
+      const totalContacts = total;
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
@@ -203,7 +203,7 @@ const FlatControllers = {
       res.status(200).json({
         status: "success",
         message: `All Listed Flat Item Retrieve successful`,
-        totalFlat,
+        totalContacts,
         totalPages,
         currentPageUrl,
         nextPageUrl,

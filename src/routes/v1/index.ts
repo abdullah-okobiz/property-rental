@@ -16,6 +16,7 @@ import Amenities from "./amenities.routes";
 import Rent from "./rent.routes";
 import Flat from "./flat.routes";
 import Land from "./land.routes";
+import Contacts from "./contacts.routes";
 export {
   UserRoutes,
   ProfileRoutes,
@@ -35,4 +36,5 @@ export {
   Rent,
   Flat,
   Land,
+  Contacts,
 };

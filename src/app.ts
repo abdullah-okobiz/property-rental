@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(multer().none());
+app.use(multer().none());
 app.use(cookieParser());
 app.use(cors(corsConfiguration));
 app.use(express.static("public"));
@@ -52,6 +52,7 @@ import {
   Rent,
   Flat,
   Land,
+  Contacts,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -72,6 +73,7 @@ app.use(baseUrl.v1, Amenities);
 app.use(baseUrl.v1, Rent);
 app.use(baseUrl.v1, Flat);
 app.use(baseUrl.v1, Land);
+app.use(baseUrl.v1, Contacts);
 
 app.use(globalErrorMiddleware);
 
