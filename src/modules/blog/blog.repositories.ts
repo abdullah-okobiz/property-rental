@@ -1,4 +1,4 @@
-import { IBlogPayload, IBlogUpdateField } from "./blog.interfaces";
+import { IBlogPayload, IBLogQuery, IBlogUpdateField } from "./blog.interfaces";
 import Blog from "./blog.models";
 
 const BlogRepositories = {
@@ -11,9 +11,14 @@ const BlogRepositories = {
       throw new Error("Unknown Error Occurred In Blog Creation Operation");
     }
   },
-  findAllBlogs: async () => {
+  findAllBlogs: async ({ feature }: IBlogPayload) => {
     try {
-      const data = await Blog.find({}).populate("feature", "featureName _id");
+      const query: IBLogQuery = {};
+      if (feature) query.feature = feature;
+      const data = await Blog.find(query).populate(
+        "feature",
+        "featureName _id"
+      );
       return data;
     } catch (error) {
       throw new Error("Unknown Error Occurred In Blog Retrieve Operation");

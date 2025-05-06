@@ -3,6 +3,7 @@ import logger from "../../configs/logger.configs";
 import BlogServices from "./blog.services";
 import IBlogInterfces, {
   IBlogPayload,
+  IBLogQuery,
   IBlogUpdateField,
 } from "./blog.interfaces";
 import mongoose from "mongoose";
@@ -45,7 +46,8 @@ const BlogControllers = {
     next: NextFunction
   ) => {
     try {
-      const data = await processRetrieveBlog();
+      const { feature } = req.query as IBLogQuery;
+      const data = await processRetrieveBlog({ feature });
       res.status(200).json({
         status: "success",
         message: "blog retrieve successful",

@@ -12,9 +12,9 @@ const {
 import { promises as fs } from "fs";
 
 const BlogServices = {
-  processRetrieveBlog: async () => {
+  processRetrieveBlog: async ({ feature }: IBlogPayload) => {
     try {
-      return await findAllBlogs();
+      return await findAllBlogs({ feature });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

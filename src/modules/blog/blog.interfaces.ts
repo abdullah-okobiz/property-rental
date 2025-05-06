@@ -15,6 +15,10 @@ export interface IBlogUpdateField {
   blogId?: Types.ObjectId;
 }
 
+export interface IBLogQuery {
+  feature?: Types.ObjectId;
+}
+
 interface IBlogInterfces extends Document {
   blogTitle?: string;
   blogImage?: string;
