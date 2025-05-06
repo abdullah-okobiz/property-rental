@@ -12,7 +12,13 @@ export interface IFlatFloorPlan {
 export enum ListingPublishStatus {
   IN_PROGRESS = "in_progress",
   PENDING = "pending",
-  APPROVED = "approved",
+  PUBLISHED = "published",
+  UNPUBLISHED = "unpublished",
+}
+
+export interface ICreateFlatPayload {
+  images?: string[];
+  payload?: IFlat;
 }
 
 interface IFlat {
@@ -39,6 +45,8 @@ export interface IFlatPayload {
   flatId?: Types.ObjectId;
   images?: string[];
   singleImage?: string;
+  isSold?: boolean;
+  publishStatus?: string;
 }
 
 export interface IFlatImagesPath {
@@ -46,12 +54,17 @@ export interface IFlatImagesPath {
 }
 
 export interface IGetAllFlatRequestedQuery {
+  isSold?: boolean;
+  search?: string;
   publishStatus?: string;
   page?: number;
   sort?: 1 | -1;
 }
 
 export interface IGetAllFlatQuery {
+  isSold?: boolean;
+  host?: Types.ObjectId;
+  email?: string;
   publishStatus?: string;
 }
 

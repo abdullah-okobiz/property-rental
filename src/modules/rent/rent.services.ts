@@ -1,5 +1,6 @@
 import { join } from "path";
 import IRent, {
+  ICreateRentPayload,
   IGetAllRentPayload,
   IGetAllRentQuery,
   IGetAllRentRequestedQuery,
@@ -14,11 +15,12 @@ const {
   findAllForHost,
   findAllListedRent,
   deleteListedRentItem,
+  createNewRent,
 } = RentRepositories;
 const RentServices = {
-  processInitializeRentListing: async ({ host }: IRentPayload) => {
+  processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
     try {
-      const data = await initializedRentListing({ host });
+      const data = await initializedRentListing({ host, payload });
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -44,6 +46,57 @@ const RentServices = {
       }
     }
   },
+  processCreateRent: async ({ images, payload }: ICreateRentPayload) => {
+    try {
+      const {
+        allowableThings,
+        amenities,
+        cancellationPolicy,
+        category,
+        floorPlan,
+        description,
+        host,
+        houseRules,
+        listingFor,
+        price,
+        location,
+        title,
+      } = payload as IRent;
+      const uploadedImages = images?.map(
+        (item) => `/public/${item}`
+      ) as string[];
+      const postPayload: IRent = {
+        images: uploadedImages,
+        coverImage: uploadedImages[0],
+        allowableThings,
+        amenities,
+        cancellationPolicy,
+        category,
+        floorPlan,
+        description,
+        host,
+        houseRules,
+        listingFor,
+        price,
+        location,
+        title,
+      };
+      const data = await createNewRent(postPayload);
+      return data;
+    } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In rent listing image upload service"
+        );
+      }
+    }
+  },
   processUploadImage: async ({ images, rentId }: IRentPayload) => {
     try {
       const uploadedImages = images?.map(
@@ -56,6 +109,10 @@ const RentServices = {
       const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
@@ -116,12 +173,14 @@ const RentServices = {
   },
   processGetAllListedRent: async ({
     page,
-    publishStatus,
+    status,
     sort,
+    search,
   }: IGetAllRentRequestedQuery) => {
     try {
       const query: IGetAllRentQuery = {};
-      if (publishStatus) query.publishStatus = String(publishStatus);
+      if (status) query.status = String(status);
+      if (search) query.email = String(search);
       const payload: IGetAllRentPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;

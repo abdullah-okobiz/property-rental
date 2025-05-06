@@ -1,9 +1,14 @@
 import { promises as fs } from "fs";
-import { join } from "path";
+import path, { join } from "path";
 import { IAmenitiesPayload } from "./amenities.interfaces";
 import AmenitiesRepositories from "./amenities.repositories";
-const { createAmenities, deleteAmenities, findAllAmenities } =
-  AmenitiesRepositories;
+const {
+  createAmenities,
+  deleteAmenities,
+  findAllAmenities,
+  updateOneBlog,
+  updateOneField,
+} = AmenitiesRepositories;
 const AmenitiesServices = {
   processCreateAmenities: async ({
     amenitiesImage,
@@ -38,7 +43,57 @@ const AmenitiesServices = {
       }
     }
   },
-
+  processUpdateAmenitiesField: async ({
+    amenitiesId,
+    amenitiesLabel,
+  }: IAmenitiesPayload) => {
+    try {
+      return await updateOneField({ amenitiesId, amenitiesLabel });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Amenities field update service"
+        );
+      }
+    }
+  },
+  processUpdateAmenities: async ({
+    amenitiesId,
+    amenitiesImage,
+    amenitiesLabel,
+    amenitiesOldImage,
+  }: IAmenitiesPayload) => {
+    const image = amenitiesOldImage as string;
+    const relativeImagePath = path.basename(image);
+    const oldFilePath = join(__dirname, "../../../public", relativeImagePath);
+    const newImageFilePath = join(
+      __dirname,
+      "../../../public",
+      amenitiesImage as string
+    );
+    try {
+      const updatedData = await updateOneBlog({
+        amenitiesId,
+        amenitiesLabel,
+        amenitiesImage: `/public/${amenitiesImage}`,
+      });
+      if (!updatedData) {
+        fs.unlink(newImageFilePath);
+      }
+      fs.unlink(oldFilePath);
+      return updatedData;
+    } catch (error) {
+      if (error instanceof Error) {
+        await fs.unlink(newImageFilePath);
+        throw error;
+      } else {
+        await fs.unlink(newImageFilePath);
+        throw new Error("Unknown Error Occurred In update amenities service");
+      }
+    }
+  },
   processRetrieveAllAmenities: async () => {
     try {
       const data = await findAllAmenities();

@@ -43,7 +43,6 @@ const UserRepositories = {
   },
   findUserByEmail: async (email: string): Promise<IUser | null> => {
     try {
-      console.log(email);
       const foundedUser = await User.findOne({ email });
       if (!foundedUser) return null;
       return foundedUser;

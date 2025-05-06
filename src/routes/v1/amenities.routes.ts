@@ -9,15 +9,30 @@ const {
   handleCreateAmenities,
   handleDeleteAmenities,
   handleRetrieveAllAmenities,
+  handleUpdateAmenities,
+  handleUpdateAmenitiesField,
 } = AmenitiesControllers;
 const router = Router();
 
 router
   .route("/admin/amenities")
   .get(handleRetrieveAllAmenities)
-  .post(checkAccessToken, isAdmin,upload.single("amenitiesImage"), handleCreateAmenities);
+  .post(
+    checkAccessToken,
+    isAdmin,
+    upload.single("amenitiesImage"),
+    handleCreateAmenities
+  );
 router
   .route("/admin/amenities/:id")
+  .put(
+    checkAccessToken,
+    isAdmin,
+    isAmenitiesExist,
+    upload.single("amenitiesImage"),
+    handleUpdateAmenities
+  )
+  .patch(checkAccessToken, isAdmin, handleUpdateAmenitiesField)
   .delete(checkAccessToken, isAdmin, isAmenitiesExist, handleDeleteAmenities);
 
 export default router;

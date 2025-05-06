@@ -1,4 +1,6 @@
+import mongoose, { Types } from "mongoose";
 import { documentPerPage } from "../../const";
+import User from "../user/user.model";
 import IRent, {
   IGetAllRentPayload,
   IRentPayload,
@@ -6,9 +8,10 @@ import IRent, {
 } from "./rent.interfaces";
 import Rent from "./rent.models";
 const RentRepositories = {
-  initializedRentListing: async ({ host }: IRentPayload) => {
+  initializedRentListing: async ({ host, payload }: IRentPayload) => {
     try {
-      const data = new Rent({ host });
+      const { listingFor } = payload as IRent;
+      const data = new Rent({ host, listingFor });
       await data.save();
       return data;
     } catch (error) {
@@ -24,7 +27,6 @@ const RentRepositories = {
       const rent = await Rent.findById(rentId);
       const { price } = payload as IRent;
       if (!price) {
-        console.log(payload);
         const data = await Rent.findByIdAndUpdate(rentId, payload, {
           new: true,
           runValidators: true,
@@ -32,7 +34,7 @@ const RentRepositories = {
         return data;
       } else {
         if (
-          rent?.status === RentListingStatus.APPROVED ||
+          rent?.status === RentListingStatus.PUBLISHED ||
           rent?.status === RentListingStatus.PENDING
         ) {
           const data = await Rent.findByIdAndUpdate(
@@ -102,14 +104,43 @@ const RentRepositories = {
       }
     }
   },
+  createNewRent: async (payload: IRent) => {
+    try {
+      const newRent = new Rent(payload);
+      await newRent.save();
+      return newRent;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Rent Creation Operation");
+      }
+    }
+  },
   findAllListedRent: async ({ query, page, sort }: IGetAllRentPayload) => {
     try {
       const currentPage = page ?? 1;
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      if (query.email) {
+        const host = await User.findOne({ email: query.email });
+        if (host) {
+          query.host = host._id as Types.ObjectId;
+          delete query.email;
+        } else {
+          return { data: [], total: 0 };
+        }
+      }
       const [data, total] = await Promise.all([
-        Rent.find(query).skip(skip).sort(sortOption),
+        Rent.find(query)
+          .skip(skip)
+          .limit(documentPerPage)
+          .sort(sortOption)
+          .populate("host")
+          .populate("listingFor")
+          .populate("category")
+          .populate("amenities"),
         Rent.countDocuments(query),
       ]);
       return { data, total };

@@ -1,4 +1,5 @@
 import ILand, {
+  ICreateLandPayload,
   IGetAllLandPayload,
   IGetAllLandQuery,
   IGetAllLandRequestedQuery,
@@ -14,6 +15,7 @@ const {
   findAllListedLand,
   initializeLandListing,
   updateLandListing,
+  createNewLand,
 } = LandRepositories;
 
 const LandServices = {
@@ -43,6 +45,63 @@ const LandServices = {
       }
     }
   },
+  processCreateLand: async ({ images, payload }: ICreateLandPayload) => {
+    try {
+      const {
+        category,
+        description,
+        host,
+        listingFor,
+        price,
+        location,
+        title,
+        video,
+        landSize,
+      } = payload as ILand;
+      const uploadedImages = images?.map(
+        (item) => `/public/${item}`
+      ) as string[];
+      const postPayload: ILand = {
+        images: uploadedImages,
+        coverImage: uploadedImages[0],
+        category,
+        description,
+        host,
+        listingFor,
+        price,
+        location,
+        title,
+        video,
+        landSize,
+      };
+      const data = await createNewLand(postPayload);
+      return data;
+    } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In rent listing image upload service"
+        );
+      }
+    }
+  },
+  processChangeStatus: async ({ landId, reqBody }: ILandPayload) => {
+    try {
+      const data = await updateLandListing({ landId, reqBody });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In change status service");
+      }
+    }
+  },
   processUploadImage: async ({ landId, images }: ILandPayload) => {
     try {
       const uploadedImages = images?.map(
@@ -54,6 +113,10 @@ const LandServices = {
       };
       return await updateLandListing({ landId, reqBody });
     } catch (error) {
+      const filePaths = images?.map((item) =>
+        join(__dirname, "../../../public", item)
+      );
+      filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
@@ -102,6 +165,8 @@ const LandServices = {
     page,
     publishStatus,
     sort,
+    isSold,
+    search,
   }: IGetAllLandRequestedQuery) => {
     try {
       const query: IGetAllLandQuery = {};
@@ -109,6 +174,8 @@ const LandServices = {
       const payload: IGetAllLandPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
+      if (isSold) query.isSold = isSold;
+      if (search) query.email = String(search);
       return await findAllListedLand(payload);
     } catch (error) {
       if (error instanceof Error) {

@@ -3,7 +3,7 @@ import logger from "../../configs/logger.configs";
 import mongoose from "mongoose";
 import { documentPerPage } from "../../const";
 import LandServices from "./land.services";
-import  {
+import ILand, {
   IGetAllLandRequestedQuery,
   ILandImagesPath,
 } from "./land.interfaces";
@@ -16,6 +16,8 @@ const {
   processUnlinkImage,
   processUpdateLandListing,
   processUploadImage,
+  processCreateLand,
+  processChangeStatus,
 } = LandServices;
 
 const LandControllers = {
@@ -30,6 +32,54 @@ const LandControllers = {
       res.status(201).json({
         status: "success",
         message: "new land listing initialized",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleCreateLand: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded;
+      const payload = req.body as ILand;
+      payload.host = userId;
+      const images = (req?.files as ILandImagesPath[])?.map(
+        (item) => item.filename
+      );
+      const data = await processCreateLand({ images, payload });
+      res.status(200).json({
+        status: "success",
+        message: "New Land Created",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleChangeStatus: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: "error", message: "Invalid Land ID" });
+        return;
+      }
+      const landId = new mongoose.Types.ObjectId(id);
+      const { status, isSold } = req.body;
+      const reqBody: ILand = {};
+      if (status) reqBody.publishStatus = status;
+      if (isSold) reqBody.isSold = isSold;
+      const data = await processChangeStatus({ landId, reqBody });
+      res.status(200).json({
+        status: "success",
+        message: `Listed item status Changed to ${status}`,
         data,
       });
     } catch (error) {
@@ -146,25 +196,45 @@ const LandControllers = {
   },
   handleGetAllLand: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { publishStatus, page, sort } =
+      const { publishStatus, page, sort, search, isSold } =
         req.query as IGetAllLandRequestedQuery;
       const { data, total } = await processGetAllListedLand({
         publishStatus,
         page,
         sort,
+        search,
+        isSold,
       });
       const totalPages = Math.ceil(total / documentPerPage);
-      const totalUsers = total;
+      const totalLand = total;
+      // const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+      //   req.path
+      // }`;
+      // const buildQuery = (pageNumber: number) => {
+      //   const query = new URLSearchParams();
+      //   if (isSold) query.set("search", String(isSold));
+      //   if (search) query.set("search", search);
+      //   if (publishStatus) query.set("publishStatus", publishStatus);
+      //   if (sort) query.set("sort", String(sort));
+      //   query.set("page", String(pageNumber));
+      //   return `${baseUrl}?${query.toString()}`;
+      // };
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
+
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
+        if (isSold !== undefined) query.set("isSold", String(isSold));
+        if (search) query.set("search", search);
         if (publishStatus) query.set("publishStatus", publishStatus);
         if (sort) query.set("sort", String(sort));
-        query.set("page", String(pageNumber));
-        return `${baseUrl}?${query.toString()}`;
+        if (pageNumber !== 1) query.set("page", String(pageNumber));
+
+        const queryString = query.toString();
+        return queryString ? `${baseUrl}?${queryString}` : baseUrl;
       };
+
       const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);
       const nextPageUrl =
@@ -173,8 +243,8 @@ const LandControllers = {
         currentPage > 1 ? buildQuery(currentPage - 1) : null;
       res.status(200).json({
         status: "success",
-        message: `All ${publishStatus} request found successful`,
-        totalUsers,
+        message: `All Listed Land Item Retrieve successful`,
+        totalLand,
         totalPages,
         currentPageUrl,
         nextPageUrl,

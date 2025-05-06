@@ -1,9 +1,14 @@
 import { Document, Types } from "mongoose";
 
-interface ITeam extends Document {
-  teamMemberName: string;
-  teamMemberDesignation: string;
-  teamMemberImage: string;
+interface ITeam {
+  teamMemberName?: string;
+  teamMemberDesignation?: string;
+  teamMemberImage?: string;
+}
+
+export interface ITeamUpdateFieldPayload {
+  payload?: ITeam;
+  teamMemberId?: Types.ObjectId;
 }
 
 export interface ITeamPayload {

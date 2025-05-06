@@ -17,6 +17,7 @@ const {
   processChangeStatus,
   processGetAllListedRent,
   processDeleteListedRentItem,
+  processCreateRent,
 } = RentServices;
 const RentControllers = {
   handleInitializeRentListing: async (
@@ -26,7 +27,10 @@ const RentControllers = {
   ) => {
     try {
       const { userId } = req.authenticateTokenDecoded;
+      const { listingFor } = req.body;
+      const payload = { listingFor } as IRent;
       const data = await processInitializeRentListing({
+        payload,
         host: userId,
       });
       res.status(201).json({
@@ -69,6 +73,26 @@ const RentControllers = {
       res.status(200).json({
         status: "success",
         message: "New Field Data Added",
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleCreateRent: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.authenticateTokenDecoded;
+      const payload = req.body as IRent;
+      payload.host = userId;
+      const images = (req?.files as IRentImagesPath[])?.map(
+        (item) => item.filename
+      );
+      const data = await processCreateRent({ images, payload });
+      res.status(200).json({
+        status: "success",
+        message: "New Rent Created",
         data,
       });
     } catch (error) {
@@ -188,24 +212,29 @@ const RentControllers = {
   },
   handleGetAllRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { publishStatus, page, sort } =
+      const { status, page, sort, search } =
         req.query as IGetAllRentRequestedQuery;
       const { data, total } = await processGetAllListedRent({
-        publishStatus,
+        search,
+        status,
         page,
         sort,
       });
       const totalPages = Math.ceil(total / documentPerPage);
-      const totalUsers = total;
+      const totalRents = total;
       const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
         req.path
       }`;
+
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
-        if (publishStatus) query.set("publishStatus", publishStatus);
+        if (search) query.set("search", search);
+        if (status) query.set("status", status);
         if (sort) query.set("sort", String(sort));
-        query.set("page", String(pageNumber));
-        return `${baseUrl}?${query.toString()}`;
+        if (pageNumber !== 1) query.set("page", String(pageNumber));
+
+        const queryString = query.toString();
+        return queryString ? `${baseUrl}?${queryString}` : baseUrl;
       };
       const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);
@@ -215,8 +244,8 @@ const RentControllers = {
         currentPage > 1 ? buildQuery(currentPage - 1) : null;
       res.status(200).json({
         status: "success",
-        message: `All ${publishStatus} request found successful`,
-        totalUsers,
+        message: `All Listed Rent Item Retrieve successful`,
+        totalRents,
         totalPages,
         currentPageUrl,
         nextPageUrl,

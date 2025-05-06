@@ -9,9 +9,11 @@ const {
   handleUpdateFlatListingField,
   handleUploadImage,
   handleUnlinkImage,
-  handleGetAllHostListedPropertiesForRent,
+  handleGetAllHostListedPropertiesForFlat,
   handleGetAllFlat,
   handleDeleteListedFlatItem,
+  handleChangeStatus,
+  handleCreateFlat,
 } = FlatControllers;
 
 const router = Router();
@@ -20,6 +22,9 @@ const router = Router();
 router
   .route("/host/flat/initialize")
   .post(checkAccessToken, isHost, handleInitializeFlatListing);
+router
+  .route("/host/create-new-flat")
+  .post(checkAccessToken, isHost, upload.array("images"), handleCreateFlat);
 router
   .route("/host/flat/:id")
   .patch(checkAccessToken, isHost, handleUpdateFlatListingField);
@@ -31,7 +36,7 @@ router
   .delete(checkAccessToken, isHost, handleUnlinkImage);
 router
   .route("/host/flat")
-  .get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForRent);
+  .get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForFlat);
 
 // COMMON GET ALL LISTED FLAT ENDPOINT
 router.route("/flat").get(handleGetAllFlat);
@@ -40,7 +45,7 @@ router.route("/flat").get(handleGetAllFlat);
 
 router
   .route("/admin/flat/:id")
-  .patch(checkAccessToken, isAdmin, handleUpdateFlatListingField)
+  .patch(checkAccessToken, isAdmin, handleChangeStatus)
   .delete(checkAccessToken, isAdmin, handleDeleteListedFlatItem);
 
 export default router;

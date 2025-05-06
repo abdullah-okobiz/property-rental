@@ -1,4 +1,4 @@
-import { ITeamPayload } from "./team.interfaces";
+import { ITeamPayload, ITeamUpdateFieldPayload } from "./team.interfaces";
 import Team from "./team.models";
 
 const TeamRepositories = {
@@ -13,7 +13,21 @@ const TeamRepositories = {
       );
     }
   },
-
+  updateTeamField: async ({
+    payload,
+    teamMemberId,
+  }: ITeamUpdateFieldPayload) => {
+    try {
+      const data = await Team.findByIdAndUpdate(teamMemberId, payload, {
+        new: true,
+      });
+      return data;
+    } catch (error) {
+      throw new Error(
+        "Unknown Error Occurred In Team Member Retrieve Operation"
+      );
+    }
+  },
   findAllTeamMembers: async () => {
     try {
       const data = await Team.find({});

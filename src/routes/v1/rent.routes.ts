@@ -13,13 +13,16 @@ const {
   handleChangeStatus,
   handleGetAllRent,
   handleDeleteListedRentItem,
+  handleCreateRent,
 } = RentControllers;
 const router = Router();
 
 router
   .route("/host/rent/new")
   .post(checkAccessToken, isHost, handleInitializeRentListing);
-
+router
+  .route("/host/create-new-rent")
+  .post(checkAccessToken, isHost, upload.array("rentImages"), handleCreateRent);
 router
   .route("/host/rent/:id")
   .patch(checkAccessToken, isHost, handleProgressCreatingRentListing);
@@ -32,6 +35,7 @@ router
     upload.array("rentImages"),
     handleUploadImage
   )
+
   .delete(checkAccessToken, isHost, handleUnlinkImage);
 
 router

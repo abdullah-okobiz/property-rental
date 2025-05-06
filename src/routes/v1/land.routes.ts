@@ -12,6 +12,8 @@ const {
   handleGetAllHostListedLand,
   handleGetAllLand,
   handleDeleteListedLandItem,
+  handleChangeStatus,
+  handleCreateLand,
 } = LandControllers;
 
 const router = Router();
@@ -20,6 +22,9 @@ const router = Router();
 router
   .route("/host/land/initialize")
   .post(checkAccessToken, isHost, handleInitializeLandListing);
+router
+  .route("/host/create-new-land")
+  .post(checkAccessToken, isHost, upload.array("images"), handleCreateLand);
 router
   .route("/host/land/:id")
   .patch(checkAccessToken, isHost, handleUpdateLandListingField);
@@ -40,7 +45,7 @@ router.route("/land").get(handleGetAllLand);
 
 router
   .route("/admin/land/:id")
-  .patch(checkAccessToken, isAdmin, handleUpdateLandListingField)
+  .patch(checkAccessToken, isAdmin, handleChangeStatus)
   .delete(checkAccessToken, isAdmin, handleDeleteListedLandItem);
 
 export default router;

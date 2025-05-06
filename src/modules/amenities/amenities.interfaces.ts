@@ -8,6 +8,7 @@ interface IAmenities extends Document {
 export interface IAmenitiesPayload {
   amenitiesLabel?: string;
   amenitiesImage?: string;
+  amenitiesOldImage?: string;
   amenitiesId?: Types.ObjectId;
 }
 

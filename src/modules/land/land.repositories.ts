@@ -1,4 +1,6 @@
+import { Types } from "mongoose";
 import { documentPerPage } from "../../const";
+import User from "../user/user.model";
 import ILand, {
   IGetAllLandPayload,
   ILandPayload,
@@ -20,19 +22,32 @@ const LandRepositories = {
       }
     }
   },
+  createNewLand: async (payload: ILand) => {
+    try {
+      const newRent = new Land(payload);
+      await newRent.save();
+      return newRent;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Rent Creation Operation");
+      }
+    }
+  },
   updateLandListing: async ({ landId, reqBody }: ILandPayload) => {
     try {
       const land = await Land.findById(landId);
       const { price } = reqBody as ILand;
       if (!price) {
-        console.log(reqBody)
+        console.log(reqBody);
         return await Land.findByIdAndUpdate(landId, reqBody, {
           new: true,
           runValidators: true,
         });
       } else {
         if (
-          land?.publishStatus === ListingPublishStatus.APPROVED ||
+          land?.publishStatus === ListingPublishStatus.PUBLISHED ||
           land?.publishStatus === ListingPublishStatus.PENDING
         ) {
           return await Land.findByIdAndUpdate(
@@ -91,8 +106,23 @@ const LandRepositories = {
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      if (query.email) {
+        const host = await User.findOne({ email: query.email });
+        if (host) {
+          query.host = host._id as Types.ObjectId;
+          delete query.email;
+        } else {
+          return { data: [], total: 0 };
+        }
+      }
       const [data, total] = await Promise.all([
-        Land.find(query).skip(skip).sort(sortOption),
+        Land.find(query)
+          .skip(skip)
+          .limit(documentPerPage)
+          .sort(sortOption)
+          .populate("host")
+          .populate("listingFor")
+          .populate("category"),
         Land.countDocuments(query),
       ]);
       return { data, total };

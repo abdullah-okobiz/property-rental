@@ -6,10 +6,13 @@ import corsConfiguration from "./configs/cors.configs";
 import { baseUrl } from "./const";
 import { globalErrorMiddleware } from "./middlewares/globalError.middleware";
 import cookieParser from "cookie-parser";
+import multer from "multer";
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(multer().none());
 app.use(cookieParser());
 app.use(cors(corsConfiguration));
 app.use(express.static("public"));
@@ -29,6 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 /* ====================================|
 |------------APP ROUTES V1-------------|
 |==================================== */
+
 import {
   BlogRoutes,
   ProfileRoutes,
@@ -48,6 +52,7 @@ import {
   Rent,
   Flat,
   Land,
+  Contacts,
 } from "./routes/v1";
 
 app.use(baseUrl.v1, UserRoutes);
@@ -68,6 +73,7 @@ app.use(baseUrl.v1, Amenities);
 app.use(baseUrl.v1, Rent);
 app.use(baseUrl.v1, Flat);
 app.use(baseUrl.v1, Land);
+app.use(baseUrl.v1, Contacts);
 
 app.use(globalErrorMiddleware);
 
