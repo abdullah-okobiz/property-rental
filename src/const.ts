@@ -1,5 +1,5 @@
 export const corsWhiteList = ["http://localhost:5173", "http://localhost:3000"];
-export const accessTokenExpiresIn = "30min";
+export const accessTokenExpiresIn = "7d";
 export const refreshTokenExpiresIn = "7d";
 export const saltRound = 10;
 export const emailRegex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
@@ -9,5 +9,7 @@ export const baseUrl = {
 export const documentPerPage = 9;
 export const rejectionEmailSubject =
   "Identity Verification Failed – Action Needed";
-export const approvedEmailSubject="Success! Your Identity Has Been Verified on Stayverz"
-export const accountSuspendedEmailSubject='Your Stayverz Account Has Been Suspended Due to Policy Violation'
+export const approvedEmailSubject =
+  "Success! Your Identity Has Been Verified on Stayverz";
+export const accountSuspendedEmailSubject =
+  "Your Stayverz Account Has Been Suspended Due to Policy Violation";
