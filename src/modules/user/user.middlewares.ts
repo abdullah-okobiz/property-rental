@@ -176,8 +176,6 @@ const UserMiddlewares = {
   },
   checkAccessToken: async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-    console.log("authorization", req.headers);
-    console.log("authorization", authHeader);
     try {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.status(401).json({

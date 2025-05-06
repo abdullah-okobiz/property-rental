@@ -5,6 +5,10 @@ export enum UserRole {
   Host = "host",
   Guest = "guest",
   Admin = "admin",
+  ListingVerificationManager = "listingVerificationManager",
+  FinanceManager = "financeManager",
+  ContentManager = "contentManager",
+  AccountAdministrator = "accountAdministrator",
 }
 
 export enum AccountStatus {
