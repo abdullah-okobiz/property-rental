@@ -2,8 +2,9 @@ import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import RentControllers from "../../modules/rent/rent.controllers";
 import upload from "../../middlewares/multer.middleware";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
-const { checkAccessToken, isHost, isAdmin } = UserMiddlewares;
+const { checkAccessToken, isHost, allowRole } = UserMiddlewares;
 const {
   handleInitializeRentListing,
   handleProgressCreatingRentListing,
@@ -44,8 +45,16 @@ router
 
 router
   .route("/admin/rent/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStatus)
-  .delete(checkAccessToken, isAdmin, handleDeleteListedRentItem);
+  .patch(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleChangeStatus
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleDeleteListedRentItem
+  );
 
 router.route("/rent").get(handleGetAllRent);
 

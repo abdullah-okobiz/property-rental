@@ -1,7 +1,8 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import VissionControllers from "../../modules/vission/vission.controllers";
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateVission,
   handleDeleteVission,
@@ -13,12 +14,24 @@ const router = Router();
 
 router
   .route("/admin/vission")
-  .post(checkAccessToken, isAdmin, handleCreateVission)
-  .get( handleRetrieveAllVission);
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateVission
+  )
+  .get(handleRetrieveAllVission);
 
 router
   .route("/admin/vission/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateVission)
-  .delete(checkAccessToken, isAdmin, handleDeleteVission);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateVission
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteVission
+  );
 
 export default router;

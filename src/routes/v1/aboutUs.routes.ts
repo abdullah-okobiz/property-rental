@@ -1,8 +1,9 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import AboutUsControllers from "../../modules/aboutUs/aboutUs.controllers";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateAboutUs,
   handleDeleteAboutUs,
@@ -14,11 +15,23 @@ const router = Router();
 
 router
   .route("/admin/about_us")
-  .post(checkAccessToken, isAdmin, handleCreateAboutUs)
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateAboutUs
+  )
   .get(handleRetriveAboutUs);
 
 router
   .route("/admin/about_us/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateAboutUs)
-  .delete(checkAccessToken, isAdmin, handleDeleteAboutUs);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateAboutUs
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteAboutUs
+  );
 export default router;

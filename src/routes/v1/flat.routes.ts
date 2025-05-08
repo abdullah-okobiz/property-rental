@@ -2,8 +2,9 @@ import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import upload from "../../middlewares/multer.middleware";
 import FlatControllers from "../../modules/flat/flat.controllers";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
-const { checkAccessToken, isHost, isAdmin } = UserMiddlewares;
+const { checkAccessToken, isHost, allowRole } = UserMiddlewares;
 const {
   handleInitializeFlatListing,
   handleUpdateFlatListingField,
@@ -45,7 +46,15 @@ router.route("/flat").get(handleGetAllFlat);
 
 router
   .route("/admin/flat/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStatus)
-  .delete(checkAccessToken, isAdmin, handleDeleteListedFlatItem);
+  .patch(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleChangeStatus
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleDeleteListedFlatItem
+  );
 
 export default router;

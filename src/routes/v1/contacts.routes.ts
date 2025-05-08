@@ -1,13 +1,14 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import ContactsControllers from "../../modules/contacts/contacts.controllers";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
 const {
   handleCreateContactMessage,
   handleDeleteContactMessage,
   handleFindAllContactsMessages,
 } = ContactsControllers;
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+const { checkAccessToken, allowRole } = UserMiddlewares;
 
 const router = Router();
 
@@ -19,6 +20,6 @@ router
 
 router
   .route("/admin/contacts/:id")
-  .delete(checkAccessToken, isAdmin, handleDeleteContactMessage);
+  .delete(checkAccessToken, allowRole(UserRole.Admin,UserRole.AccountAdministrator), handleDeleteContactMessage);
 
 export default router;

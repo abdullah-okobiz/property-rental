@@ -1,8 +1,9 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import SubCategoryControllers from "../../modules/subCategory/subCategory.controllers";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateSubCategory,
   handleDeleteSubCategory,
@@ -13,12 +14,24 @@ const router = Router();
 
 router
   .route("/admin/sub_category")
-  .post(checkAccessToken, isAdmin, handleCreateSubCategory)
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateSubCategory
+  )
   .get(handleRetrieveSubCategories);
 
 router
   .route("/admin/sub_category/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateSubCategory)
-  .delete(checkAccessToken, isAdmin, handleDeleteSubCategory);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateSubCategory
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteSubCategory
+  );
 
 export default router;

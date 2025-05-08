@@ -1,7 +1,8 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import WhyChooseUsControllers from "../../modules/whyChooseUs/whyChooseUs.controllers";
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateWhyChooseUs,
   handleDeleteWhyChooseUs,
@@ -13,12 +14,24 @@ const router = Router();
 
 router
   .route("/admin/why-choose-us")
-  .post(checkAccessToken, isAdmin, handleCreateWhyChooseUs)
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateWhyChooseUs
+  )
   .get(handleRetrieveAllWhyChooseUs);
 
 router
   .route("/admin/why-choose-us/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateWhyChooseUs)
-  .delete(checkAccessToken, isAdmin, handleDeleteWhyChooseUs);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateWhyChooseUs
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteWhyChooseUs
+  );
 
 export default router;

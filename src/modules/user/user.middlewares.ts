@@ -106,6 +106,21 @@ const UserMiddlewares = {
       return;
     }
   },
+  allowRole: (...allowedRoles: UserRole[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+      const role = req?.authenticateTokenDecoded?.role;
+
+      if (!role || !allowedRoles.includes(role)) {
+        res.status(403).json({
+          status: "error",
+          message: "You do not have permission to access this resource",
+        });
+        return;
+      }
+
+      next();
+    };
+  },
   isAdmin: async (req: Request, res: Response, next: NextFunction) => {
     const role = req?.authenticateTokenDecoded?.role;
     if (role !== UserRole.Admin) {
@@ -148,18 +163,6 @@ const UserMiddlewares = {
         });
         return;
     }
-    next();
-  },
-  isAdminOrHost: async (req: Request, res: Response, next: NextFunction) => {
-    const role = req?.authenticateTokenDecoded?.role;
-
-    if (role !== UserRole.Admin && role !== UserRole.Host) {
-      return res.status(403).json({
-        status: "error",
-        message: "You do not have permission to access this resource",
-      });
-    }
-
     next();
   },
   checkVerificationOtp: async (

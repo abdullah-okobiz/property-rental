@@ -3,8 +3,9 @@ import UserMiddlewares from "../../modules/user/user.middlewares";
 import PartnerControllers from "../../modules/partner/partner.controllers";
 import upload from "../../middlewares/multer.middleware";
 import PartnerMiddlewares from "../../modules/partner/partner.middlewares";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreatePartner,
   handleDeletePartner,
@@ -20,20 +21,25 @@ router
   .route("/admin/partner")
   .post(
     checkAccessToken,
-    isAdmin,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
     upload.single("partnerImage"),
     handleCreatePartner
   )
-  .get( handleRetrieveAllPartner);
+  .get(handleRetrieveAllPartner);
 
 router
   .route("/admin/partner/:id")
   .put(
     checkAccessToken,
-    isAdmin,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
     upload.single("partnerImage"),
     handleUpdatePartner
   )
-  .delete(checkAccessToken, isAdmin, isPartnerExist, handleDeletePartner);
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    isPartnerExist,
+    handleDeletePartner
+  );
 
 export default router;
