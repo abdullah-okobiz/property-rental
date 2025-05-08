@@ -3,7 +3,7 @@ import IRent, { IFloorPlan, RentListingStatus } from "./rent.interfaces";
 
 const FloorPlanSchema = new Schema<IFloorPlan>(
   {
-    bedRoomCount: { type: Number, default: 0 },
+    bedroomCount: { type: Number, default: 0 },
     bathCount: { type: Number, default: 0 },
     bedCount: { type: Number, default: 0 },
     guestCount: { type: Number, default: 0 },

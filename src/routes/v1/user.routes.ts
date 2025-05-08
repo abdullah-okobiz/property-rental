@@ -50,12 +50,17 @@ router
 
 router
   .route("/admin/create-staff")
-  .post(checkAccessToken, isAdmin, handleCreateStaff);
+  .post(checkAccessToken, isAdmin, isSignupUserExist, handleCreateStaff);
 router.route("/admin/staff").get(checkAccessToken, isAdmin, handleFindAllStaff);
 router
   .route("/admin/staff/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeStaffPassword)
-  .patch(checkAccessToken, isAdmin, handleChangeStaffRole)
   .delete(checkAccessToken, isAdmin, handleDeleteStaff);
+router
+  .route("/admin/staff/password/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStaffPassword);
+
+router
+  .route("/admin/staff/role/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStaffRole);
 
 export default router;

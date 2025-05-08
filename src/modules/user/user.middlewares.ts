@@ -90,19 +90,26 @@ const UserMiddlewares = {
   // check role middleware for admin login usage.to check with login credential user is a admin or not
   checkRole: async (req: Request, res: Response, next: NextFunction) => {
     const { role } = req.user as IUser;
-    if (role !== "admin") {
+    if (
+      role === UserRole.Admin ||
+      role === UserRole.AccountAdministrator ||
+      role === UserRole.ContentManager ||
+      role === UserRole.FinanceManager ||
+      UserRole.ListingVerificationManager
+    ) {
+      next();
+    } else {
       res.status(400).json({
         status: "error",
         message: "Invalid credentials or insufficient permissions",
       });
       return;
     }
-    next();
   },
   isAdmin: async (req: Request, res: Response, next: NextFunction) => {
     const role = req?.authenticateTokenDecoded?.role;
     if (role !== UserRole.Admin) {
-      res.status(403).json({
+      res.status(401).json({
         status: "error",
         message: "You do not have permission to access this resource",
       });

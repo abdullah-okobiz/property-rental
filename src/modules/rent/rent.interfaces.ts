@@ -11,7 +11,7 @@ export interface IFloorPlan {
   guestCount: number;
   bathCount: number;
   bedCount: number;
-  bedRoomCount: number;
+  bedroomCount: number;
 }
 
 interface IRent {
