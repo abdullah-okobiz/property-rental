@@ -37,6 +37,7 @@ interface IFlat {
   host?: Types.ObjectId;
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
+  slug?: string;
 }
 
 export interface IFlatPayload {

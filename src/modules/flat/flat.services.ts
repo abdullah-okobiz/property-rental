@@ -8,6 +8,9 @@ import IFlat, {
 import FlatRepositories from "./flat.repositories";
 import { join } from "path";
 import { promises as fs } from "fs";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const {
   initializeFlatListing,
@@ -34,6 +37,8 @@ const FlatServices = {
   },
   processUpdateFlatListing: async ({ flatId, reqBody }: IFlatPayload) => {
     try {
+      const { title } = reqBody as IFlat;
+      if (title) (reqBody as IFlat).slug = generateSlug(title);
       return await updateFlatListing({ flatId, reqBody });
     } catch (error) {
       if (error instanceof Error) {
@@ -60,6 +65,7 @@ const FlatServices = {
         buildingYear,
         video,
       } = payload as IFlat;
+      const slug = generateSlug(title as string);
       const uploadedImages = images?.map(
         (item) => `/public/${item}`
       ) as string[];
@@ -77,6 +83,7 @@ const FlatServices = {
         title,
         buildingYear,
         video,
+        slug,
       };
       const data = await createNewFlat(postPayload);
       return data;
