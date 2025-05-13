@@ -1,5 +1,8 @@
-import { model, Model, Schema, Types } from "mongoose";
+import { HydratedDocument, model, Model, Schema, Types } from "mongoose";
 import ILand, { ListingPublishStatus } from "./land.interfaces";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const LandSchema = new Schema<ILand>(
   {
@@ -23,6 +26,20 @@ const LandSchema = new Schema<ILand>(
   },
   { timestamps: true }
 );
+
+LandSchema.pre("save", async function (next) {
+  const land = this as HydratedDocument<ILand>;
+  if ((land.isModified("title") || land.isNew) && land.title) {
+    try {
+      land.slug = generateSlug(land?.title as string);
+    } catch (error) {
+      if (error instanceof Error) {
+        next(error);
+      }
+    }
+  }
+  next();
+});
 
 const Land: Model<ILand> = model<ILand>("Land", LandSchema);
 

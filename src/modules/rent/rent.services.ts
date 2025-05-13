@@ -8,6 +8,9 @@ import IRent, {
 } from "./rent.interfaces";
 import RentRepositories from "./rent.repositories";
 import { promises as fs } from "fs";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const {
   initializedRentListing,
@@ -34,6 +37,8 @@ const RentServices = {
   },
   processProgressRentListing: async ({ rentId, payload }: IRentPayload) => {
     try {
+      const { title } = payload as IRent;
+      if (title) (payload as IRent).slug = generateSlug(title);
       const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
@@ -65,7 +70,9 @@ const RentServices = {
       const uploadedImages = images?.map(
         (item) => `/public/${item}`
       ) as string[];
+      const slug = generateSlug(title as string);
       const postPayload: IRent = {
+        slug,
         images: uploadedImages,
         coverImage: uploadedImages[0],
         allowableThings,

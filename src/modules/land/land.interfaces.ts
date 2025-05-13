@@ -21,6 +21,7 @@ interface ILand {
   host?: Types.ObjectId;
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
+  slug?: string;
 }
 
 export interface ICreateLandPayload {

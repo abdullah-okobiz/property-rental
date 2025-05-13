@@ -1,5 +1,8 @@
-import { model, Model, Schema, Types } from "mongoose";
+import { HydratedDocument, model, Model, Schema, Types } from "mongoose";
 import IRent, { IFloorPlan, RentListingStatus } from "./rent.interfaces";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const FloorPlanSchema = new Schema<IFloorPlan>(
   {
@@ -49,6 +52,21 @@ const RentSchema = new Schema<IRent>({
     enum: RentListingStatus,
     default: RentListingStatus.IN_PROGRESS,
   },
+  slug: { type: String, unique: true, index: true },
+});
+
+RentSchema.pre("save", async function (next) {
+  const rent = this as HydratedDocument<IRent>;
+  if ((rent.isModified("title") || rent.isNew) && rent.title) {
+    try {
+      rent.slug = generateSlug(rent?.title as string);
+    } catch (error) {
+      if (error instanceof Error) {
+        next(error);
+      }
+    }
+  }
+  next();
 });
 
 RentSchema.index(

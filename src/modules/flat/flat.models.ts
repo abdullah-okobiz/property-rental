@@ -1,5 +1,8 @@
-import { model, Model, Schema, Types } from "mongoose";
+import { HydratedDocument, model, Model, Schema, Types } from "mongoose";
 import IFlat, { IFlatFloorPlan, ListingPublishStatus } from "./flat.interfaces";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const FloorPlanSchema = new Schema<IFlatFloorPlan>(
   {
@@ -47,6 +50,20 @@ const FlatSchema = new Schema<IFlat>(
   },
   { timestamps: true }
 );
+
+FlatSchema.pre("save", async function (next) {
+  const flat = this as HydratedDocument<IFlat>;
+  if ((flat.isModified("title") || flat.isNew) && flat.title) {
+    try {
+      flat.slug = generateSlug(flat?.title as string);
+    } catch (error) {
+      if (error instanceof Error) {
+        next(error);
+      }
+    }
+  }
+  next();
+});
 
 const Flat: Model<IFlat> = model<IFlat>("Flat", FlatSchema);
 

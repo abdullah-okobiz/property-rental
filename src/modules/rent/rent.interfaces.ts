@@ -30,6 +30,7 @@ interface IRent {
   amenities?: Types.ObjectId[];
   status?: RentListingStatus;
   host?: Types.ObjectId;
+  slug?: string;
 }
 export interface ICreateRentPayload {
   images?: string[];
