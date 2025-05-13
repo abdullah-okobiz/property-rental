@@ -8,6 +8,9 @@ import ILand, {
 import LandRepositories from "./land.repositories";
 import { join } from "path";
 import { promises as fs } from "fs";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 
 const {
   deleteListedLandItem,
@@ -34,6 +37,8 @@ const LandServices = {
   },
   processUpdateLandListing: async ({ landId, reqBody }: ILandPayload) => {
     try {
+      const { title } = reqBody as ILand;
+      if (title) (reqBody as ILand).slug = generateSlug(title);
       return await updateLandListing({ landId, reqBody });
     } catch (error) {
       if (error instanceof Error) {
@@ -58,6 +63,7 @@ const LandServices = {
         video,
         landSize,
       } = payload as ILand;
+      const slug = generateSlug(title as string);
       const uploadedImages = images?.map(
         (item) => `/public/${item}`
       ) as string[];
@@ -73,6 +79,7 @@ const LandServices = {
         title,
         video,
         landSize,
+        slug,
       };
       const data = await createNewLand(postPayload);
       return data;
