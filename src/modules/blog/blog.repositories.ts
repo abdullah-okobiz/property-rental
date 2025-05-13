@@ -41,12 +41,13 @@ const BlogRepositories = {
     blogTitle,
     feature,
     tags,
+    slug,
   }: IBlogPayload) => {
     try {
       const updatedData = await Blog.findByIdAndUpdate(
         blogId,
         {
-          $set: { blogDescription, blogImage, blogTitle, feature, tags },
+          $set: { slug, blogDescription, blogImage, blogTitle, feature, tags },
         },
         { new: true }
       );

@@ -31,6 +31,7 @@ router
   .get(handleRetrieveSingleBlog)
   .patch(
     checkAccessToken,
+    upload.none(),
     allowRole(UserRole.Admin, UserRole.ContentManager),
     handleUpdateBlogField
   )

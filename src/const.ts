@@ -1,4 +1,8 @@
-export const corsWhiteList = ["http://localhost:5173", "http://localhost:3000"];
+export const corsWhiteList = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4173",
+];
 export const accessTokenExpiresIn = "7d";
 export const refreshTokenExpiresIn = "7d";
 export const saltRound = 10;
