@@ -18,10 +18,8 @@ const BlogSchema = new Schema<IBlogInterfces>(
 
 BlogSchema.pre("save", async function (next) {
   const blog = this as HydratedDocument<IBlogInterfces>;
-  console.log("blog title from top in middleware===", blog.blogTitle);
   if ((blog.isModified("blogTitle") || blog.isNew) && blog.blogTitle) {
     try {
-      console.log("blog title from try block in middleware===", blog.blogTitle);
       blog.slug = generateSlug(blog?.blogTitle as string);
     } catch (error) {
       if (error instanceof Error) {
