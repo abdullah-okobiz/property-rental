@@ -51,6 +51,7 @@ export interface IRentImagesPath {
 }
 
 export interface IGetAllRentRequestedQuery {
+  category?: string;
   search?: string;
   status?: string;
   page?: number;
@@ -58,6 +59,7 @@ export interface IGetAllRentRequestedQuery {
 }
 
 export interface IGetAllRentQuery {
+  category?: string;
   host?: Types.ObjectId;
   email?: string;
   status?: string;

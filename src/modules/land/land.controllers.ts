@@ -196,7 +196,7 @@ const LandControllers = {
   },
   handleGetAllLand: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { publishStatus, page, sort, search, isSold } =
+      const { publishStatus, page, sort, search, isSold, category } =
         req.query as IGetAllLandRequestedQuery;
       const { data, total } = await processGetAllListedLand({
         publishStatus,
@@ -204,6 +204,7 @@ const LandControllers = {
         sort,
         search,
         isSold,
+        category,
       });
       const totalPages = Math.ceil(total / documentPerPage);
       const totalLand = total;
@@ -228,6 +229,7 @@ const LandControllers = {
         if (isSold !== undefined) query.set("isSold", String(isSold));
         if (search) query.set("search", search);
         if (publishStatus) query.set("publishStatus", publishStatus);
+        if (category) query.set("category", String(category));
         if (sort) query.set("sort", String(sort));
         if (pageNumber !== 1) query.set("page", String(pageNumber));
 

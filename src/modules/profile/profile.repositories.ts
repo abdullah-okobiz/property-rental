@@ -108,7 +108,7 @@ const ProfileRepositories = {
   findLanguage: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
-        "language -_id"
+        "languages -_id"
       );
       return data;
     } catch (error) {

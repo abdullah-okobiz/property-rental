@@ -212,13 +212,14 @@ const RentControllers = {
   },
   handleGetAllRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { status, page, sort, search } =
+      const { status, page, sort, search, category } =
         req.query as IGetAllRentRequestedQuery;
       const { data, total } = await processGetAllListedRent({
         search,
         status,
         page,
         sort,
+        category,
       });
       const totalPages = Math.ceil(total / documentPerPage);
       const totalRents = total;
@@ -231,6 +232,7 @@ const RentControllers = {
         if (search) query.set("search", search);
         if (status) query.set("status", status);
         if (sort) query.set("sort", String(sort));
+        if (category) query.set("category", String(category));
         if (pageNumber !== 1) query.set("page", String(pageNumber));
 
         const queryString = query.toString();

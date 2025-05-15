@@ -44,6 +44,7 @@ export interface ILandImagesPath {
 }
 
 export interface IGetAllLandRequestedQuery {
+  category?: string;
   isSold?: boolean;
   search?: string;
   publishStatus?: string;
@@ -52,6 +53,7 @@ export interface IGetAllLandRequestedQuery {
 }
 
 export interface IGetAllLandQuery {
+  category?: string;
   isSold?: boolean;
   host?: Types.ObjectId;
   publishStatus?: string;

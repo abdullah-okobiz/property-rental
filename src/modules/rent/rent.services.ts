@@ -183,11 +183,13 @@ const RentServices = {
     status,
     sort,
     search,
+    category,
   }: IGetAllRentRequestedQuery) => {
     try {
       const query: IGetAllRentQuery = {};
       if (status) query.status = String(status);
       if (search) query.email = String(search);
+      if (category) query.category = String(category);
       const payload: IGetAllRentPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;

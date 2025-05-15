@@ -174,6 +174,7 @@ const LandServices = {
     sort,
     isSold,
     search,
+    category,
   }: IGetAllLandRequestedQuery) => {
     try {
       const query: IGetAllLandQuery = {};
@@ -181,6 +182,7 @@ const LandServices = {
       const payload: IGetAllLandPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
+      if (category) query.category = String(category);
       if (isSold) query.isSold = isSold;
       if (search) query.email = String(search);
       return await findAllListedLand(payload);

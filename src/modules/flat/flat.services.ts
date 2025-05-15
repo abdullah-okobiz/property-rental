@@ -161,6 +161,7 @@ const FlatServices = {
     }
   },
   processGetAllListedFlat: async ({
+    category,
     isSold,
     search,
     page,
@@ -171,6 +172,7 @@ const FlatServices = {
       const query: IGetAllFlatQuery = {};
       if (search) query.email = String(search);
       if (isSold) query.isSold = isSold;
+      if (category) query.category = String(category);
       if (publishStatus) query.publishStatus = publishStatus;
       const payload: IGetAllFlatPayload = { query };
       if (page) payload.page = page;

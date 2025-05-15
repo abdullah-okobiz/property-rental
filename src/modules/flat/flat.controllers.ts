@@ -168,7 +168,7 @@ const FlatControllers = {
   },
   handleGetAllFlat: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { publishStatus, page, sort, search, isSold } =
+      const { publishStatus, page, sort, search, isSold, category } =
         req.query as IGetAllFlatRequestedQuery;
       const { data, total } = await processGetAllListedFlat({
         publishStatus,
@@ -176,6 +176,7 @@ const FlatControllers = {
         sort,
         isSold,
         search,
+        category,
       });
       const totalPages = Math.ceil(total / documentPerPage);
       const totalContacts = total;
@@ -186,6 +187,7 @@ const FlatControllers = {
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
         if (isSold !== undefined) query.set("isSold", String(isSold));
+        if (category) query.set("category", String(category));
         if (search) query.set("search", search);
         if (publishStatus) query.set("publishStatus", publishStatus);
         if (sort) query.set("sort", String(sort));
