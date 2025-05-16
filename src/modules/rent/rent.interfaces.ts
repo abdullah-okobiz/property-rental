@@ -37,6 +37,7 @@ export interface ICreateRentPayload {
   payload?: IRent;
 }
 export interface IRentPayload {
+  slug?: string;
   payload?: IRent;
   rentId?: Types.ObjectId;
   listingStatus?: RentListingStatus;

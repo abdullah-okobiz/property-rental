@@ -1,12 +1,8 @@
-import { Types } from "mongoose";
-import { documentPerPage } from "../../const";
-import User from "../user/user.model";
-import IFlat, {
-  IFlatPayload,
-  IGetAllFlatPayload,
-  ListingPublishStatus,
-} from "./flat.interfaces";
-import Flat from "./flat.models";
+import { Types } from 'mongoose';
+import { documentPerPage } from '../../const';
+import User from '../user/user.model';
+import IFlat, { IFlatPayload, IGetAllFlatPayload, ListingPublishStatus } from './flat.interfaces';
+import Flat from './flat.models';
 
 const FlatRepositories = {
   initializeFlatListing: async ({ userId }: IFlatPayload) => {
@@ -18,7 +14,7 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Flat Initialized Operation");
+        throw new Error('Unknown Error Occurred In Flat Initialized Operation');
       }
     }
   },
@@ -67,7 +63,7 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Flat Initialized Operation");
+        throw new Error('Unknown Error Occurred In Flat Initialized Operation');
       }
     }
   },
@@ -80,9 +76,7 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get Rent Properties For Host Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get Rent Properties For Host Operation');
       }
     }
   },
@@ -106,9 +100,9 @@ const FlatRepositories = {
           .skip(skip)
           .limit(documentPerPage)
           .sort(sortOption)
-          .populate("host")
-          .populate("listingFor")
-          .populate("category"),
+          .populate('host')
+          .populate('listingFor')
+          .populate('category'),
         Flat.countDocuments(query),
       ]);
       return { data, total };
@@ -116,9 +110,21 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get All Listed Flat Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get All Listed Flat Operation');
+      }
+    }
+  },
+  findOneListedFlat: async ({ slug }: IFlatPayload) => {
+    try {
+      return await Flat.findOne({ slug })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Flat Operation');
       }
     }
   },
@@ -131,7 +137,7 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Flat Creation Operation");
+        throw new Error('Unknown Error Occurred In Flat Creation Operation');
       }
     }
   },
@@ -143,9 +149,7 @@ const FlatRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In delete listed flat item Operation"
-        );
+        throw new Error('Unknown Error Occurred In delete listed flat item Operation');
       }
     }
   },

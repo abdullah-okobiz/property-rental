@@ -48,6 +48,7 @@ export interface IFlatPayload {
   singleImage?: string;
   isSold?: boolean;
   publishStatus?: string;
+  slug?: string;
 }
 
 export interface IFlatImagesPath {

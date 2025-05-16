@@ -2,6 +2,9 @@ export const corsWhiteList = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:4173",
+  "https://homzystay.com",
+  "https://server.homzystay.com",
+  "https://admin.homzystay.com",
 ];
 export const accessTokenExpiresIn = "7d";
 export const refreshTokenExpiresIn = "7d";
@@ -14,6 +17,6 @@ export const documentPerPage = 9;
 export const rejectionEmailSubject =
   "Identity Verification Failed – Action Needed";
 export const approvedEmailSubject =
-  "Success! Your Identity Has Been Verified on Stayverz";
+  "Success! Your Identity Has Been Verified on HomzyStay";
 export const accountSuspendedEmailSubject =
-  "Your Stayverz Account Has Been Suspended Due to Policy Violation";
+  "Your HomzyStay Account Has Been Suspended Due to Policy Violation";

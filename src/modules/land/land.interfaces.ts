@@ -37,6 +37,7 @@ export interface ILandPayload {
   singleImage?: string;
   isSold?: boolean;
   publishStatus?: string;
+  slug?:string;
 }
 
 export interface ILandImagesPath {

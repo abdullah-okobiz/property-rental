@@ -1,12 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import logger from "../../configs/logger.configs";
-import mongoose from "mongoose";
-import { documentPerPage } from "../../const";
-import LandServices from "./land.services";
-import ILand, {
-  IGetAllLandRequestedQuery,
-  ILandImagesPath,
-} from "./land.interfaces";
+import { NextFunction, Request, Response } from 'express';
+import logger from '../../configs/logger.configs';
+import mongoose from 'mongoose';
+import { documentPerPage } from '../../const';
+import LandServices from './land.services';
+import ILand, { IGetAllLandRequestedQuery, ILandImagesPath } from './land.interfaces';
 
 const {
   processDeleteListedLandItem,
@@ -18,20 +15,32 @@ const {
   processUploadImage,
   processCreateLand,
   processChangeStatus,
+  processRetrieveOneListedLand,
 } = LandServices;
 
 const LandControllers = {
-  handleInitializeLandListing: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleRetrieveOneListedLand: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { slug } = req.params;
+      const data = await processRetrieveOneListedLand({ slug });
+      res.status(201).json({
+        status: 'success',
+        message: 'Land Retrieve Successful',
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleInitializeLandListing: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.authenticateTokenDecoded;
       const data = await processInitializeLandListing({ userId });
       res.status(201).json({
-        status: "success",
-        message: "new land listing initialized",
+        status: 'success',
+        message: 'new land listing initialized',
         data,
       });
     } catch (error) {
@@ -45,13 +54,11 @@ const LandControllers = {
       const { userId } = req.authenticateTokenDecoded;
       const payload = req.body as ILand;
       payload.host = userId;
-      const images = (req?.files as ILandImagesPath[])?.map(
-        (item) => item.filename
-      );
+      const images = (req?.files as ILandImagesPath[])?.map((item) => item.filename);
       const data = await processCreateLand({ images, payload });
       res.status(200).json({
-        status: "success",
-        message: "New Land Created",
+        status: 'success',
+        message: 'New Land Created',
         data,
       });
     } catch (error) {
@@ -60,15 +67,11 @@ const LandControllers = {
       next();
     }
   },
-  handleChangeStatus: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleChangeStatus: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({ status: "error", message: "Invalid Land ID" });
+        res.status(400).json({ status: 'error', message: 'Invalid Land ID' });
         return;
       }
       const landId = new mongoose.Types.ObjectId(id);
@@ -78,7 +81,7 @@ const LandControllers = {
       if (isSold) reqBody.isSold = isSold;
       const data = await processChangeStatus({ landId, reqBody });
       res.status(200).json({
-        status: "success",
+        status: 'success',
         message: `Listed item status Changed to ${status}`,
         data,
       });
@@ -88,25 +91,19 @@ const LandControllers = {
       next();
     }
   },
-  handleUpdateLandListingField: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleUpdateLandListingField: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
         return;
       }
       const reqBody = req.body;
       const landId = new mongoose.Types.ObjectId(id);
       const data = await processUpdateLandListing({ landId, reqBody });
       res.status(200).json({
-        status: "success",
-        message: "new land listing initialized",
+        status: 'success',
+        message: 'new land listing initialized',
         data,
       });
     } catch (error) {
@@ -115,27 +112,19 @@ const LandControllers = {
       next();
     }
   },
-  handleUploadImage: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleUploadImage: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
         return;
       }
       const landId = new mongoose.Types.ObjectId(id);
-      const images = (req?.files as ILandImagesPath[])?.map(
-        (item) => item.filename
-      );
+      const images = (req?.files as ILandImagesPath[])?.map((item) => item.filename);
       const data = await processUploadImage({ landId, images });
       res.status(200).json({
-        status: "success",
-        message: "Image upload successful",
+        status: 'success',
+        message: 'Image upload successful',
         data,
       });
     } catch (error) {
@@ -144,17 +133,11 @@ const LandControllers = {
       next();
     }
   },
-  handleUnlinkImage: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleUnlinkImage: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
         return;
       }
       const landId = new mongoose.Types.ObjectId(id);
@@ -165,8 +148,8 @@ const LandControllers = {
         singleImage: imageUrl as string,
       });
       res.status(200).json({
-        status: "success",
-        message: "Image delete successful",
+        status: 'success',
+        message: 'Image delete successful',
       });
     } catch (error) {
       const err = error as Error;
@@ -174,18 +157,14 @@ const LandControllers = {
       next();
     }
   },
-  handleGetAllHostListedLand: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleGetAllHostListedLand: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.authenticateTokenDecoded;
       const host = userId;
       const data = await processHostListedLandProperties({ userId: host });
       res.status(200).json({
-        status: "success",
-        message: "Listed Properties For Land Retrieve successful",
+        status: 'success',
+        message: 'Listed Properties For Land Retrieve successful',
         data,
       });
     } catch (error) {
@@ -220,18 +199,16 @@ const LandControllers = {
       //   query.set("page", String(pageNumber));
       //   return `${baseUrl}?${query.toString()}`;
       // };
-      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
-        req.path
-      }`;
+      const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
 
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
-        if (isSold !== undefined) query.set("isSold", String(isSold));
-        if (search) query.set("search", search);
-        if (publishStatus) query.set("publishStatus", publishStatus);
-        if (category) query.set("category", String(category));
-        if (sort) query.set("sort", String(sort));
-        if (pageNumber !== 1) query.set("page", String(pageNumber));
+        if (isSold !== undefined) query.set('isSold', String(isSold));
+        if (search) query.set('search', search);
+        if (publishStatus) query.set('publishStatus', publishStatus);
+        if (category) query.set('category', String(category));
+        if (sort) query.set('sort', String(sort));
+        if (pageNumber !== 1) query.set('page', String(pageNumber));
 
         const queryString = query.toString();
         return queryString ? `${baseUrl}?${queryString}` : baseUrl;
@@ -239,12 +216,10 @@ const LandControllers = {
 
       const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);
-      const nextPageUrl =
-        currentPage < totalPages ? buildQuery(currentPage + 1) : null;
-      const previousPageUrl =
-        currentPage > 1 ? buildQuery(currentPage - 1) : null;
+      const nextPageUrl = currentPage < totalPages ? buildQuery(currentPage + 1) : null;
+      const previousPageUrl = currentPage > 1 ? buildQuery(currentPage - 1) : null;
       res.status(200).json({
-        status: "success",
+        status: 'success',
         message: `All Listed Land Item Retrieve successful`,
         totalLand,
         totalPages,
@@ -259,23 +234,17 @@ const LandControllers = {
       next();
     }
   },
-  handleDeleteListedLandItem: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleDeleteListedLandItem: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        res
-          .status(400)
-          .json({ status: "error", message: "Invalid feature ID" });
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
         return;
       }
       const landId = new mongoose.Types.ObjectId(id);
       await processDeleteListedLandItem({ landId });
       res.status(200).json({
-        status: "success",
+        status: 'success',
         message: `Item delete successful`,
       });
     } catch (error) {
