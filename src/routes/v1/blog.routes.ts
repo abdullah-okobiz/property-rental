@@ -17,7 +17,7 @@ const { isBlogExist } = BlogMiddlewares;
 const router = Router();
 
 router
-  .route("/admin/blog")
+  .route("/blog")
   .get(handleRetrieveBlog)
   .post(
     checkAccessToken,
@@ -27,7 +27,7 @@ router
   );
 
 router
-  .route("/admin/blog/:id")
+  .route("/blog/:slug")
   .get(handleRetrieveSingleBlog)
   .patch(
     checkAccessToken,

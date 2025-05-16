@@ -1,12 +1,8 @@
-import mongoose, { Types } from "mongoose";
-import { documentPerPage } from "../../const";
-import User from "../user/user.model";
-import IRent, {
-  IGetAllRentPayload,
-  IRentPayload,
-  RentListingStatus,
-} from "./rent.interfaces";
-import Rent from "./rent.models";
+import mongoose, { Types } from 'mongoose';
+import { documentPerPage } from '../../const';
+import User from '../user/user.model';
+import IRent, { IGetAllRentPayload, IRentPayload, RentListingStatus } from './rent.interfaces';
+import Rent from './rent.models';
 const RentRepositories = {
   initializedRentListing: async ({ host, payload }: IRentPayload) => {
     try {
@@ -18,7 +14,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Rent Initialized Operation");
+        throw new Error('Unknown Error Occurred In Rent Initialized Operation');
       }
     }
   },
@@ -70,7 +66,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Rent Update Operation");
+        throw new Error('Unknown Error Occurred In Rent Update Operation');
       }
     }
   },
@@ -83,9 +79,22 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get One Rent Properties Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get One Rent Properties Operation');
+      }
+    }
+  },
+  findOneListedRent: async ({ slug }: IRentPayload) => {
+    try {
+      return await Rent.findOne({ slug })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category')
+        .populate('amenities');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Rent Operation');
       }
     }
   },
@@ -98,9 +107,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get Rent Properties For Host Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get Rent Properties For Host Operation');
       }
     }
   },
@@ -113,7 +120,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Rent Creation Operation");
+        throw new Error('Unknown Error Occurred In Rent Creation Operation');
       }
     }
   },
@@ -137,10 +144,10 @@ const RentRepositories = {
           .skip(skip)
           .limit(documentPerPage)
           .sort(sortOption)
-          .populate("host")
-          .populate("listingFor")
-          .populate("category")
-          .populate("amenities"),
+          .populate('host')
+          .populate('listingFor')
+          .populate('category')
+          .populate('amenities'),
         Rent.countDocuments(query),
       ]);
       return { data, total };
@@ -148,9 +155,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get All Listed Rent Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get All Listed Rent Operation');
       }
     }
   },
@@ -162,9 +167,7 @@ const RentRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In delete listed rent item Operation"
-        );
+        throw new Error('Unknown Error Occurred In delete listed rent item Operation');
       }
     }
   },

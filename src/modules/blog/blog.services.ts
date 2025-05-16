@@ -29,9 +29,9 @@ const BlogServices = {
       }
     }
   },
-  processRetrieveSingleBlog: async ({ blogId }: IBlogPayload) => {
+  processRetrieveSingleBlog: async ({ slug }: IBlogPayload) => {
     try {
-      return await findOneBlog({ blogId });
+      return await findOneBlog({ slug });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
