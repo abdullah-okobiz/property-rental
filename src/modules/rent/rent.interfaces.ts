@@ -15,6 +15,8 @@ export interface IFloorPlan {
 }
 
 interface IRent {
+  latitude?:number;
+  longitude?:number;
   title?: string;
   images?: string[];
   coverImage?: string;
@@ -64,6 +66,11 @@ export interface IGetAllRentQuery {
   host?: Types.ObjectId;
   email?: string;
   status?: string;
+}
+
+export interface ICalendar{
+  rentId:Types.ObjectId;
+
 }
 
 export interface IGetAllRentPayload {

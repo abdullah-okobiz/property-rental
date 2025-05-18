@@ -48,6 +48,8 @@ const FlatSchema = new Schema<IFlat>(
     },
     slug: { type: String, unique: true, index: true },
     isSold: { type: Boolean, default: false },
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null },
   },
   { timestamps: true }
 );

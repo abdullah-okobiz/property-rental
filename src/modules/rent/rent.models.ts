@@ -1,6 +1,6 @@
-import { HydratedDocument, model, Model, Schema, Types } from "mongoose";
-import IRent, { IFloorPlan, RentListingStatus } from "./rent.interfaces";
-import SlugUtils from "../../utils/slug.utils";
+import { HydratedDocument, model, Model, Schema, Types } from 'mongoose';
+import IRent, { IFloorPlan, RentListingStatus } from './rent.interfaces';
+import SlugUtils from '../../utils/slug.utils';
 
 const { generateSlug } = SlugUtils;
 
@@ -21,10 +21,10 @@ const RentSchema = new Schema<IRent>({
   images: { type: [String], default: null },
   category: {
     type: Types.ObjectId,
-    ref: "Category",
+    ref: 'Category',
     default: null,
   },
-  amenities: [{ type: Types.ObjectId, ref: "Amenities" }],
+  amenities: [{ type: Types.ObjectId, ref: 'Amenities' }],
   allowableThings: { type: [String], default: null },
   floorPlan: {
     type: FloorPlanSchema,
@@ -36,12 +36,12 @@ const RentSchema = new Schema<IRent>({
     },
   },
   cancellationPolicy: { type: [String], default: null },
-  host: { type: Types.ObjectId, ref: "User", require: true },
+  host: { type: Types.ObjectId, ref: 'User', require: true },
   houseRules: { type: [String], default: null },
   listingFor: [
     {
       type: Types.ObjectId,
-      ref: "Feature",
+      ref: 'Feature',
       default: null,
     },
   ],
@@ -53,11 +53,13 @@ const RentSchema = new Schema<IRent>({
     default: RentListingStatus.IN_PROGRESS,
   },
   slug: { type: String, unique: true, index: true },
+  latitude: { type: Number, default: null },
+  longitude: { type: Number, default: null },
 });
 
-RentSchema.pre("save", async function (next) {
+RentSchema.pre('save', async function (next) {
   const rent = this as HydratedDocument<IRent>;
-  if ((rent.isModified("title") || rent.isNew) && rent.title) {
+  if ((rent.isModified('title') || rent.isNew) && rent.title) {
     try {
       rent.slug = generateSlug(rent?.title as string);
     } catch (error) {
@@ -71,8 +73,8 @@ RentSchema.pre("save", async function (next) {
 
 RentSchema.index(
   { category: 1 },
-  { unique: true, partialFilterExpression: { category: { $type: "objectId" } } }
+  { unique: true, partialFilterExpression: { category: { $type: 'objectId' } } }
 );
-const Rent: Model<IRent> = model<IRent>("Rent", RentSchema);
+const Rent: Model<IRent> = model<IRent>('Rent', RentSchema);
 
 export default Rent;

@@ -22,6 +22,8 @@ interface ILand {
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
   slug?: string;
+  latitude?:number;
+  longitude?:number;
 }
 
 export interface ICreateLandPayload {

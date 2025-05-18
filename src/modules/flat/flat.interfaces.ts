@@ -22,6 +22,8 @@ export interface ICreateFlatPayload {
 }
 
 interface IFlat {
+  latitude?:number;
+  longitude?:number;
   title?: string;
   description?: string;
   location?: string;

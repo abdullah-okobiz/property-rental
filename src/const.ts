@@ -5,6 +5,7 @@ export const corsWhiteList = [
   "https://homzystay.com",
   "https://server.homzystay.com",
   "https://admin.homzystay.com",
+  "http://192.168.0.180:3000"
 ];
 export const accessTokenExpiresIn = "7d";
 export const refreshTokenExpiresIn = "7d";
