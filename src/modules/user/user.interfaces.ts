@@ -6,6 +6,7 @@ import {
 import { DocumentType } from "./user.enums";
 
 export interface IUser extends Document {
+  isStaff: Boolean;
   avatar: string;
   name: string;
   phone: string;
@@ -16,6 +17,21 @@ export interface IUser extends Document {
   profile: Types.ObjectId;
   accountStatus: AccountStatus;
   identityDocument: Types.ObjectId;
+}
+
+export interface IUserPayload {
+  isStaff?: Boolean;
+  avatar?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  role?: UserRole;
+  isVerified?: boolean;
+  password?: string;
+  profile?: Types.ObjectId;
+  accountStatus?: AccountStatus;
+  identityDocument?: Types.ObjectId;
+  userId?:Types.ObjectId;
 }
 
 export interface ISignupPayload {
@@ -52,4 +68,22 @@ export interface IIdentityDocument extends Document {
   frontSide?: string;
   backSide?: string;
   user?: Types.ObjectId;
+}
+
+export interface IFindStaffRequestQuery {
+  search?: string;
+  role?: string;
+  page?: number;
+}
+export interface IFindStaffQuery {
+  email?: {
+    $regex: string;
+    $options: string;
+  };
+  role?: string;
+  isStaff?: Boolean;
+}
+export interface IFindStaffPayload {
+  query: IFindStaffQuery;
+  page?: number;
 }

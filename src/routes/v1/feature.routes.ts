@@ -1,7 +1,8 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import FeatureControllers from "../../modules/feature/feature.controllers";
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateFeature,
   handleRetrieveAllFeature,
@@ -13,12 +14,24 @@ const router = Router();
 
 router
   .route("/admin/feature")
-  .post(checkAccessToken, isAdmin, handleCreateFeature)
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateFeature
+  )
   .get(handleRetrieveAllFeature);
 
 router
   .route("/admin/feature/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateFeature)
-  .delete(checkAccessToken, isAdmin, handleDeleteFeature);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateFeature
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteFeature
+  );
 
 export default router;

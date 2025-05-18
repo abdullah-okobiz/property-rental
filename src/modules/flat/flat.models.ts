@@ -1,5 +1,8 @@
-import { model, Model, Schema, Types } from "mongoose";
-import IFlat, { IFlatFloorPlan, ListingPublishStatus } from "./flat.interfaces";
+import { HydratedDocument, model, Model, Schema, Types } from 'mongoose';
+import IFlat, { IFlatFloorPlan, ListingPublishStatus } from './flat.interfaces';
+import SlugUtils from '../../utils/slug.utils';
+
+const { generateSlug } = SlugUtils;
 
 const FloorPlanSchema = new Schema<IFlatFloorPlan>(
   {
@@ -22,8 +25,8 @@ const FlatSchema = new Schema<IFlat>(
     video: { type: String, default: null },
     price: { type: Number, default: null },
     coverImage: { type: String, default: null },
-    category: { type: Types.ObjectId, ref: "Category", default: null },
-    listingFor: [{ type: Types.ObjectId, ref: "Feature", default: null }],
+    category: { type: Types.ObjectId, ref: 'Category', default: null },
+    listingFor: [{ type: Types.ObjectId, ref: 'Feature', default: null }],
     buildingYear: { type: String, default: null },
     floorPlan: {
       type: FloorPlanSchema,
@@ -37,17 +40,32 @@ const FlatSchema = new Schema<IFlat>(
       },
     },
     amenities: { type: [String], default: null },
-    host: { type: Types.ObjectId, ref: "User", required: true },
+    host: { type: Types.ObjectId, ref: 'User', required: true },
     publishStatus: {
       type: String,
       enum: ListingPublishStatus,
       default: ListingPublishStatus.IN_PROGRESS,
     },
+    slug: { type: String, unique: true, index: true },
     isSold: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-const Flat: Model<IFlat> = model<IFlat>("Flat", FlatSchema);
+FlatSchema.pre('save', async function (next) {
+  const flat = this as HydratedDocument<IFlat>;
+  if ((flat.isModified('title') || flat.isNew) && flat.title) {
+    try {
+      flat.slug = generateSlug(flat?.title as string);
+    } catch (error) {
+      if (error instanceof Error) {
+        next(error);
+      }
+    }
+  }
+  next();
+});
+
+const Flat: Model<IFlat> = model<IFlat>('Flat', FlatSchema);
 
 export default Flat;

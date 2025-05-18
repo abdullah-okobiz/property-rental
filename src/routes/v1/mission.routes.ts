@@ -1,7 +1,8 @@
 import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import MissionControllers from "../../modules/mission/mission.controllers";
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateMission,
   handleDeleteMission,
@@ -13,12 +14,24 @@ const router = Router();
 
 router
   .route("/admin/mission")
-  .post(checkAccessToken, isAdmin, handleCreateMission)
-  .get( handleRetrieveAllMission);
+  .post(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleCreateMission
+  )
+  .get(handleRetrieveAllMission);
 
 router
   .route("/admin/mission/:id")
-  .put(checkAccessToken, isAdmin, handleUpdateMission)
-  .delete(checkAccessToken, isAdmin, handleDeleteMission);
+  .put(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateMission
+  )
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleDeleteMission
+  );
 
 export default router;

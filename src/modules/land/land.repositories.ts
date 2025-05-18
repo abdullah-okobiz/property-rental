@@ -1,12 +1,8 @@
-import { Types } from "mongoose";
-import { documentPerPage } from "../../const";
-import User from "../user/user.model";
-import ILand, {
-  IGetAllLandPayload,
-  ILandPayload,
-  ListingPublishStatus,
-} from "./land.interfaces";
-import Land from "./land.models";
+import { Types } from 'mongoose';
+import { documentPerPage } from '../../const';
+import User from '../user/user.model';
+import ILand, { IGetAllLandPayload, ILandPayload, ListingPublishStatus } from './land.interfaces';
+import Land from './land.models';
 
 const LandRepositories = {
   initializeLandListing: async ({ userId }: ILandPayload) => {
@@ -18,7 +14,7 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Land Initialized Operation");
+        throw new Error('Unknown Error Occurred In Land Initialized Operation');
       }
     }
   },
@@ -31,7 +27,7 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Rent Creation Operation");
+        throw new Error('Unknown Error Occurred In Rent Creation Operation');
       }
     }
   },
@@ -81,7 +77,7 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Land update Operation");
+        throw new Error('Unknown Error Occurred In Land update Operation');
       }
     }
   },
@@ -94,9 +90,21 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get All Host Listed Properties Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get All Host Listed Properties Operation');
+      }
+    }
+  },
+  findOneListedLand: async ({ slug }: ILandPayload) => {
+    try {
+      return await Land.findOne({ slug })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Land Operation');
       }
     }
   },
@@ -120,9 +128,9 @@ const LandRepositories = {
           .skip(skip)
           .limit(documentPerPage)
           .sort(sortOption)
-          .populate("host")
-          .populate("listingFor")
-          .populate("category"),
+          .populate('host')
+          .populate('listingFor')
+          .populate('category'),
         Land.countDocuments(query),
       ]);
       return { data, total };
@@ -130,9 +138,7 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Get All Listed Land Operation"
-        );
+        throw new Error('Unknown Error Occurred In Get All Listed Land Operation');
       }
     }
   },
@@ -144,9 +150,7 @@ const LandRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In delete listed land item Operation"
-        );
+        throw new Error('Unknown Error Occurred In delete listed land item Operation');
       }
     }
   },

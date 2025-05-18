@@ -14,11 +14,23 @@ import {
   IProcessDeleteUserPayload,
   IProcessResendEmailPayload,
   IIdentityDocument,
+  IFindStaffRequestQuery,
+  IFindStaffQuery,
+  IUserPayload,
 } from "./user.interfaces";
 import UserRepositories from "./user.repositories";
 import otpGenerator from "otp-generator";
 
-const { createUser, verifyUser, deleteUser } = UserRepositories;
+const {
+  createUser,
+  verifyUser,
+  deleteUser,
+  createStaff,
+  deleteStaff,
+  findAllStaff,
+  changeStaffPassword,
+  changeStaffRole,
+} = UserRepositories;
 const UserServices = {
   processSignup: async (payload: ISignupPayload) => {
     try {
@@ -172,7 +184,79 @@ const UserServices = {
         otp,
       });
     } catch (error) {
-      throw error;
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Resend Otp Operation");
+      }
+    }
+  },
+  processFindAllStaff: async ({
+    page,
+    role,
+    search,
+  }: IFindStaffRequestQuery) => {
+    try {
+      const query: IFindStaffQuery = { isStaff: true };
+      if (typeof search === "string" && search.trim() !== "") {
+        query.email = { $regex: search.trim(), $options: "i" };
+      }
+      if (role) query.role = role;
+      return await findAllStaff({ query, page });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Find All Staff Service");
+      }
+    }
+  },
+  processCreateStaff: async (payload: ISignupPayload) => {
+    try {
+      return await createStaff(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Staff Creation Service");
+      }
+    }
+  },
+  processChangeStaffPassword: async (payload: IUserPayload) => {
+    try {
+      return await changeStaffPassword(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In Staff Password Change Service"
+        );
+      }
+    }
+  },
+  processChangeStaffRole: async (payload: IUserPayload) => {
+    try {
+      return await changeStaffRole(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Staff role Change Service");
+      }
+    }
+  },
+  processDeleteStaff: async ({ id }: IProcessDeleteUserPayload) => {
+    try {
+      const { deletedUserData } = await deleteStaff(id);
+      if (!deletedUserData) return false;
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In Staff Delete Service");
+      }
     }
   },
 };

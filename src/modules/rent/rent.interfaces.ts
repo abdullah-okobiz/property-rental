@@ -11,7 +11,7 @@ export interface IFloorPlan {
   guestCount: number;
   bathCount: number;
   bedCount: number;
-  bedRoomCount: number;
+  bedroomCount: number;
 }
 
 interface IRent {
@@ -30,12 +30,14 @@ interface IRent {
   amenities?: Types.ObjectId[];
   status?: RentListingStatus;
   host?: Types.ObjectId;
+  slug?: string;
 }
 export interface ICreateRentPayload {
   images?: string[];
   payload?: IRent;
 }
 export interface IRentPayload {
+  slug?: string;
   payload?: IRent;
   rentId?: Types.ObjectId;
   listingStatus?: RentListingStatus;
@@ -50,6 +52,7 @@ export interface IRentImagesPath {
 }
 
 export interface IGetAllRentRequestedQuery {
+  category?: string;
   search?: string;
   status?: string;
   page?: number;
@@ -57,6 +60,7 @@ export interface IGetAllRentRequestedQuery {
 }
 
 export interface IGetAllRentQuery {
+  category?: string;
   host?: Types.ObjectId;
   email?: string;
   status?: string;

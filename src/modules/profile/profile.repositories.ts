@@ -108,7 +108,7 @@ const ProfileRepositories = {
   findLanguage: async (payload: Types.ObjectId) => {
     try {
       const data = await Profile.findOne({ user: payload }).select(
-        "language -_id"
+        "languages -_id"
       );
       return data;
     } catch (error) {
@@ -230,6 +230,7 @@ const ProfileRepositories = {
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+      query.isStaff = false;
       const [data, total] = await Promise.all([
         User.find(query)
           .limit(documentPerPage)

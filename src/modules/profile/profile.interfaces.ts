@@ -61,6 +61,7 @@ export interface IGetAllUserRequestedQuery {
 export interface IGetAllUserQuery {
   role: string;
   accountStatus?: string;
+  isStaff?: Boolean;
 }
 
 export interface IGetAllUserPayload {

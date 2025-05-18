@@ -3,7 +3,8 @@ import UserMiddlewares from "../../modules/user/user.middlewares";
 import upload from "../../middlewares/multer.middleware";
 import BlogControllers from "../../modules/blog/blog.controllers";
 import BlogMiddlewares from "../../modules/blog/blog.middlewares";
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateBlog,
   handleUpdateBlog,
@@ -16,26 +17,36 @@ const { isBlogExist } = BlogMiddlewares;
 const router = Router();
 
 router
-  .route("/admin/blog")
+  .route("/blog")
   .get(handleRetrieveBlog)
   .post(
     checkAccessToken,
-    isAdmin,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
     upload.single("blogImage"),
     handleCreateBlog
   );
 
 router
-  .route("/admin/blog/:id")
+  .route("/blog/:slug")
   .get(handleRetrieveSingleBlog)
-  .patch(checkAccessToken, isAdmin, handleUpdateBlogField)
+  .patch(
+    checkAccessToken,
+    upload.none(),
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    handleUpdateBlogField
+  )
   .put(
     checkAccessToken,
-    isAdmin,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
     isBlogExist,
     upload.single("blogImage"),
     handleUpdateBlog
   )
-  .delete(checkAccessToken, isAdmin, isBlogExist, handleBlogDelete);
+  .delete(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ContentManager),
+    isBlogExist,
+    handleBlogDelete
+  );
 
 export default router;

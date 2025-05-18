@@ -21,6 +21,7 @@ interface ILand {
   host?: Types.ObjectId;
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
+  slug?: string;
 }
 
 export interface ICreateLandPayload {
@@ -36,6 +37,7 @@ export interface ILandPayload {
   singleImage?: string;
   isSold?: boolean;
   publishStatus?: string;
+  slug?:string;
 }
 
 export interface ILandImagesPath {
@@ -43,6 +45,7 @@ export interface ILandImagesPath {
 }
 
 export interface IGetAllLandRequestedQuery {
+  category?: string;
   isSold?: boolean;
   search?: string;
   publishStatus?: string;
@@ -51,6 +54,7 @@ export interface IGetAllLandRequestedQuery {
 }
 
 export interface IGetAllLandQuery {
+  category?: string;
   isSold?: boolean;
   host?: Types.ObjectId;
   publishStatus?: string;

@@ -1,6 +1,12 @@
 import path, { join } from "path";
-import { IBlogPayload, IBlogUpdateField } from "./blog.interfaces";
+import IBlogInterfces, {
+  IBlogPayload,
+  IBlogUpdateField,
+} from "./blog.interfaces";
 import BlogRepositories from "./blog.repositories";
+import SlugUtils from "../../utils/slug.utils";
+
+const { generateSlug } = SlugUtils;
 const {
   createBlog,
   updateOneBlog,
@@ -12,9 +18,9 @@ const {
 import { promises as fs } from "fs";
 
 const BlogServices = {
-  processRetrieveBlog: async () => {
+  processRetrieveBlog: async ({ feature }: IBlogPayload) => {
     try {
-      return await findAllBlogs();
+      return await findAllBlogs({ feature });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -23,9 +29,9 @@ const BlogServices = {
       }
     }
   },
-  processRetrieveSingleBlog: async ({ blogId }: IBlogPayload) => {
+  processRetrieveSingleBlog: async ({ slug }: IBlogPayload) => {
     try {
-      return await findOneBlog({ blogId });
+      return await findOneBlog({ slug });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -38,6 +44,8 @@ const BlogServices = {
   },
   processUpdateBlogField: async ({ field, blogId }: IBlogUpdateField) => {
     try {
+      const { blogTitle } = field;
+      if (blogTitle) field.slug = generateSlug(blogTitle);
       return await updateOneField({ field, blogId });
     } catch (error) {
       if (error instanceof Error) {
@@ -103,8 +111,10 @@ const BlogServices = {
       "../../../public",
       blogImage as string
     );
+    const slug = generateSlug(blogTitle as string);
     try {
       const updatedData = await updateOneBlog({
+        slug,
         blogDescription,
         blogTitle,
         feature,

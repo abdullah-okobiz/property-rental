@@ -37,6 +37,7 @@ interface IFlat {
   host?: Types.ObjectId;
   publishStatus?: ListingPublishStatus;
   isSold?: boolean;
+  slug?: string;
 }
 
 export interface IFlatPayload {
@@ -47,6 +48,7 @@ export interface IFlatPayload {
   singleImage?: string;
   isSold?: boolean;
   publishStatus?: string;
+  slug?: string;
 }
 
 export interface IFlatImagesPath {
@@ -54,6 +56,7 @@ export interface IFlatImagesPath {
 }
 
 export interface IGetAllFlatRequestedQuery {
+  category?: string;
   isSold?: boolean;
   search?: string;
   publishStatus?: string;
@@ -62,6 +65,7 @@ export interface IGetAllFlatRequestedQuery {
 }
 
 export interface IGetAllFlatQuery {
+  category?: string;
   isSold?: boolean;
   host?: Types.ObjectId;
   email?: string;

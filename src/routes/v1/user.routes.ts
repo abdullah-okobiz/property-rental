@@ -25,6 +25,11 @@ const {
   handleLogout,
   handleDeleteUser,
   handleResend,
+  handleChangeStaffPassword,
+  handleChangeStaffRole,
+  handleCreateStaff,
+  handleDeleteStaff,
+  handleFindAllStaff,
 } = UserControllers;
 
 router
@@ -42,4 +47,20 @@ router.route("/logout").post(checkAccessToken, handleLogout);
 router
   .route("/admin/users/:id")
   .delete(checkAccessToken, isAdmin, handleDeleteUser);
+
+router
+  .route("/admin/create-staff")
+  .post(checkAccessToken, isAdmin, isSignupUserExist, handleCreateStaff);
+router.route("/admin/staff").get(checkAccessToken, isAdmin, handleFindAllStaff);
+router
+  .route("/admin/staff/:id")
+  .delete(checkAccessToken, isAdmin, handleDeleteStaff);
+router
+  .route("/admin/staff/password/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStaffPassword);
+
+router
+  .route("/admin/staff/role/:id")
+  .patch(checkAccessToken, isAdmin, handleChangeStaffRole);
+
 export default router;

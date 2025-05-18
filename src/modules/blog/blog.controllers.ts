@@ -1,11 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import logger from "../../configs/logger.configs";
-import BlogServices from "./blog.services";
-import IBlogInterfces, {
-  IBlogPayload,
-  IBlogUpdateField,
-} from "./blog.interfaces";
-import mongoose from "mongoose";
+import { NextFunction, Request, Response } from 'express';
+import logger from '../../configs/logger.configs';
+import BlogServices from './blog.services';
+import IBlogInterfces, { IBlogPayload, IBLogQuery, IBlogUpdateField } from './blog.interfaces';
+import mongoose from 'mongoose';
 const {
   processCreateBlog,
   processUpdateBlog,
@@ -15,22 +12,14 @@ const {
   processUpdateBlogField,
 } = BlogServices;
 const BlogControllers = {
-  handleRetrieveSingleBlog: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: "error", message: "Invalid blog ID" });
-      return;
-    }
-    const blogId = new mongoose.Types.ObjectId(id);
+  handleRetrieveSingleBlog: async (req: Request, res: Response, next: NextFunction) => {
+    const { slug } = req.params;
+
     try {
-      const data = await processRetrieveSingleBlog({ blogId });
+      const data = await processRetrieveSingleBlog({ slug });
       res.status(200).json({
-        status: "success",
-        message: "blog retrieve successful",
+        status: 'success',
+        message: 'blog retrieve successful',
         data,
       });
     } catch (error) {
@@ -39,16 +28,13 @@ const BlogControllers = {
       next();
     }
   },
-  handleRetrieveBlog: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleRetrieveBlog: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await processRetrieveBlog();
+      const { feature } = req.query as IBLogQuery;
+      const data = await processRetrieveBlog({ feature });
       res.status(200).json({
-        status: "success",
-        message: "blog retrieve successful",
+        status: 'success',
+        message: 'blog retrieve successful',
         data,
       });
     } catch (error) {
@@ -59,8 +45,7 @@ const BlogControllers = {
   },
   handleCreateBlog: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { blogTitle, blogDescription, feature, tags } =
-        req.body as IBlogPayload;
+      const { blogTitle, blogDescription, feature, tags } = req.body as IBlogPayload;
       console.log(tags);
       const blogImage = req?.file?.filename;
       console.log(blogImage);
@@ -72,8 +57,8 @@ const BlogControllers = {
         tags,
       });
       res.status(201).json({
-        status: "success",
-        message: "blog create successful",
+        status: 'success',
+        message: 'blog create successful',
         data,
       });
     } catch (error) {
@@ -86,13 +71,12 @@ const BlogControllers = {
     const { id } = req.params;
     const { blogImage } = req.blog as IBlogPayload;
     const oldImage = blogImage;
-    const { blogDescription, blogTitle, tags, feature } =
-      req.body as IBlogPayload;
+    const { blogDescription, blogTitle, tags, feature } = req.body as IBlogPayload;
 
     const newImage = req?.file?.filename;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      res.status(400).json({ status: 'error', message: 'Invalid blog ID' });
       return;
     }
     const blogId = new mongoose.Types.ObjectId(id);
@@ -107,8 +91,8 @@ const BlogControllers = {
         blogId,
       });
       res.status(200).json({
-        status: "success",
-        message: "blog update successful",
+        status: 'success',
+        message: 'blog update successful',
         data,
       });
     } catch (error) {
@@ -121,15 +105,15 @@ const BlogControllers = {
     const { id } = req.params;
     const { blogImage } = req.blog as IBlogPayload;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      res.status(400).json({ status: 'error', message: 'Invalid blog ID' });
       return;
     }
     const blogId = new mongoose.Types.ObjectId(id);
     try {
       await processDeleteBlog({ blogId, blogImage });
       res.status(200).json({
-        status: "success",
-        message: "blog delete successful",
+        status: 'success',
+        message: 'blog delete successful',
       });
     } catch (error) {
       const err = error as Error;
@@ -137,15 +121,11 @@ const BlogControllers = {
       next();
     }
   },
-  handleUpdateBlogField: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  handleUpdateBlogField: async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const field = req.body as IBlogInterfces;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: "error", message: "Invalid blog ID" });
+      res.status(400).json({ status: 'error', message: 'Invalid blog ID' });
       return;
     }
     const blogId = new mongoose.Types.ObjectId(id);
@@ -155,8 +135,8 @@ const BlogControllers = {
     try {
       const data = await processUpdateBlogField(payload);
       res.status(200).json({
-        status: "success",
-        message: "blog field successful",
+        status: 'success',
+        message: 'blog field successful',
         data,
       });
     } catch (error) {

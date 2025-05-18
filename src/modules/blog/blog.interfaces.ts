@@ -8,11 +8,16 @@ export interface IBlogPayload {
   tags?: string[];
   blogId?: Types.ObjectId;
   blogOldImage?: string;
+  slug?: string;
 }
 
 export interface IBlogUpdateField {
   field: IBlogInterfces;
   blogId?: Types.ObjectId;
+}
+
+export interface IBLogQuery {
+  feature?: Types.ObjectId;
 }
 
 interface IBlogInterfces extends Document {
@@ -21,6 +26,7 @@ interface IBlogInterfces extends Document {
   blogDescription?: string;
   feature?: Types.ObjectId;
   tags?: string[];
+  slug?: string;
 }
 
 export default IBlogInterfces;

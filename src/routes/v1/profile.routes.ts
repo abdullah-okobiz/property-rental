@@ -2,9 +2,10 @@ import { Router } from "express";
 import UserMiddlewares from "../../modules/user/user.middlewares";
 import ProfileControllers from "../../modules/profile/profile.controllers";
 import upload from "../../middlewares/multer.middleware";
+import { UserRole } from "../../interfaces/jwtPayload.interfaces";
 
 const router = Router();
-const { checkAccessToken, isAdmin } = UserMiddlewares;
+const { checkAccessToken, allowRole } = UserMiddlewares;
 const {
   handleCreateWorksAt,
   handleGetWorksAt,
@@ -39,12 +40,27 @@ router
   .route("/profile/identity-document")
   .post(checkAccessToken, upload.array("documents"), handleIdentityUpload);
 
-router.route("/admin/users").get(checkAccessToken, isAdmin, handleGetAllUsers);
+// ADMIN ROUTES
+router
+  .route("/admin/users")
+  .get(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.AccountAdministrator),
+    handleGetAllUsers
+  );
 router
   .route("/admin/users/:id")
-  .patch(checkAccessToken, isAdmin, handleChangeUserIdentityStatus);
+  .patch(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleChangeUserIdentityStatus
+  );
 router
   .route("/admin/search/users/")
-  .get(checkAccessToken, isAdmin, handleSearchUser);
+  .get(
+    checkAccessToken,
+    allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
+    handleSearchUser
+  );
 
 export default router;

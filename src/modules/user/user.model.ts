@@ -5,6 +5,7 @@ import { AccountStatus } from "../../interfaces/jwtPayload.interfaces";
 
 const UserSchema = new Schema<IUser>(
   {
+    isStaff: { type: Boolean, default: false },
     avatar: { type: String, default: null },
     email: { type: String, required: true },
     isVerified: { type: Boolean, default: false },

@@ -1,13 +1,16 @@
-import { join } from "path";
+import { join } from 'path';
 import IRent, {
   ICreateRentPayload,
   IGetAllRentPayload,
   IGetAllRentQuery,
   IGetAllRentRequestedQuery,
   IRentPayload,
-} from "./rent.interfaces";
-import RentRepositories from "./rent.repositories";
-import { promises as fs } from "fs";
+} from './rent.interfaces';
+import RentRepositories from './rent.repositories';
+import { promises as fs } from 'fs';
+import SlugUtils from '../../utils/slug.utils';
+
+const { generateSlug } = SlugUtils;
 
 const {
   initializedRentListing,
@@ -16,6 +19,7 @@ const {
   findAllListedRent,
   deleteListedRentItem,
   createNewRent,
+  findOneListedRent,
 } = RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
@@ -26,23 +30,21 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In initialize rent listing service"
-        );
+        throw new Error('Unknown Error Occurred In initialize rent listing service');
       }
     }
   },
   processProgressRentListing: async ({ rentId, payload }: IRentPayload) => {
     try {
+      const { title } = payload as IRent;
+      if (title) (payload as IRent).slug = generateSlug(title);
       const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In initialize rent listing service"
-        );
+        throw new Error('Unknown Error Occurred In initialize rent listing service');
       }
     }
   },
@@ -62,10 +64,10 @@ const RentServices = {
         location,
         title,
       } = payload as IRent;
-      const uploadedImages = images?.map(
-        (item) => `/public/${item}`
-      ) as string[];
+      const uploadedImages = images?.map((item) => `/public/${item}`) as string[];
+      const slug = generateSlug(title as string);
       const postPayload: IRent = {
+        slug,
         images: uploadedImages,
         coverImage: uploadedImages[0],
         allowableThings,
@@ -84,24 +86,18 @@ const RentServices = {
       const data = await createNewRent(postPayload);
       return data;
     } catch (error) {
-      const filePaths = images?.map((item) =>
-        join(__dirname, "../../../public", item)
-      );
+      const filePaths = images?.map((item) => join(__dirname, '../../../public', item));
       filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In rent listing image upload service"
-        );
+        throw new Error('Unknown Error Occurred In rent listing image upload service');
       }
     }
   },
   processUploadImage: async ({ images, rentId }: IRentPayload) => {
     try {
-      const uploadedImages = images?.map(
-        (item) => `/public/${item}`
-      ) as string[];
+      const uploadedImages = images?.map((item) => `/public/${item}`) as string[];
       const payload: IRent = {
         images: uploadedImages,
         coverImage: uploadedImages[0],
@@ -109,40 +105,31 @@ const RentServices = {
       const data = await creatingRentListingById({ payload, rentId });
       return data;
     } catch (error) {
-      const filePaths = images?.map((item) =>
-        join(__dirname, "../../../public", item)
-      );
+      const filePaths = images?.map((item) => join(__dirname, '../../../public', item));
       filePaths?.map((item) => fs.unlink(item));
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In rent listing image upload service"
-        );
+        throw new Error('Unknown Error Occurred In rent listing image upload service');
       }
     }
   },
   processUnlinkImage: async ({ singleImage, images, rentId }: IRentPayload) => {
     const image = singleImage as String;
-    const relativeImagePath = image.replace("/public/", "");
-    const filePath = join(__dirname, "../../../public", relativeImagePath);
+    const relativeImagePath = image.replace('/public/', '');
+    const filePath = join(__dirname, '../../../public', relativeImagePath);
     try {
       const payload: IRent = {};
       if (images) {
         payload.coverImage = images[0];
         payload.images = images;
       }
-      await Promise.all([
-        fs.unlink(filePath),
-        creatingRentListingById({ payload, rentId }),
-      ]);
+      await Promise.all([fs.unlink(filePath), creatingRentListingById({ payload, rentId })]);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In unlink rent listing image service"
-        );
+        throw new Error('Unknown Error Occurred In unlink rent listing image service');
       }
     }
   },
@@ -153,9 +140,18 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In unlink rent listing image service"
-        );
+        throw new Error('Unknown Error Occurred In unlink rent listing image service');
+      }
+    }
+  },
+  processRetrieveOneListedRent: async ({ slug }: IRentPayload) => {
+    try {
+      return await findOneListedRent({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Rent Service');
       }
     }
   },
@@ -167,7 +163,7 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In change status service");
+        throw new Error('Unknown Error Occurred In change status service');
       }
     }
   },
@@ -176,11 +172,13 @@ const RentServices = {
     status,
     sort,
     search,
+    category,
   }: IGetAllRentRequestedQuery) => {
     try {
       const query: IGetAllRentQuery = {};
       if (status) query.status = String(status);
       if (search) query.email = String(search);
+      if (category) query.category = String(category);
       const payload: IGetAllRentPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
@@ -189,7 +187,7 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred get all listed rent service");
+        throw new Error('Unknown Error Occurred get all listed rent service');
       }
     }
   },
@@ -197,11 +195,9 @@ const RentServices = {
     try {
       const { images } = (await deleteListedRentItem({ rentId })) as IRent;
       if (images !== null) {
-        const relativeImagePath = images?.map((item) =>
-          item.replace("/public/", "")
-        );
+        const relativeImagePath = images?.map((item) => item.replace('/public/', ''));
         const filePaths = relativeImagePath?.map((item) =>
-          join(__dirname, "../../../public", item)
+          join(__dirname, '../../../public', item)
         );
         await Promise.all([filePaths?.map((item) => fs.unlink(item))]);
         return;
@@ -211,9 +207,7 @@ const RentServices = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In delete listed rent item service"
-        );
+        throw new Error('Unknown Error Occurred In delete listed rent item service');
       }
     }
   },

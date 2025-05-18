@@ -1,4 +1,4 @@
-export interface IIdentityVerificationEmailData{
-    name:string
-    email:string
+export interface IIdentityVerificationEmailData {
+  name: string;
+  email: string;
 }
