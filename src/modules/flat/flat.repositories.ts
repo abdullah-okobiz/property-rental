@@ -128,6 +128,20 @@ const FlatRepositories = {
       }
     }
   },
+  findOneListedFlatById: async ({ flatId }: IFlatPayload) => {
+    try {
+      return await Flat.findOne({ flatId })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Flat Operation');
+      }
+    }
+  },
   createNewFlat: async (payload: IFlat) => {
     try {
       const newRent = new Flat(payload);

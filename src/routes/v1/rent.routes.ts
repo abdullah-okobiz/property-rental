@@ -16,6 +16,7 @@ const {
   handleDeleteListedRentItem,
   handleCreateRent,
   handleRetrieveOneListedRent,
+  handleRetrieveOneListedRentById,
 } = RentControllers;
 const router = Router();
 
@@ -32,6 +33,7 @@ router
   .delete(checkAccessToken, isHost, handleUnlinkImage);
 
 router.route('/host/rent').get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForRent);
+router.route('/host/rent/:id').get(checkAccessToken, isHost, handleRetrieveOneListedRentById);
 
 router
   .route('/admin/rent/:id')

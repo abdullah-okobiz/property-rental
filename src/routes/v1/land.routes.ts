@@ -16,12 +16,13 @@ const {
   handleChangeStatus,
   handleCreateLand,
   handleRetrieveOneListedLand,
+  handleRetrieveOneListedLandById,
 } = LandControllers;
 
 const router = Router();
 
 // HOST ROUTES
-router.route('/host/land/initialize').post(checkAccessToken, isHost, handleInitializeLandListing);
+router.route('/host/land/new').post(checkAccessToken, isHost, handleInitializeLandListing);
 router
   .route('/host/create-new-land')
   .post(checkAccessToken, isHost, upload.array('images'), handleCreateLand);
@@ -31,6 +32,7 @@ router
   .patch(checkAccessToken, isHost, upload.array('images'), handleUploadImage);
 router.route('/host/land/image/:id').delete(checkAccessToken, isHost, handleUnlinkImage);
 router.route('/host/land').get(checkAccessToken, isHost, handleGetAllHostListedLand);
+router.route('/host/land/:id').get(checkAccessToken, isHost, handleRetrieveOneListedLandById);
 
 // COMMON GET ALL LISTED FLAT ENDPOINT
 router.route('/land').get(handleGetAllLand);

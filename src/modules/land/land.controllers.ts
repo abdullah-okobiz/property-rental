@@ -16,6 +16,7 @@ const {
   processCreateLand,
   processChangeStatus,
   processRetrieveOneListedLand,
+  processRetrieveOneListedLandById,
 } = LandServices;
 
 const LandControllers = {
@@ -23,6 +24,26 @@ const LandControllers = {
     try {
       const { slug } = req.params;
       const data = await processRetrieveOneListedLand({ slug });
+      res.status(201).json({
+        status: 'success',
+        message: 'Land Retrieve Successful',
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleRetrieveOneListedLandById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'Invalid team member ID' });
+        return;
+      }
+      const landId = new mongoose.Types.ObjectId(id);
+      const data = await processRetrieveOneListedLandById({ landId });
       res.status(201).json({
         status: 'success',
         message: 'Land Retrieve Successful',

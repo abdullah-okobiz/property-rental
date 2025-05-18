@@ -20,6 +20,7 @@ const {
   deleteListedFlatItem,
   createNewFlat,
   findOneListedFlat,
+  findOneListedFlatById,
 } = FlatRepositories;
 
 const FlatServices = {
@@ -169,6 +170,17 @@ const FlatServices = {
   processRetrieveOneListedFlat: async ({ slug }: IFlatPayload) => {
     try {
       return await findOneListedFlat({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Flat Service');
+      }
+    }
+  },
+  processRetrieveOneListedFlatById: async ({ flatId }: IFlatPayload) => {
+    try {
+      return await findOneListedFlatById({ flatId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

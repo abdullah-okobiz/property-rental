@@ -20,6 +20,7 @@ const {
   deleteListedRentItem,
   createNewRent,
   findOneListedRent,
+  findOneListedRentById,
 } = RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
@@ -147,6 +148,17 @@ const RentServices = {
   processRetrieveOneListedRent: async ({ slug }: IRentPayload) => {
     try {
       return await findOneListedRent({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Rent Service');
+      }
+    }
+  },
+  processRetrieveOneListedRentById: async ({ rentId }: IRentPayload) => {
+    try {
+      return await findOneListedRentById({ rentId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

@@ -20,12 +20,24 @@ const {
   updateLandListing,
   createNewLand,
   findOneListedLand,
+  findOneByIdListedLand,
 } = LandRepositories;
 
 const LandServices = {
   processRetrieveOneListedLand: async ({ slug }: ILandPayload) => {
     try {
       return await findOneListedLand({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Land service');
+      }
+    }
+  },
+  processRetrieveOneListedLandById: async ({ landId }: ILandPayload) => {
+    try {
+      return await findOneByIdListedLand({ landId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;

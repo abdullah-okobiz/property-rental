@@ -108,6 +108,20 @@ const LandRepositories = {
       }
     }
   },
+  findOneByIdListedLand: async ({ landId }: ILandPayload) => {
+    try {
+      return await Land.findOne({ landId })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Land Operation');
+      }
+    }
+  },
   findAllListedLand: async ({ query, page, sort }: IGetAllLandPayload) => {
     try {
       const currentPage = page ?? 1;

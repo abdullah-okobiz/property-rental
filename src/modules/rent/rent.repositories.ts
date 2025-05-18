@@ -98,6 +98,21 @@ const RentRepositories = {
       }
     }
   },
+  findOneListedRentById: async ({ rentId }: IRentPayload) => {
+    try {
+      return await Rent.findOne({ rentId })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category')
+        .populate('amenities');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Rent Operation');
+      }
+    }
+  },
   findAllForHost: async ({ host }: IRentPayload) => {
     try {
       const data = await Rent.find({ host });

@@ -16,6 +16,7 @@ const {
   processCreateFlat,
   processChangeStatus,
   processRetrieveOneListedFlat,
+  processRetrieveOneListedFlatById,
 } = FlatServices;
 
 const FlatControllers = {
@@ -23,6 +24,26 @@ const FlatControllers = {
     try {
       const { slug } = req.params;
       const data = await processRetrieveOneListedFlat({ slug });
+      res.status(201).json({
+        status: 'success',
+        message: 'Flat Retrieve Successful',
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleRetrieveOneListedFlatById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
+        return;
+      }
+      const flatId = new mongoose.Types.ObjectId(id);
+      const data = await processRetrieveOneListedFlatById({ flatId });
       res.status(201).json({
         status: 'success',
         message: 'Flat Retrieve Successful',
