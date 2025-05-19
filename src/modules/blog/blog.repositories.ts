@@ -70,5 +70,13 @@ const BlogRepositories = {
       throw new Error('Unknown Error Occurred In Single Blog Retrieve Operation');
     }
   },
+  findOneBlogById: async ({ blogId }: IBlogPayload) => {
+    try {
+      const data = await Blog.findOne({ _id: blogId }).populate('feature');
+      return data;
+    } catch (error) {
+      throw new Error('Unknown Error Occurred In Single Blog Retrieve Operation');
+    }
+  },
 };
 export default BlogRepositories;

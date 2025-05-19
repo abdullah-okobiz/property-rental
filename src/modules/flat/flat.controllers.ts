@@ -180,7 +180,7 @@ const FlatControllers = {
         req.query as IGetAllFlatRequestedQuery;
       const { data, total } = await processGetAllListedFlat({
         publishStatus,
-        page,
+        page, 
         sort,
         isSold,
         search,
