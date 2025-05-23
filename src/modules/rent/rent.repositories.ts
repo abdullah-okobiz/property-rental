@@ -186,6 +186,29 @@ const RentRepositories = {
       }
     }
   },
+  findOneHostListedStepField: async ({ id, field }: { id: string, field: string }) => {
+    try {
+      const data = await Rent.findById(id).lean();
+
+      if (!data) {
+        throw new Error('Rent listing data not found');
+      }
+
+      if (!(field in data)) {
+        throw new Error(`Field "${field}" does not exist in rent document`);
+      }
+
+      return data
+
+    } catch (error) {
+       if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In delete listed rent item Operation');
+      }
+
+    }
+  }
 };
 
 export default RentRepositories;

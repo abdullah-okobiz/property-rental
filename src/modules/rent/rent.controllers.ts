@@ -17,6 +17,7 @@ const {
   processCreateRent,
   processRetrieveOneListedRent,
   processRetrieveOneListedRentById,
+  processGetRentField
 } = RentServices;
 const RentControllers = {
   handleRetrieveOneListedRent: async (req: Request, res: Response, next: NextFunction) => {
@@ -276,6 +277,29 @@ const RentControllers = {
       next();
     }
   },
+  handleGetRentField: async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      const { id, field } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'invalid listing id' });
+        return;
+      }
+      const data  = await processGetRentField({ id, field });
+      res.status(200).json({
+        status: 'success',
+        message: `Rent field data get successfully`,
+        data: data
+
+      })
+
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+
+    }
+  }
 };
 
 export default RentControllers;
