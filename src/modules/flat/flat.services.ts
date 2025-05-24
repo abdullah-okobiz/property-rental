@@ -21,6 +21,7 @@ const {
   createNewFlat,
   findOneListedFlat,
   findOneListedFlatById,
+  findOneHostListedStepFlatField
 } = FlatRepositories;
 
 const FlatServices = {
@@ -220,6 +221,20 @@ const FlatServices = {
         throw new Error('Unknown Error Occurred In delete listed flat item service');
       }
     }
+  },
+  processGetFlatField: async ({ id, field }: { id: string; field: string }) => {
+    try {
+      const data = await findOneHostListedStepFlatField({ id, field });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Flat Service');
+      }
+
+    }
+    
   },
 };
 

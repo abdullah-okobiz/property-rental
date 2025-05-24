@@ -58,6 +58,7 @@ FlatSchema.pre('save', async function (next) {
   const flat = this as HydratedDocument<IFlat>;
   if ((flat.isModified('title') || flat.isNew) && flat.title) {
     try {
+      
       flat.slug = generateSlug(flat?.title as string);
     } catch (error) {
       if (error instanceof Error) {

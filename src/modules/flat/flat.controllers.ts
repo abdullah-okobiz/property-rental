@@ -17,6 +17,7 @@ const {
   processChangeStatus,
   processRetrieveOneListedFlat,
   processRetrieveOneListedFlatById,
+  processGetFlatField
 } = FlatServices;
 
 const FlatControllers = {
@@ -265,6 +266,28 @@ const FlatControllers = {
       next();
     }
   },
+   handleGetFlatField:async (req:Request,res:Response,next:NextFunction)=>{
+    try {
+      const { id, field } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'invalid listing id' });
+        return;
+      }
+      const data  = await processGetFlatField({ id, field });
+      res.status(200).json({
+        status: 'success',
+        message: `Flat field data get successfully`,
+        data: data
+
+      })
+
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+
+    }
+  }
 };
 
 export default FlatControllers;

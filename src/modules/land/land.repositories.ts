@@ -168,6 +168,29 @@ const LandRepositories = {
       }
     }
   },
+  findOneHostListedStepLandField: async ({ id, field }: { id: string, field: string }) => {
+      try {
+        const data = await Land.findById(id).lean();
+  
+        if (!data) {
+          throw new Error('Land listing data not found');
+        }
+  
+        if (!(field in data)) {
+          throw new Error(`Field "${field}" does not exist in Land document`);
+        }
+  
+        return data
+  
+      } catch (error) {
+         if (error instanceof Error) {
+          throw error;
+        } else {
+          throw new Error('Unknown Error Occurred In delete listed Land item Operation');
+        }
+  
+      }
+    }
 };
 
 export default LandRepositories;

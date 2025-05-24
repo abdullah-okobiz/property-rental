@@ -17,6 +17,7 @@ const {
   processChangeStatus,
   processRetrieveOneListedLand,
   processRetrieveOneListedLandById,
+  processGetLandField
 } = LandServices;
 
 const LandControllers = {
@@ -274,6 +275,28 @@ const LandControllers = {
       next();
     }
   },
+  handleGetLandField:async (req:Request,res:Response,next:NextFunction)=>{
+    try {
+      const { id, field } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'invalid listing id' });
+        return;
+      }
+      const data  = await processGetLandField({ id, field });
+      res.status(200).json({
+        status: 'success',
+        message: `Land field data get successfully`,
+        data: data
+
+      })
+
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+
+    }
+  }
 };
 
 export default LandControllers;

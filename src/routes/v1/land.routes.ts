@@ -17,6 +17,7 @@ const {
   handleCreateLand,
   handleRetrieveOneListedLand,
   handleRetrieveOneListedLandById,
+  handleGetLandField
 } = LandControllers;
 
 const router = Router();
@@ -51,5 +52,8 @@ router
     allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
     handleDeleteListedLandItem
   );
+  router
+  .route('/host/land/:id/field/:field')
+  .get(checkAccessToken, isHost, handleGetLandField);
 
 export default router;

@@ -21,6 +21,7 @@ const {
   createNewLand,
   findOneListedLand,
   findOneByIdListedLand,
+  findOneHostListedStepLandField
 } = LandRepositories;
 
 const LandServices = {
@@ -207,6 +208,20 @@ const LandServices = {
         throw new Error('Unknown Error Occurred In delete listed land item service');
       }
     }
+  },
+  processGetLandField: async ({ id, field }: { id: string; field: string }) => {
+    try {
+      const data = await findOneHostListedStepLandField({ id, field });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Land Service');
+      }
+
+    }
+    
   },
 };
 

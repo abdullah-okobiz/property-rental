@@ -17,6 +17,7 @@ const {
   handleCreateFlat,
   handleRetrieveOneListedFlat,
   handleRetrieveOneListedFlatById,
+  handleGetFlatField
 } = FlatControllers;
 
 const router = Router();
@@ -52,5 +53,8 @@ router
     allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
     handleDeleteListedFlatItem
   );
+   router
+  .route('/host/land/:id/field/:field')
+  .get(checkAccessToken, isHost, handleGetFlatField);
 
 export default router;

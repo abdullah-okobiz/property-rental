@@ -167,6 +167,29 @@ const FlatRepositories = {
       }
     }
   },
+    findOneHostListedStepFlatField: async ({ id, field }: { id: string, field: string }) => {
+        try {
+          const data = await Flat.findById(id).lean();
+    
+          if (!data) {
+            throw new Error('Flat listing data not found');
+          }
+    
+          if (!(field in data)) {
+            throw new Error(`Field "${field}" does not exist in Flat document`);
+          }
+    
+          return data
+    
+        } catch (error) {
+           if (error instanceof Error) {
+            throw error;
+          } else {
+            throw new Error('Unknown Error Occurred In delete listed Flat item Operation');
+          }
+    
+        }
+      }
 };
 
 export default FlatRepositories;
