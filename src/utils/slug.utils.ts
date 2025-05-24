@@ -1,5 +1,9 @@
-import { customAlphabet } from 'nanoid';
-const generate4DigitNumber = customAlphabet('1234567890', 4);
+import crypto from 'crypto';
+
+const generate4DigitNumber = (): string => {
+  const num = crypto.randomInt(1000, 10000); // 1000–9999
+  return num.toString();
+};
 
 const SlugUtils = {
   generateSlug: (text: string): string => {

@@ -1,12 +1,12 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
-import morgan from "morgan";
-import { morganMessageFormat, streamConfig } from "./configs/morgan.configs";
-import corsConfiguration from "./configs/cors.configs";
-import { baseUrl } from "./const";
-import { globalErrorMiddleware } from "./middlewares/globalError.middleware";
-import cookieParser from "cookie-parser";
-import multer from "multer";
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import { morganMessageFormat, streamConfig } from './configs/morgan.configs';
+import corsConfiguration from './configs/cors.configs';
+import { baseUrl } from './const';
+import { globalErrorMiddleware } from './middlewares/globalError.middleware';
+import cookieParser from 'cookie-parser';
+import multer from 'multer';
 
 const app = express();
 
@@ -15,8 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(multer().none());
 app.use(cookieParser());
 app.use(cors(corsConfiguration));
-app.use(express.static("public"));
-app.use("/api/v1/public", express.static("public"));
+app.use(express.static('public'));
+app.use('/api/v1/public', express.static('public'));
 app.use(
   morgan(morganMessageFormat, {
     stream: {
@@ -25,8 +25,8 @@ app.use(
   })
 );
 
-app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ message: "Server Is Running" });
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ message: 'Server Is Running' });
 });
 
 /* ====================================|
@@ -53,7 +53,7 @@ import {
   Flat,
   Land,
   Contacts,
-} from "./routes/v1";
+} from './routes/v1';
 
 app.use(baseUrl.v1, UserRoutes);
 app.use(baseUrl.v1, ProfileRoutes);
