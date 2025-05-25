@@ -52,22 +52,31 @@ const RentSchema = new Schema<IRent>({
     enum: RentListingStatus,
     default: RentListingStatus.IN_PROGRESS,
   },
-  slug: { type: String, unique: true, index: true },
+  slug: {
+    type: String,
+    index: {
+      unique: true,
+      partialFilterExpression: { slug: { $type: 'string' } },
+    },
+  },
   latitude: { type: Number, default: null },
   longitude: { type: Number, default: null },
 });
 
 RentSchema.pre('save', async function (next) {
   const rent = this as HydratedDocument<IRent>;
-  if ((rent.isModified('title') || rent.isNew) && rent.title) {
+
+  if (rent.isModified('title') || rent.isNew) {
     try {
-      rent.slug = generateSlug(rent?.title as string);
+      const baseSlug = rent.title?.trim() || `listing-${Date.now()}`;
+      rent.slug = generateSlug(baseSlug);
     } catch (error) {
       if (error instanceof Error) {
         next(error);
       }
     }
   }
+
   next();
 });
 

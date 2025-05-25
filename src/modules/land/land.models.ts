@@ -22,7 +22,14 @@ const LandSchema = new Schema<ILand>(
       enum: ListingPublishStatus,
       default: ListingPublishStatus.IN_PROGRESS,
     },
-    slug: { type: String, unique: true, index: true },
+    slug: {
+      type: String,
+      index: {
+        unique: true,
+        partialFilterExpression: { slug: { $type: 'string' } },
+      },
+    },
+
     isSold: { type: Boolean, default: false },
     latitude: { type: Number, default: null },
     longitude: { type: Number, default: null },
@@ -32,17 +39,22 @@ const LandSchema = new Schema<ILand>(
 
 LandSchema.pre('save', async function (next) {
   const land = this as HydratedDocument<ILand>;
-  if ((land.isModified('title') || land.isNew) && land.title) {
+
+  if (land.isModified('title') || land.isNew) {
     try {
-      land.slug = generateSlug(land?.title as string);
+      const baseSlug = land.title?.trim() || `listing-${Date.now()}`;
+      land.slug = generateSlug(baseSlug);
     } catch (error) {
       if (error instanceof Error) {
         next(error);
       }
     }
   }
+
   next();
 });
+
+ 
 
 const Land: Model<ILand> = model<ILand>('Land', LandSchema);
 
