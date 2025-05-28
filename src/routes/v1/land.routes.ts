@@ -17,7 +17,8 @@ const {
   handleCreateLand,
   handleRetrieveOneListedLand,
   handleRetrieveOneListedLandById,
-  handleGetLandField
+  handleGetLandField,
+  HandleLandSearchProcess
 } = LandControllers;
 
 const router = Router();
@@ -55,5 +56,6 @@ router
   router
   .route('/host/land/:id/field/:field')
   .get(checkAccessToken, isHost, handleGetLandField);
+  router.route('/land-search').get(HandleLandSearchProcess);
 
 export default router;

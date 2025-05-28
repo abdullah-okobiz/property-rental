@@ -3,6 +3,7 @@ import { documentPerPage } from '../../const';
 import User from '../user/user.model';
 import ILand, { IGetAllLandPayload, ILandPayload, ListingPublishStatus } from './land.interfaces';
 import Land from './land.models';
+import { query } from 'winston';
 
 const LandRepositories = {
   initializeLandListing: async ({ userId }: ILandPayload) => {
@@ -189,6 +190,16 @@ const LandRepositories = {
           throw new Error('Unknown Error Occurred In delete listed Land item Operation');
         }
   
+      }
+    },
+    findAllSearchingLand:async({query}:any)=>{
+      try {
+          const lands = await Land.find(query).populate('category').populate('host');
+          return lands;
+
+        
+      } catch (error) {
+          throw new Error('Error occurred while searching Land listings');
       }
     }
 };

@@ -240,7 +240,7 @@ const RentServices = {
     
   },
   searchRentListings: async (payload:any) => {
-    const result = await RentRepositories.findAllSearchingRent(payload);
+    const result = await findAllSearchingRent(payload);
     return result;
   },
 };

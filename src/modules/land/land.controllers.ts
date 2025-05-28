@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { documentPerPage } from '../../const';
 import LandServices from './land.services';
 import ILand, { IGetAllLandRequestedQuery, ILandImagesPath } from './land.interfaces';
+import { buildLandQuery } from '../../utils/land.query';
 
 const {
   processDeleteListedLandItem,
@@ -17,7 +18,8 @@ const {
   processChangeStatus,
   processRetrieveOneListedLand,
   processRetrieveOneListedLandById,
-  processGetLandField
+  processGetLandField,
+  searchLandListingHandleMethod
 } = LandServices;
 
 const LandControllers = {
@@ -295,6 +297,24 @@ const LandControllers = {
       logger.error(err.message);
       next();
 
+    }
+  },
+  HandleLandSearchProcess:async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+      const { location, minPrice, maxPrice, category } = req.query;
+       const query = buildLandQuery({
+      location: location as string,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      category: category as string,
+    });
+    const result = await searchLandListingHandleMethod({
+      query
+    })
+      res.status(200).json({ success: true, data:result });
+      
+    } catch (error) {
+       next(error);
     }
   }
 };

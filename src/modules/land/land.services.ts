@@ -21,7 +21,8 @@ const {
   createNewLand,
   findOneListedLand,
   findOneByIdListedLand,
-  findOneHostListedStepLandField
+  findOneHostListedStepLandField,
+  findAllSearchingLand
 } = LandRepositories;
 
 const LandServices = {
@@ -221,8 +222,22 @@ const LandServices = {
       }
 
     }
-    
+
   },
+  searchLandListingHandleMethod: async (payload: any) => {
+    try {
+      const result = await findAllSearchingLand(payload)
+      return result;
+
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Land Service');
+      }
+    }
+
+  }
 };
 
 export default LandServices;
