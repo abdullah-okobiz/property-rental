@@ -21,7 +21,8 @@ const {
   createNewRent,
   findOneListedRent,
   findOneListedRentById,
-  findOneHostListedStepField
+  findOneHostListedStepField,
+  findAllSearchingRent
 } = RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
@@ -237,6 +238,10 @@ const RentServices = {
 
     }
     
+  },
+  searchRentListings: async (payload:any) => {
+    const result = await RentRepositories.findAllSearchingRent(payload);
+    return result;
   },
 };
 

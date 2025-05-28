@@ -14,6 +14,55 @@ const FloorPlanSchema = new Schema<IFloorPlan>(
   { _id: false }
 );
 
+// const RentSchema = new Schema<IRent>({
+//   title: { type: String, default: null },
+//   description: { type: String, default: null },
+//   coverImage: { type: String, default: null },
+//   images: { type: [String], default: null },
+//   category: {
+//     type: Types.ObjectId,
+//     ref: 'Category',
+//     default: null,
+//   },
+//   amenities: [{ type: Types.ObjectId, ref: 'Amenities' }],
+//   allowableThings: { type: [String], default: null },
+//   floorPlan: {
+//     type: FloorPlanSchema,
+//     default: {
+//       bedRoomCount: 0,
+//       bathCount: 0,
+//       bedCount: 0,
+//       guestCount: 0,
+//     },
+//   },
+//   cancellationPolicy: { type: [String], default: null },
+//   host: { type: Types.ObjectId, ref: 'User', require: true },
+//   houseRules: { type: [String], default: null },
+//   listingFor: [
+//     {
+//       type: Types.ObjectId,
+//       ref: 'Feature',
+//       default: null,
+//     },
+//   ],
+//   location: { type: String, default: null },
+//   price: { type: Number, default: null },
+//   status: {
+//     type: String,
+//     enum: RentListingStatus,
+//     default: RentListingStatus.IN_PROGRESS,
+//   },
+//   slug: {
+//     type: String,
+//     index: {
+//       unique: true,
+//       partialFilterExpression: { slug: { $type: 'string' } },
+//     },
+//   },
+//   latitude: { type: Number, default: null },
+//   longitude: { type: Number, default: null },
+// });
+
 const RentSchema = new Schema<IRent>({
   title: { type: String, default: null },
   description: { type: String, default: null },
@@ -29,15 +78,15 @@ const RentSchema = new Schema<IRent>({
   floorPlan: {
     type: FloorPlanSchema,
     default: {
-      bedRoomCount: 0,
+      bedroomCount: 0,
       bathCount: 0,
       bedCount: 0,
       guestCount: 0,
     },
   },
   cancellationPolicy: { type: [String], default: null },
-  host: { type: Types.ObjectId, ref: 'User', require: true },
   houseRules: { type: [String], default: null },
+  host: { type: Types.ObjectId, ref: 'User', require: true },
   listingFor: [
     {
       type: Types.ObjectId,
@@ -46,6 +95,12 @@ const RentSchema = new Schema<IRent>({
     },
   ],
   location: { type: String, default: null },
+
+  checkinDate: { type: Date, default: null },
+  checkoutDate: { type: Date, default: null },
+  adultCount: { type: Number, default: 0 },
+  childrenCount: { type: Number, default: 0 },
+
   price: { type: Number, default: null },
   status: {
     type: String,
