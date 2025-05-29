@@ -149,25 +149,66 @@ const FlatServices = {
     page,
     publishStatus,
     sort,
+    location,
+    minPrice,
+    maxPrice,
   }: IGetAllFlatRequestedQuery) => {
     try {
       const query: IGetAllFlatQuery = {};
+
       if (search) query.email = String(search);
-      if (isSold) query.isSold = isSold;
+      if (isSold !== undefined) query.isSold = isSold;
       if (category) query.category = String(category);
       if (publishStatus) query.publishStatus = publishStatus;
+      if (location) {
+        query.location = { $regex: location, $options: "i" };
+      }
+      if (minPrice !== undefined || maxPrice !== undefined) {
+        query.price = {};
+        if (minPrice !== undefined) query.price.$gte = minPrice;
+        if (maxPrice !== undefined) query.price.$lte = maxPrice;
+      }
+
       const payload: IGetAllFlatPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
+
       return await findAllListedFlat(payload);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error('Unknown Error Occurred get all listed flat service');
+        throw new Error("Unknown Error Occurred get all listed flat service");
       }
     }
   },
+
+  // processGetAllListedFlat: async ({
+  //   category,
+  //   isSold,
+  //   search,
+  //   page,
+  //   publishStatus,
+  //   sort,
+  // }: IGetAllFlatRequestedQuery) => {
+  //   try {
+  //     const query: IGetAllFlatQuery = {};
+  //     if (search) query.email = String(search);
+  //     if (isSold) query.isSold = isSold;
+  //     if (category) query.category = String(category);
+  //     if (publishStatus) query.publishStatus = publishStatus;
+  //     const payload: IGetAllFlatPayload = { query };
+  //     if (page) payload.page = page;
+  //     if (sort) payload.sort = sort;
+  //     return await findAllListedFlat(payload);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw error;
+  //     } else {
+  //       throw new Error('Unknown Error Occurred get all listed flat service');
+  //     }
+  //   }
+  // },
   processRetrieveOneListedFlat: async ({ slug }: IFlatPayload) => {
     try {
       return await findOneListedFlat({ slug });
@@ -234,7 +275,7 @@ const FlatServices = {
       }
 
     }
-    
+
   },
 };
 

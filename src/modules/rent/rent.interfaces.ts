@@ -15,8 +15,8 @@ export interface IFloorPlan {
 }
 
 interface IRent {
-  latitude?:number;
-  longitude?:number;
+  latitude?: number;
+  longitude?: number;
   title?: string;
   images?: string[];
   coverImage?: string;
@@ -33,6 +33,10 @@ interface IRent {
   status?: RentListingStatus;
   host?: Types.ObjectId;
   slug?: string;
+  checkinDate?: Date | null;
+  checkoutDate?: Date | null;
+  adultCount?: number;
+  childrenCount?: number;
 }
 export interface ICreateRentPayload {
   images?: string[];
@@ -68,8 +72,8 @@ export interface IGetAllRentQuery {
   status?: string;
 }
 
-export interface ICalendar{
-  rentId:Types.ObjectId;
+export interface ICalendar {
+  rentId: Types.ObjectId;
 
 }
 

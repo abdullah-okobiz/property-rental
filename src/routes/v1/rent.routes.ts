@@ -17,7 +17,9 @@ const {
   handleCreateRent,
   handleRetrieveOneListedRent,
   handleRetrieveOneListedRentById,
-  handleGetRentField
+  handleGetRentField,
+  HandleSearchRentListings
+
 } = RentControllers;
 const router = Router();
 
@@ -54,5 +56,6 @@ router.route('/rent/:slug').get(handleRetrieveOneListedRent);
 router
   .route('/host/rent/:id/field/:field')
   .get(checkAccessToken, isHost, handleGetRentField);
+router.route('/rent-search').get(HandleSearchRentListings);
 
 export default router;

@@ -5,6 +5,7 @@ import { documentPerPage } from '../../const';
 import LandServices from './land.services';
 import ILand, { IGetAllLandRequestedQuery, ILandImagesPath } from './land.interfaces';
 
+
 const {
   processDeleteListedLandItem,
   processGetAllListedLand,
@@ -17,7 +18,8 @@ const {
   processChangeStatus,
   processRetrieveOneListedLand,
   processRetrieveOneListedLandById,
-  processGetLandField
+  processGetLandField,
+ 
 } = LandServices;
 
 const LandControllers = {
@@ -195,10 +197,24 @@ const LandControllers = {
       next();
     }
   },
-  handleGetAllLand: async (req: Request, res: Response, next: NextFunction) => {
+  handleGetAllLand: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const { publishStatus, page, sort, search, isSold, category } =
-        req.query as IGetAllLandRequestedQuery;
+      const {
+        publishStatus,
+        page,
+        sort,
+        search,
+        isSold,
+        category,
+        location,
+        minPrice,
+        maxPrice,
+      } = req.query as unknown as IGetAllLandRequestedQuery;
+
       const { data, total } = await processGetAllListedLand({
         publishStatus,
         page,
@@ -206,23 +222,15 @@ const LandControllers = {
         search,
         isSold,
         category,
+        location,
+        minPrice,
+        maxPrice,
       });
-      const totalPages = Math.ceil(total / documentPerPage);
-      const totalLand = total;
-      // const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
-      //   req.path
-      // }`;
-      // const buildQuery = (pageNumber: number) => {
-      //   const query = new URLSearchParams();
-      //   if (isSold) query.set("search", String(isSold));
-      //   if (search) query.set("search", search);
-      //   if (publishStatus) query.set("publishStatus", publishStatus);
-      //   if (sort) query.set("sort", String(sort));
-      //   query.set("page", String(pageNumber));
-      //   return `${baseUrl}?${query.toString()}`;
-      // };
-      const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
 
+      const totalPages = Math.ceil(total / documentPerPage);
+      const currentPage = Number(page) || 1;
+
+      const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();
         if (isSold !== undefined) query.set('isSold', String(isSold));
@@ -230,20 +238,23 @@ const LandControllers = {
         if (publishStatus) query.set('publishStatus', publishStatus);
         if (category) query.set('category', String(category));
         if (sort) query.set('sort', String(sort));
+        if (location) query.set('location', location);
+        if (minPrice !== undefined) query.set('minPrice', String(minPrice));
+        if (maxPrice !== undefined) query.set('maxPrice', String(maxPrice));
         if (pageNumber !== 1) query.set('page', String(pageNumber));
 
         const queryString = query.toString();
         return queryString ? `${baseUrl}?${queryString}` : baseUrl;
       };
 
-      const currentPage = Number(page) || 1;
       const currentPageUrl = buildQuery(currentPage);
       const nextPageUrl = currentPage < totalPages ? buildQuery(currentPage + 1) : null;
       const previousPageUrl = currentPage > 1 ? buildQuery(currentPage - 1) : null;
+
       res.status(200).json({
         status: 'success',
-        message: `All Listed Land Item Retrieve successful`,
-        totalLand,
+        message: 'All Listed Land Item Retrieve successful',
+        totalLand: total,
         totalPages,
         currentPageUrl,
         nextPageUrl,
@@ -251,11 +262,71 @@ const LandControllers = {
         data,
       });
     } catch (error) {
-      const err = error as Error;
-      logger.error(err.message);
-      next();
+      logger.error((error as Error).message);
+      next(error);
     }
   },
+  // handleGetAllLand: async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const { publishStatus, page, sort, search, isSold, category } =
+  //       req.query as IGetAllLandRequestedQuery;
+  //     const { data, total } = await processGetAllListedLand({
+  //       publishStatus,
+  //       page,
+  //       sort,
+  //       search,
+  //       isSold,
+  //       category,
+  //     });
+  //     const totalPages = Math.ceil(total / documentPerPage);
+  //     const totalLand = total;
+  //     // const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+  //     //   req.path
+  //     // }`;
+  //     // const buildQuery = (pageNumber: number) => {
+  //     //   const query = new URLSearchParams();
+  //     //   if (isSold) query.set("search", String(isSold));
+  //     //   if (search) query.set("search", search);
+  //     //   if (publishStatus) query.set("publishStatus", publishStatus);
+  //     //   if (sort) query.set("sort", String(sort));
+  //     //   query.set("page", String(pageNumber));
+  //     //   return `${baseUrl}?${query.toString()}`;
+  //     // };
+  //     const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
+
+  //     const buildQuery = (pageNumber: number) => {
+  //       const query = new URLSearchParams();
+  //       if (isSold !== undefined) query.set('isSold', String(isSold));
+  //       if (search) query.set('search', search);
+  //       if (publishStatus) query.set('publishStatus', publishStatus);
+  //       if (category) query.set('category', String(category));
+  //       if (sort) query.set('sort', String(sort));
+  //       if (pageNumber !== 1) query.set('page', String(pageNumber));
+
+  //       const queryString = query.toString();
+  //       return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+  //     };
+
+  //     const currentPage = Number(page) || 1;
+  //     const currentPageUrl = buildQuery(currentPage);
+  //     const nextPageUrl = currentPage < totalPages ? buildQuery(currentPage + 1) : null;
+  //     const previousPageUrl = currentPage > 1 ? buildQuery(currentPage - 1) : null;
+  //     res.status(200).json({
+  //       status: 'success',
+  //       message: `All Listed Land Item Retrieve successful`,
+  //       totalLand,
+  //       totalPages,
+  //       currentPageUrl,
+  //       nextPageUrl,
+  //       previousPageUrl,
+  //       data,
+  //     });
+  //   } catch (error) {
+  //     const err = error as Error;
+  //     logger.error(err.message);
+  //     next();
+  //   }
+  // },
   handleDeleteListedLandItem: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -275,14 +346,14 @@ const LandControllers = {
       next();
     }
   },
-  handleGetLandField:async (req:Request,res:Response,next:NextFunction)=>{
+  handleGetLandField: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id, field } = req.params;
       if (!mongoose.Types.ObjectId.isValid(id)) {
         res.status(400).json({ status: 'error', message: 'invalid listing id' });
         return;
       }
-      const data  = await processGetLandField({ id, field });
+      const data = await processGetLandField({ id, field });
       res.status(200).json({
         status: 'success',
         message: `Land field data get successfully`,
@@ -296,7 +367,25 @@ const LandControllers = {
       next();
 
     }
-  }
+  },
+  // HandleLandSearchProcess: async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const { location, minPrice, maxPrice, category } = req.query;
+  //     const query = buildLandQuery({
+  //       location: location as string,
+  //       minPrice: minPrice ? Number(minPrice) : undefined,
+  //       maxPrice: maxPrice ? Number(maxPrice) : undefined,
+  //       category: category as string,
+  //     });
+  //     const result = await searchLandListingHandleMethod({
+  //       query
+  //     })
+  //     res.status(200).json({ success: true, data: result });
+
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 };
 
 export default LandControllers;

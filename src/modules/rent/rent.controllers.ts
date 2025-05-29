@@ -17,7 +17,8 @@ const {
   processCreateRent,
   processRetrieveOneListedRent,
   processRetrieveOneListedRentById,
-  processGetRentField
+  processGetRentField,
+  searchRentListings
 } = RentServices;
 const RentControllers = {
   handleRetrieveOneListedRent: async (req: Request, res: Response, next: NextFunction) => {
@@ -285,7 +286,7 @@ const RentControllers = {
         res.status(400).json({ status: 'error', message: 'invalid listing id' });
         return;
       }
-      const data  = await processGetRentField({ id, field });
+      const data = await processGetRentField({ id, field });
       res.status(200).json({
         status: 'success',
         message: `Rent field data get successfully`,
@@ -299,7 +300,39 @@ const RentControllers = {
       next();
 
     }
+  },
+  HandleSearchRentListings: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        location,
+        checkinDate,
+        checkoutDate,
+        adultCount,
+        childrenCount,
+        page,
+        sort,
+      } = req.query;
+
+      const query: Record<string, any> = {};
+
+      if (location) query.location = location;
+      if (checkinDate) query.checkinDate = new Date(checkinDate as string);
+      if (checkoutDate) query.checkoutDate = new Date(checkoutDate as string);
+      if (adultCount) query.adultCount = Number(adultCount);
+      if (childrenCount) query.childrenCount = Number(childrenCount);
+
+      const result = await searchRentListings({
+        query,
+        page: page ? Number(page) : 1,
+        sort: sort === "1" ? 1 : -1, 
+      });
+
+      res.status(200).json({ success: true, ...result });
+    } catch (error) {
+      next(error);
+    }
   }
+
 };
 
 export default RentControllers;
