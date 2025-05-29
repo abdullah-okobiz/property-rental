@@ -81,39 +81,78 @@ const FlatRepositories = {
     }
   },
   findAllListedFlat: async ({ query, page, sort }: IGetAllFlatPayload) => {
-    try {
-      const currentPage = page ?? 1;
-      const skip = (currentPage - 1) * documentPerPage;
-      const sortOption: Record<string, 1 | -1> | undefined =
-        sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
-      if (query.email) {
-        const host = await User.findOne({ email: query.email });
-        if (host) {
-          query.host = host._id as Types.ObjectId;
-          delete query.email;
-        } else {
-          return { data: [], total: 0 };
-        }
-      }
-      const [data, total] = await Promise.all([
-        Flat.find(query)
-          .skip(skip)
-          .limit(documentPerPage)
-          .sort(sortOption)
-          .populate('host')
-          .populate('listingFor')
-          .populate('category'),
-        Flat.countDocuments(query),
-      ]);
-      return { data, total };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
+  try {
+    const currentPage = page ?? 1;
+    const skip = (currentPage - 1) * documentPerPage;
+
+    const sortOption: Record<string, 1 | -1> | undefined =
+      sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+
+    if (query.email) {
+      const host = await User.findOne({ email: query.email });
+      if (host) {
+        query.host = host._id as Types.ObjectId;
+        delete query.email;
       } else {
-        throw new Error('Unknown Error Occurred In Get All Listed Flat Operation');
+        return { data: [], total: 0 };
       }
     }
-  },
+
+    const [data, total] = await Promise.all([
+      Flat.find(query)
+        .skip(skip)
+        .limit(documentPerPage)
+        .sort(sortOption)
+        .populate("host")
+        .populate("listingFor")
+        .populate("category"),
+      Flat.countDocuments(query),
+    ]);
+
+    return { data, total };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    } else {
+      throw new Error("Unknown Error Occurred In Get All Listed Flat Operation");
+    }
+  }
+},
+
+  // findAllListedFlat: async ({ query, page, sort }: IGetAllFlatPayload) => {
+  //   try {
+  //     const currentPage = page ?? 1;
+  //     const skip = (currentPage - 1) * documentPerPage;
+  //     const sortOption: Record<string, 1 | -1> | undefined =
+  //       sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+  //     if (query.email) {
+  //       const host = await User.findOne({ email: query.email });
+  //       if (host) {
+  //         query.host = host._id as Types.ObjectId;
+  //         delete query.email;
+  //       } else {
+  //         return { data: [], total: 0 };
+  //       }
+  //     }
+  //     const [data, total] = await Promise.all([
+  //       Flat.find(query)
+  //         .skip(skip)
+  //         .limit(documentPerPage)
+  //         .sort(sortOption)
+  //         .populate('host')
+  //         .populate('listingFor')
+  //         .populate('category'),
+  //       Flat.countDocuments(query),
+  //     ]);
+  //     return { data, total };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw error;
+  //     } else {
+  //       throw new Error('Unknown Error Occurred In Get All Listed Flat Operation');
+  //     }
+  //   }
+  // },
   findOneListedFlat: async ({ slug }: IFlatPayload) => {
     try {
       return await Flat.findOne({ slug })

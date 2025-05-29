@@ -3,7 +3,7 @@ import { documentPerPage } from '../../const';
 import User from '../user/user.model';
 import ILand, { IGetAllLandPayload, ILandPayload, ListingPublishStatus } from './land.interfaces';
 import Land from './land.models';
-import { query } from 'winston';
+
 
 const LandRepositories = {
   initializeLandListing: async ({ userId }: ILandPayload) => {
@@ -129,6 +129,7 @@ const LandRepositories = {
       const skip = (currentPage - 1) * documentPerPage;
       const sortOption: Record<string, 1 | -1> | undefined =
         sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+
       if (query.email) {
         const host = await User.findOne({ email: query.email });
         if (host) {
@@ -138,6 +139,7 @@ const LandRepositories = {
           return { data: [], total: 0 };
         }
       }
+
       const [data, total] = await Promise.all([
         Land.find(query)
           .skip(skip)
@@ -148,15 +150,46 @@ const LandRepositories = {
           .populate('category'),
         Land.countDocuments(query),
       ]);
+
       return { data, total };
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error('Unknown Error Occurred In Get All Listed Land Operation');
-      }
+      throw new Error('Unknown Error Occurred In Get All Listed Land Operation');
     }
   },
+  // findAllListedLand: async ({ query, page, sort }: IGetAllLandPayload) => {
+  //   try {
+  //     const currentPage = page ?? 1;
+  //     const skip = (currentPage - 1) * documentPerPage;
+  //     const sortOption: Record<string, 1 | -1> | undefined =
+  //       sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+  //     if (query.email) {
+  //       const host = await User.findOne({ email: query.email });
+  //       if (host) {
+  //         query.host = host._id as Types.ObjectId;
+  //         delete query.email;
+  //       } else {
+  //         return { data: [], total: 0 };
+  //       }
+  //     }
+  //     const [data, total] = await Promise.all([
+  //       Land.find(query)
+  //         .skip(skip)
+  //         .limit(documentPerPage)
+  //         .sort(sortOption)
+  //         .populate('host')
+  //         .populate('listingFor')
+  //         .populate('category'),
+  //       Land.countDocuments(query),
+  //     ]);
+  //     return { data, total };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw error;
+  //     } else {
+  //       throw new Error('Unknown Error Occurred In Get All Listed Land Operation');
+  //     }
+  //   }
+  // },
   deleteListedLandItem: async ({ landId }: ILandPayload) => {
     try {
       const data = await Land.findByIdAndDelete(landId);
@@ -170,38 +203,29 @@ const LandRepositories = {
     }
   },
   findOneHostListedStepLandField: async ({ id, field }: { id: string, field: string }) => {
-      try {
-        const data = await Land.findById(id).lean();
-  
-        if (!data) {
-          throw new Error('Land listing data not found');
-        }
-  
-        if (!(field in data)) {
-          throw new Error(`Field "${field}" does not exist in Land document`);
-        }
-  
-        return data
-  
-      } catch (error) {
-         if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error('Unknown Error Occurred In delete listed Land item Operation');
-        }
-  
-      }
-    },
-    findAllSearchingLand:async({query}:any)=>{
-      try {
-          const lands = await Land.find(query).populate('category').populate('host');
-          return lands;
+    try {
+      const data = await Land.findById(id).lean();
 
-        
-      } catch (error) {
-          throw new Error('Error occurred while searching Land listings');
+      if (!data) {
+        throw new Error('Land listing data not found');
       }
+
+      if (!(field in data)) {
+        throw new Error(`Field "${field}" does not exist in Land document`);
+      }
+
+      return data
+
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In delete listed Land item Operation');
+      }
+
     }
+  },
+  
 };
 
 export default LandRepositories;
