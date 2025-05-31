@@ -19,7 +19,8 @@ const {
   processFindAllStaff,
   processChangeStaffPassword,
   processChangeStaffRole,
-  processChangeOwnPassword
+  processChangeOwnPassword,
+  processForgotPassword
 } = UserServices;
 
 const UserControllers = {
@@ -192,6 +193,31 @@ const UserControllers = {
       next();
     }
   },
+  handleForgotPassword: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).json({
+          status: "error",
+          message: "Email is required",
+        });
+        return;
+      }
+
+      const result = await processForgotPassword(email);
+
+      res.status(200).json({
+        status: "success",
+        message: result.message,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+
   handleChangeStaffPassword: async (
     req: Request,
     res: Response,

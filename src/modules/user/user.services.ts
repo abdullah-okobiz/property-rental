@@ -30,13 +30,14 @@ const {
   findAllStaff,
   changeStaffPassword,
   changeStaffRole,
-  changeUserPassword
+  changeUserPassword,
+  findUserByEmailPassword
 } = UserRepositories;
 const UserServices = {
   processSignup: async (payload: ISignupPayload) => {
     try {
       const createdUser = await createUser(payload);
-      const otp = otpGenerator.generate(5, {
+      const otp = otpGenerator.generate(6, {
         digits: true,
         lowerCaseAlphabets: false,
         specialChars: false,
@@ -236,30 +237,71 @@ const UserServices = {
       }
     }
   },
-  processChangeOwnPassword : async ({
-  userId,
-  oldPassword,
-  newPassword,
-}: {
-  userId: string;
-  oldPassword: string;
-  newPassword: string;
-}) => {
-  try {
-    return await changeUserPassword({userId,oldPassword,newPassword});
-    
-  } catch (error) {
-     if (error instanceof Error) {
+  processChangeOwnPassword: async ({
+    userId,
+    oldPassword,
+    newPassword,
+  }: {
+    userId: string;
+    oldPassword: string;
+    newPassword: string;
+  }) => {
+    try {
+      return await changeUserPassword({ userId, oldPassword, newPassword });
+
+    } catch (error) {
+      if (error instanceof Error) {
         throw error;
       } else {
         throw new Error(
           "Unknown Error Occurred In User Password Change Service"
         );
       }
-    
-  }
-  
-},
+
+    }
+
+  },
+  processForgotPassword: async (email: string) => {
+    try {
+      const user = await findUserByEmailPassword(email);
+      if (!user) {
+        throw new Error("If this email exists, an OTP has been sent.");
+      }
+
+      const resendKey = `user:otp:resend-limit:${email}`;
+      const isLimited = await redisClient.get(resendKey);
+
+      if (isLimited) {
+        throw new Error("Please wait a minute before requesting another OTP.");
+      }
+
+      await redisClient.set(resendKey, "1", "EX", 60);
+      const otp = otpGenerator.generate(6, {
+        digits: true,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+        upperCaseAlphabets: false,
+      });
+
+
+      await redisClient.set(`user:reset-otp:${email}`, otp, "EX", 2 * 60); 
+      await sendVerificationEmail({
+        email,
+        expirationTime: 2,
+        name: user.name,
+        otp,
+      });
+
+      return {
+        message: "If the email exists, an OTP has been sent.",
+      };
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Forgot password OTP request failed.");
+    }
+  },
+
   processChangeStaffRole: async (payload: IUserPayload) => {
     try {
       return await changeStaffRole(payload);

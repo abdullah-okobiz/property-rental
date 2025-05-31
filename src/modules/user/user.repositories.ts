@@ -227,6 +227,16 @@ const UserRepositories = {
     }
 
   },
+   findUserByEmailPassword: async (email: string) => {
+    try {
+      const user = await User.findOne({ email });
+      return user;
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to find user by email");
+    }
+  },
   changeStaffRole: async ({ role, userId }: IUserPayload) => {
     try {
       const data = await User.findByIdAndUpdate(
