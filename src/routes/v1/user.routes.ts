@@ -30,6 +30,7 @@ const {
   handleCreateStaff,
   handleDeleteStaff,
   handleFindAllStaff,
+  handleChangeOwnPassword
 } = UserControllers;
 
 router
@@ -62,5 +63,7 @@ router
 router
   .route("/admin/staff/role/:id")
   .patch(checkAccessToken, isAdmin, handleChangeStaffRole);
+router.route("/user/change-password")
+.patch(checkAccessToken, handleChangeOwnPassword);
 
 export default router;

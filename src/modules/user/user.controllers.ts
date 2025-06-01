@@ -19,6 +19,7 @@ const {
   processFindAllStaff,
   processChangeStaffPassword,
   processChangeStaffRole,
+  processChangeOwnPassword
 } = UserServices;
 
 const UserControllers = {
@@ -167,6 +168,30 @@ const UserControllers = {
       next();
     }
   },
+  handleChangeOwnPassword: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.authenticateTokenDecoded?.userId;
+      const { oldPassword, newPassword } = req.body;
+
+      if (!oldPassword || !newPassword) {
+        res.status(400).json({
+          status: "error",
+          message: "Both oldPassword and newPassword are required",
+        });
+        return;
+      }
+
+      await processChangeOwnPassword({ userId: userId.toString(), oldPassword, newPassword });
+      res.status(200).json({
+        status: "success",
+        message: "Password changed successfully",
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
   handleChangeStaffPassword: async (
     req: Request,
     res: Response,
@@ -264,9 +289,8 @@ const UserControllers = {
       const { data, total } = await processFindAllStaff({ page, role, search });
       const totalPages = Math.ceil(total / documentPerPage);
       const totalStaffs = total;
-      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
-        req.path
-      }`;
+      const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${req.path
+        }`;
 
       const buildQuery = (pageNumber: number) => {
         const query = new URLSearchParams();

@@ -10,7 +10,7 @@ import {
 import User, { IdentityDocument } from './user.model';
 import { ISearchUserQuery } from '../profile/profile.interfaces';
 import { documentPerPage } from '../../const';
-import { hashPassword } from '../../utils/password.utils';
+import { comparePassword, hashPassword } from '../../utils/password.utils';
 
 const UserRepositories = {
   createUser: async ({ email, name, password, role }: ISignupPayload): Promise<IUser> => {
@@ -183,6 +183,49 @@ const UserRepositories = {
         throw new Error('Unknown Error Occurred In Staff Password Change Repository');
       }
     }
+  },
+  changeUserPassword: async ({
+    userId,
+    oldPassword,
+    newPassword,
+  }: {
+    userId: string;
+    oldPassword: string;
+    newPassword: string;
+  }) => {
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error("User not found");
+
+      if (!user.password) {
+        throw new Error("User has no password set");
+      }
+
+      const isMatch = await comparePassword(oldPassword, user.password);
+      if (!isMatch) throw new Error("Old password is incorrect");
+
+      const hashedPassword = await hashPassword(newPassword);
+      if (!hashedPassword) {
+        throw new Error("Password hashing failed");
+      }
+
+       const data = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: { password: hashedPassword },
+        },
+        { new: true }
+      );
+     
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error("Unknown Error Occurred In User Password Change");
+      }
+    }
+
   },
   changeStaffRole: async ({ role, userId }: IUserPayload) => {
     try {

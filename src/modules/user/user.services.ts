@@ -30,6 +30,7 @@ const {
   findAllStaff,
   changeStaffPassword,
   changeStaffRole,
+  changeUserPassword
 } = UserRepositories;
 const UserServices = {
   processSignup: async (payload: ISignupPayload) => {
@@ -235,6 +236,30 @@ const UserServices = {
       }
     }
   },
+  processChangeOwnPassword : async ({
+  userId,
+  oldPassword,
+  newPassword,
+}: {
+  userId: string;
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  try {
+    return await changeUserPassword({userId,oldPassword,newPassword});
+    
+  } catch (error) {
+     if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error(
+          "Unknown Error Occurred In User Password Change Service"
+        );
+      }
+    
+  }
+  
+},
   processChangeStaffRole: async (payload: IUserPayload) => {
     try {
       return await changeStaffRole(payload);
