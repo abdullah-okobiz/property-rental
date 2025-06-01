@@ -21,6 +21,7 @@ import {
 import UserRepositories from "./user.repositories";
 import otpGenerator from "otp-generator";
 
+
 const {
   createUser,
   verifyUser,
@@ -31,7 +32,10 @@ const {
   changeStaffPassword,
   changeStaffRole,
   changeUserPassword,
-  findUserByEmailPassword
+  findUserByEmailPassword,
+  findUserByEmailResetPass,
+  findUserByEmailForResetOtp,
+  resendForgotPasswordOtp
 } = UserRepositories;
 const UserServices = {
   processSignup: async (payload: ISignupPayload) => {
@@ -172,7 +176,7 @@ const UserServices = {
   },
   processResend: async ({ email, name }: IProcessResendEmailPayload) => {
     try {
-      const otp = otpGenerator.generate(5, {
+      const otp = otpGenerator.generate(6, {
         digits: true,
         lowerCaseAlphabets: false,
         specialChars: false,
@@ -284,7 +288,7 @@ const UserServices = {
       });
 
 
-      await redisClient.set(`user:reset-otp:${email}`, otp, "EX", 2 * 60); 
+      await redisClient.set(`user:reset-otp:${email}`, otp, "EX", 2 * 60);
       await sendVerificationEmail({
         email,
         expirationTime: 2,
@@ -293,7 +297,7 @@ const UserServices = {
       });
 
       return {
-        message: "If the email exists, an OTP has been sent.",
+        message: "An OTP has been sent.",
       };
     } catch (error) {
       throw error instanceof Error
@@ -301,7 +305,49 @@ const UserServices = {
         : new Error("Forgot password OTP request failed.");
     }
   },
+  processResetPassword: async ({
+    email,
+    otp,
+    newPassword,
+  }: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }) => {
+    try {
+      const savedOtp = await redisClient.get(`user:reset-otp:${email}`);
+      if (!savedOtp || savedOtp !== otp) {
+        throw new Error("Invalid or expired OTP");
+      }
 
+      const updatedUser = await findUserByEmailResetPass(email, newPassword);
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+
+      await redisClient.del(`user:reset-otp:${email}`);
+
+      return { message: "Password reset successfully" };
+    } catch (error) {
+      throw error instanceof Error ? error : new Error("Password reset failed");
+    }
+  },
+  processResendForgotPasswordOtp: async (email: string) => {
+    try {
+      const user = await findUserByEmailForResetOtp(email);
+      if (!user) {
+        throw new Error(" An OTP has been sent.");
+      }
+
+      await resendForgotPasswordOtp(user);
+
+      return { message: "OTP has been resent to your email." };
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to resend OTP");
+    }
+  },
   processChangeStaffRole: async (payload: IUserPayload) => {
     try {
       return await changeStaffRole(payload);
