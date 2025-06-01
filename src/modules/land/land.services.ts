@@ -20,12 +20,26 @@ const {
   updateLandListing,
   createNewLand,
   findOneListedLand,
+  findOneByIdListedLand,
+  findOneHostListedStepLandField,
+
 } = LandRepositories;
 
 const LandServices = {
   processRetrieveOneListedLand: async ({ slug }: ILandPayload) => {
     try {
       return await findOneListedLand({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Land service');
+      }
+    }
+  },
+  processRetrieveOneListedLandById: async ({ landId }: ILandPayload) => {
+    try {
+      return await findOneByIdListedLand({ landId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -157,25 +171,56 @@ const LandServices = {
     isSold,
     search,
     category,
+    location,
+    minPrice,
+    maxPrice,
   }: IGetAllLandRequestedQuery) => {
     try {
       const query: IGetAllLandQuery = {};
+
       if (publishStatus) query.publishStatus = String(publishStatus);
-      const payload: IGetAllLandPayload = { query };
-      if (page) payload.page = page;
-      if (sort) payload.sort = sort;
+      if (isSold !== undefined) query.isSold = isSold;
       if (category) query.category = String(category);
-      if (isSold) query.isSold = isSold;
+      if (location) query.location = String(location);
+      if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
+      }
       if (search) query.email = String(search);
+
+      const payload: IGetAllLandPayload = { query, page, sort };
       return await findAllListedLand(payload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error('Unknown Error Occurred get all listed land service');
-      }
+      throw new Error('Unknown Error Occurred get all listed land service');
     }
   },
+  // processGetAllListedLand: async ({
+  //   page,
+  //   publishStatus,
+  //   sort,
+  //   isSold,
+  //   search,
+  //   category,
+  // }: IGetAllLandRequestedQuery) => {
+  //   try {
+  //     const query: IGetAllLandQuery = {};
+  //     if (publishStatus) query.publishStatus = String(publishStatus);
+  //     const payload: IGetAllLandPayload = { query };
+  //     if (page) payload.page = page;
+  //     if (sort) payload.sort = sort;
+  //     if (category) query.category = String(category);
+  //     if (isSold) query.isSold = isSold;
+  //     if (search) query.email = String(search);
+  //     return await findAllListedLand(payload);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw error;
+  //     } else {
+  //       throw new Error('Unknown Error Occurred get all listed land service');
+  //     }
+  //   }
+  // },
   processDeleteListedLandItem: async ({ landId }: ILandPayload) => {
     try {
       const { images } = (await deleteListedLandItem({ landId })) as ILand;
@@ -196,6 +241,21 @@ const LandServices = {
       }
     }
   },
+  processGetLandField: async ({ id, field }: { id: string; field: string }) => {
+    try {
+      const data = await findOneHostListedStepLandField({ id, field });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Land Service');
+      }
+
+    }
+
+  },
+  
 };
 
 export default LandServices;

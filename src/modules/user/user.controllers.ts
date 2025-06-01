@@ -27,7 +27,7 @@ const UserControllers = {
       const data = await processSignup(req.body);
       res
         .status(201)
-        .json({ status: "success", message: "User created", data });
+        .json({ status: "success", message: "User Signup Successfully", data });
       return;
     } catch (error) {
       const err = error as Error;

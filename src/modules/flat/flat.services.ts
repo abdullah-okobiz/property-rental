@@ -20,6 +20,8 @@ const {
   deleteListedFlatItem,
   createNewFlat,
   findOneListedFlat,
+  findOneListedFlatById,
+  findOneHostListedStepFlatField
 } = FlatRepositories;
 
 const FlatServices = {
@@ -147,28 +149,54 @@ const FlatServices = {
     page,
     publishStatus,
     sort,
+    location,
+    minPrice,
+    maxPrice,
   }: IGetAllFlatRequestedQuery) => {
     try {
       const query: IGetAllFlatQuery = {};
+
       if (search) query.email = String(search);
-      if (isSold) query.isSold = isSold;
+      if (isSold !== undefined) query.isSold = isSold;
       if (category) query.category = String(category);
       if (publishStatus) query.publishStatus = publishStatus;
+      if (location) {
+        query.location = {
+          $regex: location,
+          $options: 'i',
+        }
+      }
+      if (minPrice !== undefined || maxPrice !== undefined) {
+        query.price = {};
+        if (minPrice !== undefined) query.price.$gte = Number(minPrice);
+        if (maxPrice !== undefined) query.price.$lte = Number(maxPrice);
+      }
+
       const payload: IGetAllFlatPayload = { query };
       if (page) payload.page = page;
       if (sort) payload.sort = sort;
       return await findAllListedFlat(payload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error('Unknown Error Occurred get all listed flat service');
-      }
+      throw error instanceof Error
+        ? error
+        : new Error("Unknown Error Occurred in get all listed flat service");
     }
   },
+
   processRetrieveOneListedFlat: async ({ slug }: IFlatPayload) => {
     try {
       return await findOneListedFlat({ slug });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Flat Service');
+      }
+    }
+  },
+  processRetrieveOneListedFlatById: async ({ flatId }: IFlatPayload) => {
+    try {
+      return await findOneListedFlatById({ flatId });
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -208,6 +236,20 @@ const FlatServices = {
         throw new Error('Unknown Error Occurred In delete listed flat item service');
       }
     }
+  },
+  processGetFlatField: async ({ id, field }: { id: string; field: string }) => {
+    try {
+      const data = await findOneHostListedStepFlatField({ id, field });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Flat Service');
+      }
+
+    }
+
   },
 };
 

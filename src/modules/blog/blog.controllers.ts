@@ -48,7 +48,6 @@ const BlogControllers = {
       const { blogTitle, blogDescription, feature, tags } = req.body as IBlogPayload;
       console.log(tags);
       const blogImage = req?.file?.filename;
-      console.log(blogImage);
       const data = await processCreateBlog({
         blogImage,
         blogDescription,

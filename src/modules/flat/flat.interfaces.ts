@@ -22,6 +22,8 @@ export interface ICreateFlatPayload {
 }
 
 interface IFlat {
+  latitude?:number;
+  longitude?:number;
   title?: string;
   description?: string;
   location?: string;
@@ -55,6 +57,29 @@ export interface IFlatImagesPath {
   filename: string;
 }
 
+// export interface IGetAllFlatRequestedQuery {
+//   category?: string;
+//   isSold?: boolean;
+//   search?: string;
+//   publishStatus?: string;
+//   page?: number;
+//   sort?: 1 | -1;
+// }
+
+// export interface IGetAllFlatQuery {
+//   category?: string;
+//   isSold?: boolean;
+//   host?: Types.ObjectId;
+//   email?: string;
+//   publishStatus?: string;
+// }
+
+// export interface IGetAllFlatPayload {
+//   query: IGetAllFlatQuery;
+//   page?: number;
+//   sort?: 1 | -1;
+// }
+ 
 export interface IGetAllFlatRequestedQuery {
   category?: string;
   isSold?: boolean;
@@ -62,14 +87,19 @@ export interface IGetAllFlatRequestedQuery {
   publishStatus?: string;
   page?: number;
   sort?: 1 | -1;
+  location?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export interface IGetAllFlatQuery {
   category?: string;
   isSold?: boolean;
   host?: Types.ObjectId;
-  email?: string;
   publishStatus?: string;
+  email?: string;
+  location?: { $regex: string; $options: string };
+  price?: { $gte?: number; $lte?: number };
 }
 
 export interface IGetAllFlatPayload {
@@ -77,5 +107,6 @@ export interface IGetAllFlatPayload {
   page?: number;
   sort?: 1 | -1;
 }
+
 
 export default IFlat;

@@ -16,12 +16,35 @@ const {
   processDeleteListedRentItem,
   processCreateRent,
   processRetrieveOneListedRent,
+  processRetrieveOneListedRentById,
+  processGetRentField,
+  searchRentListings
 } = RentServices;
 const RentControllers = {
   handleRetrieveOneListedRent: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { slug } = req.params;
       const data = await processRetrieveOneListedRent({ slug });
+      res.status(201).json({
+        status: 'success',
+        message: 'Rent Retrieve Successful',
+        data,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleRetrieveOneListedRentById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'Invalid feature ID' });
+        return;
+      }
+      const rentId = new mongoose.Types.ObjectId(id);
+      const data = await processRetrieveOneListedRent({ rentId });
       res.status(201).json({
         status: 'success',
         message: 'Rent Retrieve Successful',
@@ -255,6 +278,61 @@ const RentControllers = {
       next();
     }
   },
+  handleGetRentField: async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      const { id, field } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ status: 'error', message: 'invalid listing id' });
+        return;
+      }
+      const data = await processGetRentField({ id, field });
+      res.status(200).json({
+        status: 'success',
+        message: `Rent field data get successfully`,
+        data: data
+
+      })
+
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+
+    }
+  },
+  HandleSearchRentListings: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        location,
+        checkinDate,
+        checkoutDate,
+        adultCount,
+        childrenCount,
+        page,
+        sort,
+      } = req.query;
+
+      const query: Record<string, any> = {};
+
+      if (location) query.location = location;
+      if (checkinDate) query.checkinDate = new Date(checkinDate as string);
+      if (checkoutDate) query.checkoutDate = new Date(checkoutDate as string);
+      if (adultCount) query.adultCount = Number(adultCount);
+      if (childrenCount) query.childrenCount = Number(childrenCount);
+
+      const result = await searchRentListings({
+        query,
+        page: page ? Number(page) : 1,
+        sort: sort === "1" ? 1 : -1, 
+      });
+
+      res.status(200).json({ success: true, ...result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
 };
 
 export default RentControllers;

@@ -1,24 +1,19 @@
-import mongoose, { Types } from "mongoose";
-import Profile from "../profile/profile.models";
+import mongoose, { Types } from 'mongoose';
+import Profile from '../profile/profile.models';
 import {
   IFindStaffPayload,
   ISearchUserDatabaseQuery,
   ISignupPayload,
   IUser,
   IUserPayload,
-} from "./user.interfaces";
-import User, { IdentityDocument } from "./user.model";
-import { ISearchUserQuery } from "../profile/profile.interfaces";
-import { documentPerPage } from "../../const";
-import { hashPassword } from "../../utils/password.utils";
+} from './user.interfaces';
+import User, { IdentityDocument } from './user.model';
+import { ISearchUserQuery } from '../profile/profile.interfaces';
+import { documentPerPage } from '../../const';
+import { hashPassword } from '../../utils/password.utils';
 
 const UserRepositories = {
-  createUser: async ({
-    email,
-    name,
-    password,
-    role,
-  }: ISignupPayload): Promise<IUser> => {
+  createUser: async ({ email, name, password, role }: ISignupPayload): Promise<IUser> => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -41,7 +36,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In User Creation Repository");
+        throw new Error('Unknown Error Occurred In User Creation Repository');
       }
     }
   },
@@ -54,22 +49,19 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In User Find Repository");
+        throw new Error('Unknown Error Occurred In User Find Repository');
       }
     }
   },
-  findUserByEmailOrPhone: async ({
-    role,
-    user,
-  }: ISearchUserQuery): Promise<IUser | null> => {
+  findUserByEmailOrPhone: async ({ role, user }: ISearchUserQuery): Promise<IUser | null> => {
     try {
       const query = { role } as ISearchUserDatabaseQuery;
-      if (typeof user === "string" && user.trim() !== "") {
-        query.email = { $regex: user.trim(), $options: "i" };
+      if (typeof user === 'string' && user.trim() !== '') {
+        query.email = { $regex: user.trim(), $options: 'i' };
       }
       const foundedUser = await User.findOne(query).populate({
-        path: "identityDocument",
-        select: "_id documentType frontSide backSide",
+        path: 'identityDocument',
+        select: '_id documentType frontSide backSide',
       });
       if (!foundedUser) return null;
       return foundedUser;
@@ -77,7 +69,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In User Find Repository");
+        throw new Error('Unknown Error Occurred In User Find Repository');
       }
     }
   },
@@ -85,14 +77,15 @@ const UserRepositories = {
     try {
       const verifiedUserData = await User.findOneAndUpdate(
         { email },
-        { isVerified: true }
+        { isVerified: true },
+        { new: true }
       );
       return verifiedUserData;
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In User Find Repository");
+        throw new Error('Unknown Error Occurred In User Find Repository');
       }
     }
   },
@@ -103,9 +96,7 @@ const UserRepositories = {
       const deletedUserData = await User.findByIdAndDelete(payload);
       await Profile.findOneAndDelete({ user: payload });
       const deletedIdentityData = deletedUserData?.identityDocument
-        ? await IdentityDocument.findByIdAndDelete(
-            deletedUserData?.identityDocument
-          )
+        ? await IdentityDocument.findByIdAndDelete(deletedUserData?.identityDocument)
         : null;
       session.endSession();
       return { deletedUserData, deletedIdentityData };
@@ -115,7 +106,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In User Delete Repository");
+        throw new Error('Unknown Error Occurred In User Delete Repository');
       }
     }
   },
@@ -132,7 +123,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Staff Retrieve Repository");
+        throw new Error('Unknown Error Occurred In Staff Retrieve Repository');
       }
     }
   },
@@ -152,7 +143,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Staff Creation Repository");
+        throw new Error('Unknown Error Occurred In Staff Creation Repository');
       }
     }
   },
@@ -170,7 +161,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error("Unknown Error Occurred In Staff Delete Repository");
+        throw new Error('Unknown Error Occurred In Staff Delete Repository');
       }
     }
   },
@@ -189,9 +180,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Staff Password Change Repository"
-        );
+        throw new Error('Unknown Error Occurred In Staff Password Change Repository');
       }
     }
   },
@@ -209,9 +198,7 @@ const UserRepositories = {
       if (error instanceof Error) {
         throw error;
       } else {
-        throw new Error(
-          "Unknown Error Occurred In Staff Role Change Repository"
-        );
+        throw new Error('Unknown Error Occurred In Staff Role Change Repository');
       }
     }
   },

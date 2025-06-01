@@ -121,8 +121,8 @@ const TeamServices = {
     const filePath = join(__dirname, "../../../public", relativeImagePath);
 
     try {
-      await fs.unlink(filePath);
       await deleteTeamMember({ teamMemberId });
+      await fs.unlink(filePath);
       return;
     } catch (error) {
       if (error instanceof Error) {

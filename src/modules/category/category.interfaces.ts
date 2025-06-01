@@ -3,6 +3,7 @@ import { Document, Types } from "mongoose";
 interface ICategory extends Document {
   categoryName: string;
   feature: [Types.ObjectId];
+  slug:string
 }
 
 export interface ICategoryPayload {

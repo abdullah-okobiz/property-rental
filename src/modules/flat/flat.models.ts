@@ -46,23 +46,35 @@ const FlatSchema = new Schema<IFlat>(
       enum: ListingPublishStatus,
       default: ListingPublishStatus.IN_PROGRESS,
     },
-    slug: { type: String, unique: true, index: true },
+    slug: {
+      type: String,
+      index: {
+        unique: true,
+        partialFilterExpression: { slug: { $type: 'string' } },
+      },
+    },
     isSold: { type: Boolean, default: false },
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null },
   },
   { timestamps: true }
 );
 
+ 
 FlatSchema.pre('save', async function (next) {
   const flat = this as HydratedDocument<IFlat>;
-  if ((flat.isModified('title') || flat.isNew) && flat.title) {
+
+  if (flat.isModified('title') || flat.isNew) {
     try {
-      flat.slug = generateSlug(flat?.title as string);
+      const baseSlug = flat.title?.trim() || `listing-${Date.now()}`;
+      flat.slug = generateSlug(baseSlug);
     } catch (error) {
       if (error instanceof Error) {
         next(error);
       }
     }
   }
+
   next();
 });
 

@@ -20,6 +20,9 @@ const {
   deleteListedRentItem,
   createNewRent,
   findOneListedRent,
+  findOneListedRentById,
+  findOneHostListedStepField,
+  findAllSearchingRent
 } = RentRepositories;
 const RentServices = {
   processInitializeRentListing: async ({ host, payload }: IRentPayload) => {
@@ -155,6 +158,17 @@ const RentServices = {
       }
     }
   },
+  processRetrieveOneListedRentById: async ({ rentId }: IRentPayload) => {
+    try {
+      return await findOneListedRentById({ rentId });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Rent Service');
+      }
+    }
+  },
   processChangeStatus: async ({ rentId, payload }: IRentPayload) => {
     try {
       const data = await creatingRentListingById({ payload, rentId });
@@ -210,6 +224,24 @@ const RentServices = {
         throw new Error('Unknown Error Occurred In delete listed rent item service');
       }
     }
+  },
+  processGetRentField: async ({ id, field }: { id: string; field: string }) => {
+    try {
+      const data = await findOneHostListedStepField({ id, field });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Retrieve One Listed Rent Service');
+      }
+
+    }
+    
+  },
+  searchRentListings: async (payload:any) => {
+    const result = await findAllSearchingRent(payload);
+    return result;
   },
 };
 

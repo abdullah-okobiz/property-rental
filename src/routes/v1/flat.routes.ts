@@ -16,12 +16,14 @@ const {
   handleChangeStatus,
   handleCreateFlat,
   handleRetrieveOneListedFlat,
+  handleRetrieveOneListedFlatById,
+  handleGetFlatField
 } = FlatControllers;
 
 const router = Router();
 
 // HOST ROUTES
-router.route('/host/flat/initialize').post(checkAccessToken, isHost, handleInitializeFlatListing);
+router.route('/host/flat/new').post(checkAccessToken, isHost, handleInitializeFlatListing);
 router
   .route('/host/create-new-flat')
   .post(checkAccessToken, isHost, upload.array('images'), handleCreateFlat);
@@ -31,6 +33,7 @@ router
   .patch(checkAccessToken, isHost, upload.array('images'), handleUploadImage);
 router.route('/host/flat/image/:id').delete(checkAccessToken, isHost, handleUnlinkImage);
 router.route('/host/flat').get(checkAccessToken, isHost, handleGetAllHostListedPropertiesForFlat);
+router.route('/host/flat/:id').get(checkAccessToken, isHost, handleRetrieveOneListedFlatById);
 
 // COMMON GET ALL LISTED FLAT ENDPOINT
 router.route('/flat').get(handleGetAllFlat);
@@ -50,5 +53,8 @@ router
     allowRole(UserRole.Admin, UserRole.ListingVerificationManager),
     handleDeleteListedFlatItem
   );
+   router
+  .route('/host/land/:id/field/:field')
+  .get(checkAccessToken, isHost, handleGetFlatField);
 
 export default router;

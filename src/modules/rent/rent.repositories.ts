@@ -98,6 +98,21 @@ const RentRepositories = {
       }
     }
   },
+  findOneListedRentById: async ({ rentId }: IRentPayload) => {
+    try {
+      return await Rent.findOne({ rentId })
+        .populate('host')
+        .populate('listingFor')
+        .populate('category')
+        .populate('amenities');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In Find One Listed Rent Operation');
+      }
+    }
+  },
   findAllForHost: async ({ host }: IRentPayload) => {
     try {
       const data = await Rent.find({ host });
@@ -171,6 +186,93 @@ const RentRepositories = {
       }
     }
   },
+  findOneHostListedStepField: async ({ id, field }: { id: string, field: string }) => {
+    try {
+      const data = await Rent.findById(id).lean();
+
+      if (!data) {
+        throw new Error('Rent listing data not found');
+      }
+
+      if (!(field in data)) {
+        throw new Error(`Field "${field}" does not exist in rent document`);
+      }
+
+      return data
+
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown Error Occurred In delete listed rent item Operation');
+      }
+
+    }
+  },
+  findAllSearchingRent: async ({ query, page, sort }: IGetAllRentPayload) => {
+    try {
+      const currentPage = page ?? 1;
+      const skip = (currentPage - 1) * documentPerPage;
+      const sortOption: Record<string, 1 | -1> | undefined =
+        sort === 1 || sort === -1 ? { createdAt: sort } : undefined;
+
+      const mongoQuery: any = { ...query };
+
+      if (mongoQuery.email) {
+        const host = await User.findOne({ email: mongoQuery.email });
+        if (host) {
+          mongoQuery.host = host._id;
+        } else {
+          return { data: [], total: 0 };
+        }
+        delete mongoQuery.email;
+      }
+
+      if (mongoQuery.location) {
+        mongoQuery.location = { $regex: new RegExp(mongoQuery.location, 'i') };
+      }
+
+      if (mongoQuery.checkinDate && mongoQuery.checkoutDate) {
+        const checkin = new Date(mongoQuery.checkinDate);
+        const checkout = new Date(mongoQuery.checkoutDate);
+
+        mongoQuery.checkinDate = { $lte: checkin };
+        mongoQuery.checkoutDate = { $gte: checkout };
+      }
+
+      if (mongoQuery.adultCount) {
+        mongoQuery.adultCount = { $gte: Number(mongoQuery.adultCount) };
+      }
+
+      if (mongoQuery.childrenCount) {
+        mongoQuery.childrenCount = { $gte: Number(mongoQuery.childrenCount) };
+      }
+
+      Object.keys(mongoQuery).forEach((key) => {
+        if (mongoQuery[key] === undefined || mongoQuery[key] === null) {
+          delete mongoQuery[key];
+        }
+      });
+
+      const [data, total] = await Promise.all([
+        Rent.find(mongoQuery)
+          .skip(skip)
+          .limit(documentPerPage)
+          .sort(sortOption)
+          .populate('host')
+          .populate('listingFor')
+          .populate('category')
+          .populate('amenities'),
+        Rent.countDocuments(mongoQuery),
+      ]);
+
+      return { data, total };
+    } catch (error) {
+      throw new Error('Error occurred while searching rent listings');
+    }
+  },
+
+
 };
 
 export default RentRepositories;

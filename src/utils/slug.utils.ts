@@ -12,6 +12,7 @@ const SlugUtils = {
       .replace(/\s+/g, '-')
       .toLowerCase();
     const randomDigits = generate4DigitNumber();
+    console.log("rerffffff ", randomDigits)
     return `${baseSlug}-${randomDigits}`;
   },
 };

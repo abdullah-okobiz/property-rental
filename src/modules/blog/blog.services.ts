@@ -1,5 +1,5 @@
 import path, { join } from "path";
-import IBlogInterfces, {
+import  {
   IBlogPayload,
   IBlogUpdateField,
 } from "./blog.interfaces";
