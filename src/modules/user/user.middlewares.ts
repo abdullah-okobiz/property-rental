@@ -185,44 +185,100 @@ const UserMiddlewares = {
     next();
   },
   checkAccessToken: async (req: Request, res: Response, next: NextFunction) => {
+
+
     const authHeader = req.headers.authorization;
-    console.log("authheader ===", authHeader)
+
+
     try {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.status(401).json({
           status: "error",
-          message: "Unauthorize Request",
-          error: "Accesstoken is missing",
+          message: "Unauthorized Request",
+          error: "Access token is missing",
         });
-        return;
+        return
       }
-      const token = authHeader?.split(" ")[1];
-      console.log("token ===", token)
+
+      const token = authHeader.split(" ")[1];
+
       const isBlacklisted = await redisClient.get(`blacklist:${token}`);
-      console.log("isBlacklisted ===", isBlacklisted)
+
+
       if (isBlacklisted) {
         res.status(403).json({
           status: "error",
           message: "Permission Denied",
-          error: "Accesstoken has been revoked",
+          error: "Access token has been revoked",
         });
-        return;
+        return
       }
+
       const decoded = verifyAccessToken(token);
       if (!decoded) {
         res.status(403).json({
           status: "error",
           message: "Permission Denied",
-          error: "Accesstoken expired or invalid",
+          error: "Access token expired or invalid",
         });
         return;
       }
       req.authenticateTokenDecoded = decoded as TokenPayload;
+      console.log("decoded ===", decoded);
+
       next();
     } catch (error) {
-      throw error;
+      console.error("Middleware error ===", error);
+      res.status(500).json({
+        status: "error",
+        message: "Internal server error in auth middleware",
+        error: (error as Error).message,
+      });
+      return;
     }
   },
+
+  // checkAccessToken: async (req: Request, res: Response, next: NextFunction) => {
+  //   req.authenticateTokenDecoded = decoded as TokenPayload;
+  //   const authHeader = req.headers.authorization;
+  //   console.log("authheader ===", authHeader)
+  //   try {
+  //     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  //       res.status(401).json({
+  //         status: "error",
+  //         message: "Unauthorize Request",
+  //         error: "Accesstoken is missing",
+  //       });
+  //       return;
+  //     }
+  //     const token = authHeader?.split(" ")[1];
+  //     console.log("token ===", token)
+  //     const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+  //     console.log("isBlacklisted ===", isBlacklisted)
+  //     if (isBlacklisted) {
+  //       res.status(403).json({
+  //         status: "error",
+  //         message: "Permission Denied",
+  //         error: "Accesstoken has been revoked",
+  //       });
+  //       return;
+  //     }
+  //     const decoded = verifyAccessToken(token);
+  //     if (!decoded) {
+  //       res.status(403).json({
+  //         status: "error",
+  //         message: "Permission Denied",
+  //         error: "Accesstoken expired or invalid",
+  //       });
+  //       return;
+  //     }
+  //     req.authenticateTokenDecoded = decoded as TokenPayload;
+  //     next();
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
+
   checkRefreshToken: (req: Request, res: Response, next: NextFunction) => {
     const { refreshtoken } = req.cookies;
     if (refreshtoken) {
