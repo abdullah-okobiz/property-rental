@@ -19,7 +19,10 @@ const {
   processFindAllStaff,
   processChangeStaffPassword,
   processChangeStaffRole,
-  processChangeOwnPassword
+  processChangeOwnPassword,
+  processForgotPassword,
+  processResetPassword,
+  processResendForgotPasswordOtp
 } = UserServices;
 
 const UserControllers = {
@@ -144,7 +147,7 @@ const UserControllers = {
       await processResend({ email, name });
       res
         .status(200)
-        .json({ status: "success", message: "otp resend successful" });
+        .json({ status: "success", message: "Otp resend successfully" });
     } catch (error) {
       const err = error as Error;
       logger.error(err.message);
@@ -192,6 +195,84 @@ const UserControllers = {
       next();
     }
   },
+  handleForgotPassword: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).json({
+          status: "error",
+          message: "Email is required",
+        });
+        return;
+      }
+
+      const result = await processForgotPassword(email);
+
+      res.status(200).json({
+        status: "success",
+        message: result.message,
+      });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(err.message);
+      next();
+    }
+  },
+  handleResetPassword: async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      res.status(400).json({
+        status: "error",
+        message: "Email, OTP, and newPassword are required",
+      });
+      return;
+    }
+
+    const result = await processResetPassword({ email, otp, newPassword });
+
+    res.status(200).json({
+      status: "success",
+      message: result.message,
+    });
+  } catch (error) {
+    const err = error as Error;
+      logger.error(err.message);
+      next();
+  }
+},
+handleResendForgotPasswordOtp: async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body as IUser;
+
+    if (!email) {
+       res.status(400).json({
+        status: "error",
+        message: "Email is required",
+      });
+      return ;
+    }
+
+    const result = await processResendForgotPasswordOtp(email);
+
+     res.status(200).json({
+      status: "success",
+      message: result?.message,
+    });
+  } catch (error) {
+     const err = error as Error;
+      logger.error(err.message);
+      next();
+  }
+},
+
+
   handleChangeStaffPassword: async (
     req: Request,
     res: Response,

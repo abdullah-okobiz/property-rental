@@ -4,19 +4,20 @@ import logger from '../configs/logger.configs';
 
 export const hashPassword = async (
   passwordString: string
-): Promise<string | null> => {
+): Promise<string> => {
   try {
     return await bcrypt.hash(passwordString, saltRound);
   } catch (error) {
     if (error instanceof Error) {
-      logger.warn(`Error Occurred In Hash Password Utils: ${error.message}`);
-      return null;
+      logger.error(`Hashing failed: ${error.message}`);
+      throw error;
     } else {
-      logger.warn('Unexpected Error Occurred In Hash Password Utils');
-      return null;
+      logger.error("Unexpected error occurred during password hashing");
+      throw new Error("Unexpected hashing error");
     }
   }
 };
+
 
 export const comparePassword = async (
   requestedPassword: string,

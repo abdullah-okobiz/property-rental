@@ -186,6 +186,7 @@ const UserMiddlewares = {
   },
   checkAccessToken: async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
+    console.log("authheader ===", authHeader)
     try {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.status(401).json({
@@ -196,7 +197,9 @@ const UserMiddlewares = {
         return;
       }
       const token = authHeader?.split(" ")[1];
+      console.log("token ===", token)
       const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+      console.log("isBlacklisted ===", isBlacklisted)
       if (isBlacklisted) {
         res.status(403).json({
           status: "error",

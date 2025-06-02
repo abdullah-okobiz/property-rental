@@ -2,6 +2,7 @@ import mongoose, { Types } from 'mongoose';
 import Profile from '../profile/profile.models';
 import {
   IFindStaffPayload,
+  IProcessResendEmailPayload,
   ISearchUserDatabaseQuery,
   ISignupPayload,
   IUser,
@@ -11,6 +12,9 @@ import User, { IdentityDocument } from './user.model';
 import { ISearchUserQuery } from '../profile/profile.interfaces';
 import { documentPerPage } from '../../const';
 import { comparePassword, hashPassword } from '../../utils/password.utils';
+import redisClient from '../../configs/redis.configs';
+import sendVerificationEmail from '../../utils/sendVerificationEmail.utils';
+import otpGenerator from "otp-generator";
 
 const UserRepositories = {
   createUser: async ({ email, name, password, role }: ISignupPayload): Promise<IUser> => {
@@ -209,14 +213,14 @@ const UserRepositories = {
         throw new Error("Password hashing failed");
       }
 
-       const data = await User.findByIdAndUpdate(
+      const data = await User.findByIdAndUpdate(
         userId,
         {
           $set: { password: hashedPassword },
         },
         { new: true }
       );
-     
+
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -227,6 +231,98 @@ const UserRepositories = {
     }
 
   },
+  findUserByEmailPassword: async (email: string) => {
+    try {
+      const user = await User.findOne({ email });
+      return user;
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to find user by email");
+    }
+  },
+  findUserByEmailForResetOtp: async (email: string) => {
+    try {
+      const user = await User.findOne({ email });
+      return user;
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to find user by email");
+    }
+  },
+  resendForgotPasswordOtp: async ({ email, name }: IProcessResendEmailPayload) => {
+    try {
+      const resendKey = `user:reset-otp:resend-limit:${email}`;
+      const isLimited = await redisClient.get(resendKey);
+
+      if (isLimited) {
+        throw new Error("Please wait before requesting another OTP.");
+      }
+
+      await redisClient.set(resendKey, "1", "EX", 60);
+
+      const otp = otpGenerator.generate(6, {
+        digits: true,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+        upperCaseAlphabets: false,
+      });
+
+      await redisClient.set(`user:reset-otp:${email}`, otp, "EX", 3 * 60); 
+
+      await sendVerificationEmail({
+        email,
+        name,
+        otp,
+        expirationTime: 2,
+      });
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Unknown Error Occurred In Resend OTP Operation");
+    }
+  }
+  ,
+  findUserByEmailResetPass: async (email: string, newPassword: string) => {
+  try {
+    const hashedPassword = await hashPassword(newPassword);
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $set: { password: hashedPassword } },
+      { new: true }
+    );
+
+    return user;
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("Error resetting user password");
+  }
+}
+,
+  // findUserByEmailResetPass: async (
+  //   email: string,
+  //   newPassword: string
+  // ) => {
+  //   try {
+  //     const user = await User.findOne({ email });
+  //     if (!user) return null;
+
+  //     const hashedPassword = await hashPassword(newPassword);
+  //     console.log("DB password: ", user.password);
+  //     user.password = hashedPassword;
+  //     // await user.save();
+
+  //     return user;
+  //   } catch (error) {
+  //     throw error instanceof Error
+  //       ? error
+  //       : new Error("Error resetting user password");
+  //   }
+  // },
+
   changeStaffRole: async ({ role, userId }: IUserPayload) => {
     try {
       const data = await User.findByIdAndUpdate(
