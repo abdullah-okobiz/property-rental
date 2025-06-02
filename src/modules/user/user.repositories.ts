@@ -284,26 +284,44 @@ const UserRepositories = {
     }
   }
   ,
-  findUserByEmailResetPass: async (
-    email: string,
-    newPassword: string
-  ) => {
-    try {
-      const user = await User.findOne({ email });
-      if (!user) return null;
+  findUserByEmailResetPass: async (email: string, newPassword: string) => {
+  try {
+    const hashedPassword = await hashPassword(newPassword);
 
-      const hashedPassword = await hashPassword(newPassword);
-      console.log("DB password: ", user.password);
-      user.password = hashedPassword;
-      await user.save();
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $set: { password: hashedPassword } },
+      { new: true }
+    );
 
-      return user;
-    } catch (error) {
-      throw error instanceof Error
-        ? error
-        : new Error("Error resetting user password");
-    }
-  },
+    return user;
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("Error resetting user password");
+  }
+}
+,
+  // findUserByEmailResetPass: async (
+  //   email: string,
+  //   newPassword: string
+  // ) => {
+  //   try {
+  //     const user = await User.findOne({ email });
+  //     if (!user) return null;
+
+  //     const hashedPassword = await hashPassword(newPassword);
+  //     console.log("DB password: ", user.password);
+  //     user.password = hashedPassword;
+  //     // await user.save();
+
+  //     return user;
+  //   } catch (error) {
+  //     throw error instanceof Error
+  //       ? error
+  //       : new Error("Error resetting user password");
+  //   }
+  // },
 
   changeStaffRole: async ({ role, userId }: IUserPayload) => {
     try {

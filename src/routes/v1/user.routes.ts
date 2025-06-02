@@ -69,7 +69,7 @@ router
 router.route("/user/change-password")
 .patch(checkAccessToken, handleChangeOwnPassword);
 router.route("/forgot-password").post( handleForgotPassword);
-router.route("/reset-password").post(handleResetPassword)
+router.route("/reset-password").post(handleResetPassword);
 router.route("/resend-forgot-password").post(handleResendForgotPasswordOtp);
 
 export default router;
