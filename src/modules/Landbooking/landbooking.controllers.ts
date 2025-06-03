@@ -92,18 +92,26 @@ const LandBookingController = {
       next(err);
     }
   },
-  handleAvailableLandStats: async (_req: Request, res: Response, next: NextFunction) => {
+ 
+ handleAvailableLandStats: async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const stats = await LandBookingService.getAvailableLandStats();
+    const [list, count] = await Promise.all([
+      LandBookingService.getAvailableLands(),
+      LandBookingService.countAvailableLands(),
+    ]);
+
     res.status(200).json({
-      status: "success",
-      message: "Available land list with count",
-      data: stats,
+      status: 'success',
+      message: 'Available lands retrieved successfully',
+      data: { count, list },
     });
   } catch (error) {
-    next(error);
+    const err = error as Error;
+    logger.error(err.message);
+    next(err);
   }
 },
+
 
  
 

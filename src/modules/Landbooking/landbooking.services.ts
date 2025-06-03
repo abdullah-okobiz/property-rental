@@ -1,7 +1,6 @@
 import { ILandBooking, LandBookingStatus } from './landbooking.interfaces';
 import LandBookingRepository from './landbooking.repositories';
 
-
 const LandBookingService = {
   createBooking: async (data: ILandBooking) => {
     try {
@@ -68,11 +67,28 @@ const LandBookingService = {
       throw new Error('Unknown Error Occurred In Get Land Booking Stats Service');
     }
   },
-  getAvailableLandStats: async () => {
-  const lands = await LandBookingRepository.getAvailableLands();
-  const count = await LandBookingRepository.countAvailableLands();
-  return { lands, count };
-},
+
+  getAvailableLands: async () => {
+    try {
+      return await LandBookingRepository.getAvailableLands();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Unknown Error Occurred In Get Available Lands Service');
+    }
+  },
+
+  countAvailableLands: async () => {
+    try {
+      return await LandBookingRepository.countAvailableLands();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Unknown Error Occurred In Count Available Lands Service');
+    }
+  },
 };
 
 export default LandBookingService;
