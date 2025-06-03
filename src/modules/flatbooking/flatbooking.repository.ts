@@ -17,7 +17,13 @@ const FlatBookingRepository = {
     getAllBookings: async (filter = {}) => {
         try {
             return await FlatBooking.find(filter)
-                .populate('flat')
+                .populate({
+                    path: 'flat',
+                    populate: {
+                        path: 'host',
+                        select: 'name email role', 
+                    },
+                })
                 .populate({ path: 'user', select: '-password' });
         } catch (error) {
             throw error instanceof Error
@@ -25,6 +31,7 @@ const FlatBookingRepository = {
                 : new Error('Unknown error occurred while fetching flat bookings.');
         }
     },
+
 
     getBookingById: async (id: string) => {
         try {
