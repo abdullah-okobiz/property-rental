@@ -53,7 +53,8 @@ import {
   Flat,
   Land,
   Contacts,
-  FlatBookingRoutes
+  FlatBookingRoutes,
+  LandBookingRoutes,
 } from './routes/v1';
 
 app.use(baseUrl.v1, UserRoutes);
@@ -76,6 +77,7 @@ app.use(baseUrl.v1, Flat);
 app.use(baseUrl.v1, Land);
 app.use(baseUrl.v1, Contacts);
 app.use(baseUrl.v1, FlatBookingRoutes);
+app.use(baseUrl.v1, LandBookingRoutes);
 
 app.use(globalErrorMiddleware);
 
