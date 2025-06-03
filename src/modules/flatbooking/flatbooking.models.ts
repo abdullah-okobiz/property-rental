@@ -1,14 +1,19 @@
 import { Schema, model, Model } from 'mongoose';
-import { IFlatBooking } from './flatbooking.interfaces';
+import { IFlatBooking, FlatBookingStatus } from './flatbooking.interfaces';
 
 const FlatBookingSchema = new Schema<IFlatBooking>(
     {
         flat: { type: Schema.Types.ObjectId, ref: 'Flat', required: true },
-        name: { type: String, },
-        email: { type: String,  },
+        name: { type: String },
+        email: { type: String },
         phone: { type: String, required: true },
         message: { type: String, default: null },
         user: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+        status: {
+            type: String,
+            enum: Object.values(FlatBookingStatus),
+            default: FlatBookingStatus.AVAILABLE,
+        },
     },
     { timestamps: true }
 );
