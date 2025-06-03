@@ -92,6 +92,21 @@ const LandBookingController = {
       next(err);
     }
   },
+  handleAvailableLandStats: async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const stats = await LandBookingService.getAvailableLandStats();
+    res.status(200).json({
+      status: "success",
+      message: "Available land list with count",
+      data: stats,
+    });
+  } catch (error) {
+    next(error);
+  }
+},
+
+ 
+
 };
 
 export default LandBookingController;

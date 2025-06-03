@@ -88,6 +88,30 @@ const LandBookingRepository = {
       }
     }
   },
+  countAvailableLands: async () => {
+    try {
+      return await LandBooking.countDocuments({ status: 'available' });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown error occurred while counting available lands.');
+      }
+    }
+  },
+
+  getAvailableLands: async () => {
+    try {
+      return await LandBooking.find({ status: 'available' }).populate('land');
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      } else {
+        throw new Error('Unknown error occurred while fetching available lands.');
+      }
+    }
+  },
+
 };
 
 export default LandBookingRepository;

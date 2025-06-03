@@ -13,6 +13,8 @@ const {
   handleUpdateLandBookingStatus,
   handleDeleteLandBooking,
   handleLandBookingStats,
+  handleAvailableLandStats,
+
 } = LandBookingController;
 
 // ✅ User creates a land booking
@@ -29,6 +31,10 @@ router
 router
   .route('/admin/land/bookings/stats')
   .get(checkAccessToken, allowRole(UserRole.Admin), handleLandBookingStats);
+  router
+  .route('/admin/land/available')
+  .get(checkAccessToken, allowRole(UserRole.Admin), handleAvailableLandStats);
+
 
 // ✅ Admin: Update booking status
 router

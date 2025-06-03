@@ -68,6 +68,11 @@ const LandBookingService = {
       throw new Error('Unknown Error Occurred In Get Land Booking Stats Service');
     }
   },
+  getAvailableLandStats: async () => {
+  const lands = await LandBookingRepository.getAvailableLands();
+  const count = await LandBookingRepository.countAvailableLands();
+  return { lands, count };
+},
 };
 
 export default LandBookingService;
